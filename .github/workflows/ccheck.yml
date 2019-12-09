@@ -11,6 +11,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: make and run
       run: |
+        /bin/bash -c "sudo xcode-select -s /Applications/Xcode_10.app/Contents/Developer"
         cd c
         make
         ./main
