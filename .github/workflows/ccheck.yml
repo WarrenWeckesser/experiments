@@ -1,0 +1,16 @@
+name: C Check
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: make and run
+      run: |
+        cd c
+        make
+        ./main
