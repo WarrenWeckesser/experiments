@@ -14,6 +14,7 @@ jobs:
         sw_vers
         xcodebuild -version
         python --version
+        python3 --version
         cd c
         make
         ./main
