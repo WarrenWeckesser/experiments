@@ -13,6 +13,7 @@ jobs:
       run: |
         sw_vers
         xcodebuild -version
+        python --version
         cd c
         make
         ./main
