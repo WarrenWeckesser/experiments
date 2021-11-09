@@ -15,6 +15,6 @@ jobs:
         xcodebuild -version
         python --version
         python3 --version
-        cd c
+        cd c/powl
         make
         ./main
