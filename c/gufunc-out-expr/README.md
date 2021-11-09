@@ -22,10 +22,10 @@ Instructions
 opcode  arg   symbolic opcodes and args
    11     0   PUSH VARIABLE n
    11     0   PUSH VARIABLE n
-    2     1   PUSH CONSTANT     1
+    2     1   PUSH CONSTANT 1
    10         SUBTRACT
     9         MULTIPLY
-    2     2   PUSH CONSTANT     2
+    2     2   PUSH CONSTANT 2
     6         DIVIDE
 
 Demonstrate evaluation...
@@ -42,7 +42,7 @@ opcode  arg   symbolic opcodes and args
    11     1   PUSH VARIABLE n
     4         MINIMUM
    10         SUBTRACT
-    2     1   PUSH CONSTANT     1
+    2     1   PUSH CONSTANT 1
    10         SUBTRACT
 
 Demonstrate evaluation...

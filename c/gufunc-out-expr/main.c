@@ -29,16 +29,21 @@ static char *opcode_names[] = {
 
 
 //
-// Note: check_names modifies the string names by putting
-// null characters at the end of each space-separated name
-// that it finds.
+// The return value of get_names must be freed.
+// The memory pointed to by names is modified
+// by this function.
+//
 char **
-check_names(char *names, int *num_names)
+get_names(char *names, int *num_names)
 {
     char *p = names;
     int count = 0;
     char *name_start = NULL;
+
+    *num_names = 0;
+
     // First pass counts the number of names.
+    p = names;
     while(*p) {
         if (*p == ' ') {
             if (name_start != NULL) {
@@ -56,8 +61,14 @@ check_names(char *names, int *num_names)
     if (name_start != NULL) {
         ++count;
     }
+    if (count == 0) {
+        *num_names = 0;
+        return NULL;
+    }
+
     char **name_ptrs = malloc(count*sizeof(char *));
     if (name_ptrs == NULL) {
+        *num_names = -1;
         return NULL;
     }
 
@@ -217,6 +228,8 @@ print_instructions(instruction *instructions, char **names, int num_names)
 {
     int k = 0;
 
+    printf("Instructions\n");
+    printf("opcode  arg   symbolic opcodes and args\n");
     while(instructions[k].opcode != 0) {
         int64_t opcode = instructions[k].opcode;
         printf("%5lld ", opcode);
@@ -240,7 +253,7 @@ print_instructions(instruction *instructions, char **names, int num_names)
             printf("%s", opcode_names[opcode]);
             break;
         case PARSED_INT:
-            printf("%s %5lld", opcode_names[opcode], instructions[k].argument);
+            printf("%s %lld", opcode_names[opcode], instructions[k].argument);
             break;
         case PARSED_VARIABLE:
             printf("%s %s", opcode_names[opcode], names[instructions[k].argument]);
@@ -418,12 +431,49 @@ evaluate_instructions(instruction *instructions, int64_t *vars, int *error)
     return value;
 }
 
+
+void print_alloc_failed(void)
+{
+    printf("failed to allocate memory\n");
+}
+
+
+int demonstrate_evaluation(instruction *instructions,
+                           char **name_ptrs,
+                           int num_names)
+{
+    int error;
+
+    printf("\n");
+    printf("Demonstrate evaluation...\n");
+    int64_t *vars = calloc(num_names, sizeof(int64_t));
+    if (vars == NULL) {
+        return -1;
+    }
+
+    // Fill vars with some numbers for the demonstration.
+    for (int k = 0; k < num_names; ++k) {
+        vars[k] = 5*k + 3;
+        printf("%s = %lld\n", name_ptrs[k], vars[k]);
+    }
+
+    int64_t result = evaluate_instructions(instructions, vars, &error);
+    if (error < 0) {
+        printf("evaluate_instructions failed; error = %d\n", error);
+    }
+    else {
+        printf("evaluate_instructions returned %lld\n", result);
+    }
+    free(vars);
+    return 0;
+}
+
+
 int main(int argc, char *argv[])
 {
-    struct owl_tree *tree;
-    int error;
     char **name_ptrs;
     int num_names;
+    int retval = 0;
 
     if (argc < 3) {
         printf("use: ./main names expr\n");
@@ -433,52 +483,44 @@ int main(int argc, char *argv[])
         exit(-1);
     }
 
-    // Make a copy of argv[1].  Some characters in the string
-    // will be modified in the call to check_names().
-    char *names = malloc(strlen(argv[1])+1);
-    if (names == NULL) {
-        printf("malloc failed\n");
-        exit(-1);
-    }
-    memcpy(names, argv[1], strlen(argv[1])+1);
-
-    name_ptrs = check_names(names, &num_names);
-    if (name_ptrs == NULL || num_names < 1) {
+    // Note that get_names modifies characters in argv[1].
+    name_ptrs = get_names(argv[1], &num_names);
+    if (name_ptrs == NULL) {
+        if (num_names < 0) {
+            print_alloc_failed();
+        }
+        else {
+            printf("no names\n");
+        }
         exit(-1);
     }
 
-    tree = owl_tree_create_from_string(argv[2]);
+    struct owl_tree *tree = owl_tree_create_from_string(argv[2]);
     if (owl_tree_get_error(tree, NULL) != ERROR_NONE) {
         owl_tree_print(tree);
+        free(name_ptrs);
         exit(-1);
     }
 
-    // print_stack(tree, name_ptrs, num_names, argv[2]);
-
     instruction *instructions = create_instructions(tree, name_ptrs, num_names, argv[2]);
+    // Done with tree
+    owl_tree_destroy(tree);
+    if (instructions == NULL) {
+        print_alloc_failed();
+        free(name_ptrs);
+        exit(-1);
+    }
 
-    printf("Instructions\n");
-    printf("opcode  arg   symbolic opcodes and args\n");
     print_instructions(instructions, name_ptrs, num_names);
 
-    printf("\n");
-    printf("Demonstrate evaluation...\n");
-    int64_t *vars = calloc(num_names, sizeof(int64_t));
-    for (int k = 0; k < num_names; ++k) {
-        vars[k] = 5*k + 3;
-        printf("%s = %lld\n", name_ptrs[k], vars[k]);
-    }
-    int64_t result = evaluate_instructions(instructions, vars, &error);
-    if (error < 0) {
-        printf("evaluate_instructions failed; error = %d\n", error);
-    }
-    else {
-        printf("evaluate_instructions returned %lld\n", result);
+    int status = demonstrate_evaluation(instructions, name_ptrs, num_names);
+    if (status < 0) {
+        print_alloc_failed();
+        retval = -1;
     }
 
     free(instructions);
+    free(name_ptrs);
 
-    owl_tree_destroy(tree);
-
-    return 0;
+    return retval;
 }
