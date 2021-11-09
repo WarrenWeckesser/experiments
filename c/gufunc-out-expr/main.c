@@ -2,6 +2,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <inttypes.h>
 
 #define OWL_PARSER_IMPLEMENTATION
 #include "dim-expr-parser.h"
@@ -232,9 +233,9 @@ print_instructions(instruction *instructions, char **names, int num_names)
     printf("opcode  arg   symbolic opcodes and args\n");
     while(instructions[k].opcode != 0) {
         int64_t opcode = instructions[k].opcode;
-        printf("%5lld ", opcode);
+        printf("%5" PRId64 " ", opcode);
         if (opcode == PARSED_INT || opcode == PARSED_VARIABLE) {
-            printf("%5lld   ", instructions[k].argument);
+            printf("%5" PRId64 "   ", instructions[k].argument);
         }
         else {
             printf("        ");
@@ -253,7 +254,7 @@ print_instructions(instruction *instructions, char **names, int num_names)
             printf("%s", opcode_names[opcode]);
             break;
         case PARSED_INT:
-            printf("%s %lld", opcode_names[opcode], instructions[k].argument);
+            printf("%s %" PRId64, opcode_names[opcode], instructions[k].argument);
             break;
         case PARSED_VARIABLE:
             printf("%s %s", opcode_names[opcode], names[instructions[k].argument]);
@@ -454,7 +455,7 @@ int demonstrate_evaluation(instruction *instructions,
     // Fill vars with some numbers for the demonstration.
     for (int k = 0; k < num_names; ++k) {
         vars[k] = 5*k + 3;
-        printf("%s = %lld\n", name_ptrs[k], vars[k]);
+        printf("%s = %" PRId64 "\n", name_ptrs[k], vars[k]);
     }
 
     int64_t result = evaluate_instructions(instructions, vars, &error);
@@ -462,7 +463,7 @@ int demonstrate_evaluation(instruction *instructions,
         printf("evaluate_instructions failed; error = %d\n", error);
     }
     else {
-        printf("evaluate_instructions returned %lld\n", result);
+        printf("evaluate_instructions returned %" PRId64 "\n", result);
     }
     free(vars);
     return 0;
