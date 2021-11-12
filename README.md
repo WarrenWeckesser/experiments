@@ -1,2 +1,3 @@
 # experiments
-Random coding experiments and scratch work.
+
+Coding experiments and scratch work.
