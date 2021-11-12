@@ -1,0 +1,9 @@
+The code in this directory uses the fortran routine DKLAG6 to
+solve the "delay" version of the SIR model:
+
+    S'(t) = -r*S(t)*I(t)
+    I'(t) =  r*S(t)*I(t) - r*S(t-h)*I(t-h)
+    R'(t) =  r*S(t-h)*I(t-h)
+
+In this model, we assume that each individual recovers in
+exactly h time units.
