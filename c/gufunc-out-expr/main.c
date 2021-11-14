@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <inttypes.h>
+#include <math.h>
 
 #define OWL_PARSER_IMPLEMENTATION
 #include "dim-expr-parser.h"
@@ -373,10 +374,71 @@ void print_stack(struct owl_tree *tree, char **names, int num_names, char *input
 }
 
 
-int64_t
-intpow(int64_t b, int64_t p)
+#define ARITHMETIC_OK        0
+#define ARITHMETIC_OVERFLOW -1
+
+static int64_t
+add_int64(int64_t a, int64_t b, int *perror)
 {
-  return (p == 0) ? 1 : (p == 1) ? b : ((p % 2) ? b : 1) * intpow(b * b, p / 2);
+    *perror = ARITHMETIC_OK;
+    if (((a >= 0) && (b <= INT64_MAX - a)) || ((a < 0) && (b >= INT64_MIN - a))) {
+        return a + b;
+    }
+    else {
+        *perror = ARITHMETIC_OVERFLOW;
+        return 0;
+    }
+}
+
+static int64_t
+subtract_int64(int64_t a, int64_t b, int *perror)
+{
+    *perror = ARITHMETIC_OK;
+    if (((b >= 0) && (a >= INT64_MIN + b)) || ((b < 0) && (a <= INT64_MAX + b))) {
+        return a - b;
+    }
+    else {
+        *perror = ARITHMETIC_OVERFLOW;
+        return 0;
+    }
+}
+
+static int64_t
+multiply_int64(int64_t a, int64_t b, int *perror)
+{
+    *perror = ARITHMETIC_OK;
+
+    if (b == 0) {
+        return 0;
+    }
+    if (b < 0) {
+        b = -b;
+        a = -a;
+    }
+    if ((INT64_MIN/b <= a) && (a <= INT64_MAX/b)) {
+        return a*b;
+    }
+    else {
+        *perror = ARITHMETIC_OVERFLOW;
+        return 0;
+    }
+}
+
+static int64_t
+pow_int64(int64_t b, int64_t p, int *perror)
+{
+    *perror = 0;
+    if (p < 0) {
+        *perror = -4;
+        return 0;
+    }
+    if (p*log(fabs(b)) < log(INT64_MAX)) {
+        return (p == 0) ? 1 : (p == 1) ? b : ((p % 2) ? b : 1) * pow_int64(b * b, p / 2, perror);
+    }
+    else {
+        *perror = -1;
+        return 0;
+    }
 }
 
 
@@ -390,6 +452,7 @@ evaluate_instructions(instruction *instructions, int64_t *vars, int *error)
     //     the instructions array is ended with an instruction that has
     //     opcode 0.
 
+    int overflow;
     int64_t value;
 
     *error = 0;
@@ -428,31 +491,65 @@ evaluate_instructions(instruction *instructions, int64_t *vars, int *error)
             break;
         case PARSED_ADD:
             --stack_counter;
-            value = stack[stack_counter-1] + stack[stack_counter];
+            // value = stack[stack_counter-1] + stack[stack_counter];
+            value = add_int64(stack[stack_counter-1], stack[stack_counter], &overflow);
+            if (overflow != 0) {
+                *error = -3;
+                break;
+            }
             stack[stack_counter-1] = value;
             break;
         case PARSED_SUBTRACT:
             --stack_counter;
-            value = stack[stack_counter-1] - stack[stack_counter];
+            // value = stack[stack_counter-1] - stack[stack_counter];
+            value = subtract_int64(stack[stack_counter-1], stack[stack_counter], &overflow);
+            if (overflow != 0) {
+                *error = -3;
+                break;
+            }
             stack[stack_counter-1] = value;
             break;
         case PARSED_POWER:
             --stack_counter;
-            value = intpow(stack[stack_counter-1], stack[stack_counter]);
+            if (stack[stack_counter] < 0) {
+                // Negative power not allowed.
+                *error = -4;
+                break;
+            }
+            value = pow_int64(stack[stack_counter-1], stack[stack_counter], &overflow);
+            if (overflow != 0) {
+                *error = -3;
+                break;
+            }
             stack[stack_counter-1] = value;
             break;
         case PARSED_MULTIPLY:
             --stack_counter;
-            value = stack[stack_counter-1] * stack[stack_counter];
+            // value = stack[stack_counter-1] * stack[stack_counter];
+            value = multiply_int64(stack[stack_counter-1], stack[stack_counter], &overflow);
+            if (overflow != 0) {
+                *error = -3;
+                break;
+            }
             stack[stack_counter-1] = value;
             break;
         case PARSED_DIVIDE:
             --stack_counter;
+            if (stack[stack_counter] == 0) {
+                // Division by 0.
+                *error = -5;
+                break;
+            }
             value = stack[stack_counter-1] / stack[stack_counter];
             stack[stack_counter-1] = value;
             break;
         case PARSED_REMAINDER:
             --stack_counter;
+            if (stack[stack_counter] == 0) {
+                // Division by 0.
+                *error = -5;
+                break;
+            }
             value = stack[stack_counter-1] % stack[stack_counter];
             stack[stack_counter-1] = value;
             break;
@@ -460,6 +557,11 @@ evaluate_instructions(instruction *instructions, int64_t *vars, int *error)
             // XXX PARSED_PARENS should not appear in the instructions array.
             break;
         case PARSED_NEGATE:
+            if (stack[stack_counter-1] == INT64_MIN) {
+                // Can't negate INT64_MIN; flag it as an overflow error.
+                *error = -3;
+                break;
+            }
             stack[stack_counter-1] = -stack[stack_counter-1];
             break;
         case PARSED_VARIABLE:
@@ -467,13 +569,19 @@ evaluate_instructions(instruction *instructions, int64_t *vars, int *error)
             ++stack_counter;
             break;
         }
+        if (*error != 0) {
+            break;
+        }
     }
-    if (stack_counter != 1) {
+    if (*error == 0 && stack_counter != 1) {
         *error = -2;
-        free(stack);
-        return 0;
     }
-    value = stack[0];
+    if (*error != 0) {
+        value = 0;
+    }
+    else {
+        value = stack[0];
+    }
     free(stack);
     return value;
 }
