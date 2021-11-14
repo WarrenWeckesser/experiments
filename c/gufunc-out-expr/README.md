@@ -29,8 +29,9 @@ opcode  arg   symbolic opcodes and args
     6         DIVIDE
 
 Demonstrate evaluation...
-n = 3
-evaluate_instructions returned 3
+n = 5
+evaluate_instructions returned 10
+
 
 $ ./main "m n" "max(m, n) - min(m, n) - 1"
 Instructions
@@ -46,8 +47,8 @@ opcode  arg   symbolic opcodes and args
    10         SUBTRACT
 
 Demonstrate evaluation...
-m = 3
-n = 8
-evaluate_instructions returned 4
+m = 5
+n = 12
+evaluate_instructions returned 6
 
 ```

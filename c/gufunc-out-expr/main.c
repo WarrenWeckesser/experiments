@@ -107,7 +107,7 @@ get_names(char *names, int *num_names)
 // The first argument of lookup_name is not null terminated.  The
 // length is given as the second argument.
 //
-int lookup_name(char *name, int len_name, char **names, int num_names)
+int lookup_name(const char *name, int len_name, char **names, int num_names)
 {
     for (int k = 0; k < num_names; ++k) {
         if (len_name == strlen(names[k])) {
@@ -119,7 +119,7 @@ int lookup_name(char *name, int len_name, char **names, int num_names)
     return -1;
 }
 
-void print_range(char *p, int from, int to)
+void print_range(const char *p, int from, int to)
 {
     for (int i = from; i < to; ++i) {
         putchar(p[i]);
@@ -132,28 +132,43 @@ typedef struct instruction {
     int64_t argument;
 } instruction;
 
-void
+#define PARSE_OK                      0
+#define PARSE_ERROR_INVALID_VARIABLE -1
+
+static int
 create_instructions_recursive(instruction *instructions, int *num_instructions,
                               struct parsed_expr expr,
                               char **names, int num_names,
                               char *input)
 {
-    int64_t value;
-    bool goodname;
+    int status;
+    struct parsed_integer parsed_int;
+    struct parsed_identifier parsed_id;
+
 
     switch (expr.type) {
 
         case PARSED_INT:
-            value = strtol(input + expr.range.start, NULL, 10);
+            parsed_int = parsed_integer_get(expr.integer);
             instructions[*num_instructions].opcode = PARSED_INT;
-            instructions[*num_instructions].argument = value;
+            instructions[*num_instructions].argument = parsed_int.integer;
             ++*num_instructions;
             break;
 
         case PARSED_MAX:
         case PARSED_MIN:
-            create_instructions_recursive(instructions, num_instructions, parsed_expr_get(expr.arg1), names, num_names, input);
-            create_instructions_recursive(instructions, num_instructions, parsed_expr_get(expr.arg2), names, num_names, input);
+            status = create_instructions_recursive(instructions, num_instructions,
+                                                   parsed_expr_get(expr.arg1),
+                                                   names, num_names, input);
+            if (status < 0) {
+                return status;
+            }
+            status = create_instructions_recursive(instructions, num_instructions,
+                                                   parsed_expr_get(expr.arg2),
+                                                   names, num_names, input);
+            if (status < 0) {
+                return status;
+            }
             instructions[*num_instructions].opcode = expr.type;
             ++*num_instructions;
             break;
@@ -164,58 +179,89 @@ create_instructions_recursive(instruction *instructions, int *num_instructions,
         case PARSED_MULTIPLY:
         case PARSED_DIVIDE:
         case PARSED_REMAINDER:
-            create_instructions_recursive(instructions, num_instructions, parsed_expr_get(expr.left), names, num_names, input);
-            create_instructions_recursive(instructions, num_instructions, parsed_expr_get(expr.right), names, num_names, input);
+            status = create_instructions_recursive(instructions, num_instructions,
+                                                   parsed_expr_get(expr.left),
+                                                   names, num_names, input);
+            if (status < 0) {
+                return status;
+            }
+            status = create_instructions_recursive(instructions, num_instructions,
+                                                   parsed_expr_get(expr.right),
+                                                   names, num_names, input);
+            if (status < 0) {
+                return status;
+            }
             instructions[*num_instructions].opcode = expr.type;
             ++*num_instructions;
             break;
 
         case PARSED_PARENS:
-            create_instructions_recursive(instructions, num_instructions, parsed_expr_get(expr.expr), names, num_names, input);
+            status = create_instructions_recursive(instructions, num_instructions,
+                                                   parsed_expr_get(expr.expr),
+                                                   names, num_names, input);
+            if (status < 0) {
+                return status;
+            }
             break;
 
         case PARSED_NEGATE:
-            create_instructions_recursive(instructions, num_instructions, parsed_expr_get(expr.operand), names, num_names, input);
+            status = create_instructions_recursive(instructions, num_instructions,
+                                                   parsed_expr_get(expr.operand),
+                                                   names, num_names, input);
+            if (status < 0) {
+                return status;
+            }
             instructions[*num_instructions].opcode = expr.type;
             ++*num_instructions;        
             break;
 
         case PARSED_VARIABLE:
-            goodname = false;
-            int varlen = expr.range.end - expr.range.start;
-            int k = lookup_name(input + expr.range.start, varlen,
+            parsed_id = parsed_identifier_get(expr.identifier);
+            int k = lookup_name(parsed_id.identifier, parsed_id.length,
                                 names, num_names);
-            if (k >= 0) {
-                goodname = true;
-                instructions[*num_instructions].opcode = expr.type;
-                instructions[*num_instructions].argument = k;
-                ++*num_instructions;
-            }
-            // XXX Fix the error handling!
-            if (!goodname) {
-                printf("bad var name '");
-                print_range(input, expr.range.start, expr.range.end);
+            if (k < 0) {
+                printf("unknown variable name '");
+                print_range(parsed_id.identifier, 0, parsed_id.length);
                 printf("'\n");
+                return PARSE_ERROR_INVALID_VARIABLE;
             }
+            instructions[*num_instructions].opcode = expr.type;
+            instructions[*num_instructions].argument = k;
+            ++*num_instructions;
             break;
     }
+    return PARSE_OK;
 }
 
+#define CREATE_STATUS_OK           0
+#define CREATE_STATUS_NO_MEMORY   -1
+#define CREATE_STATUS_PARSE_ERROR -2
+
+
 instruction *
-create_instructions(struct owl_tree *tree, char **names, int num_names, char *input)
+create_instructions(struct owl_tree *tree, char **names, int num_names, char *input,
+                    int *perror)
 {
+    *perror = CREATE_STATUS_OK;
+    int status;
     int num_instructions = 0;
 
     // Use strlen(input)+1 as an overestimate of the size of the array
     // of instructions.
     instruction *instructions = calloc(strlen(input)+1, sizeof(instruction));
     if (instructions == NULL) {
+        *perror = CREATE_STATUS_NO_MEMORY;
         return NULL;
     }
 
     struct parsed_expr expr = owl_tree_get_parsed_expr(tree);
-    create_instructions_recursive(instructions, &num_instructions,
-                                  expr, names, num_names, input);
+    status = create_instructions_recursive(instructions, &num_instructions,
+                                           expr, names, num_names, input);
+    if (status != PARSE_OK) {
+        free(instructions);
+        *perror = CREATE_STATUS_PARSE_ERROR;
+        return NULL;
+    }
     // Append the last instruction, with opcode 0.
     instructions[num_instructions].opcode = 0;
     instructions[num_instructions].argument = 0;
@@ -454,7 +500,7 @@ int demonstrate_evaluation(instruction *instructions,
 
     // Fill vars with some numbers for the demonstration.
     for (int k = 0; k < num_names; ++k) {
-        vars[k] = 5*k + 3;
+        vars[k] = 7*k + 5;
         printf("%s = %" PRId64 "\n", name_ptrs[k], vars[k]);
     }
 
@@ -472,6 +518,7 @@ int demonstrate_evaluation(instruction *instructions,
 
 int main(int argc, char *argv[])
 {
+    int status;
     char **name_ptrs;
     int num_names;
     int retval = 0;
@@ -503,18 +550,24 @@ int main(int argc, char *argv[])
         exit(-1);
     }
 
-    instruction *instructions = create_instructions(tree, name_ptrs, num_names, argv[2]);
+    instruction *instructions = create_instructions(tree, name_ptrs, num_names,
+                                                    argv[2], &status);
     // Done with tree
     owl_tree_destroy(tree);
     if (instructions == NULL) {
-        print_alloc_failed();
+        if (status == CREATE_STATUS_NO_MEMORY) {
+            print_alloc_failed();
+        }
+        else {
+            printf("failed to create instructions\n");
+        }
         free(name_ptrs);
         exit(-1);
     }
 
     print_instructions(instructions, name_ptrs, num_names);
 
-    int status = demonstrate_evaluation(instructions, name_ptrs, num_names);
+    status = demonstrate_evaluation(instructions, name_ptrs, num_names);
     if (status < 0) {
         print_alloc_failed();
         retval = -1;
