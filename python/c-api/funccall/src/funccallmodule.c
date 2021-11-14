@@ -28,11 +28,25 @@ find_name_in_list(char **list, Py_ssize_t nlist, const char *name)
 // The first three arguments are the arguments that were passed by Python
 // to the function with the METH_FASTCALL | METH_KEYWORDS flags.
 //
+// The argument processing corresponds to a function signature such as
+//
+//     def func(a, b, c, *, d, e, f=None, g=0)
+//
+// a, b, and c are the positional arguments (but they may also be given
+// with keyword assignment); d and e are not optional, and must be given
+// with keyword assignment; f and g are optional (and if given, must also
+// be given with keyword assignment).
+//
+// The function does not allow for a signature that corresponds to
+// using `/` in the `def` statement (i.e. it does not allow positional *only*
+// arguments, with no keyword assignment allowed).
+//
 // `allargs` is the output array.  It must be an array of PyObject
 // pointers with length
 // `n_pos_arg_names + n_kw_arg_names + n_optional_kw_arg_names`.
-// If there is no error, the pointers will be set to object passed in,
-// or to a given default values, with their refcounts incremented.
+// If there is no error, the pointers will be set to the objects passed
+// in, or to a given default value.  The refcounts of all objects assigned
+// to allargs are incremented.
 //
 // Returns 0 on success, or a negative value on failure.
 //
@@ -113,12 +127,14 @@ process_args(PyObject *const *args, Py_ssize_t nargs, PyObject *kwnames,
             else {
                 name = kw_arg_names[i - n_pos_arg_names];
             }
-            PyErr_Format(PyExc_TypeError, "%s() missing required positional argument '%s'",
+            PyErr_Format(PyExc_TypeError, "%s() missing required argument '%s'",
                          funcname, name);
             return -4;
         }
     }
 
+    // Fill in the default values of any optional keyword parameters
+    // that were not given.
     for (Py_ssize_t k = 0; k < n_optional_kw_arg_names; ++k) {
         Py_ssize_t i = k + n_pos_arg_names + n_kw_arg_names;
         if (allargs[i] == NULL) {
