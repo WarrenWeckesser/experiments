@@ -184,18 +184,12 @@ func1(PyObject *self, PyObject *args, PyObject *kwargs)
 static PyObject *
 func2(PyObject *self, PyObject *const *args, Py_ssize_t nargs, PyObject *kwnames)
 {
-    Py_ssize_t nkw;
     PyObject *allargs[3];
     char *pos_arg_names[2] = {"items", "n"};
     char *kw_arg_names[0] = {};
     char *optional_kw_arg_names[1] = {"p"};
     PyObject *default_kw_values[1] = {Py_None};
     Py_INCREF(Py_None);
-
-    nkw = 0;
-    if (kwnames != NULL) {
-        nkw = PyTuple_GET_SIZE(kwnames);
-    }
 
     int status = process_args(args, nargs, kwnames,
                               "func2",
