@@ -10,4 +10,4 @@ plots in Abramowitz and Stegun (A&S).
 
 This is the plot generate by `mathieu_plot_characteristic_values.py`:
 
-![](https://github.com/WarrenWeckesser/experiments/blob/master/python/scipy/mathieu-plots/image/char_values_AS20.1.png)
+![](https://github.com/WarrenWeckesser/experiments/blob/master/python/scipy/mathieu-plots/images/char_values_AS20.1.png)
