@@ -63,6 +63,6 @@ plt.text(-1, 0.045,
          f"weibull_max.fit():  {wm_c:.5f} {wm_loc:.5f} {wm_scale:8.5f}",
          fontfamily='monospace', fontsize=7,
          bbox=dict(facecolor='gray', alpha=0.4))
-plt.title('Fit the same data to genextreme and weibull_max')
+plt.title('Fit genextreme and weibull_max to the same data')
 # plt.show()
 plt.savefig('weibull_and_genextreme.png', dpi=125)
