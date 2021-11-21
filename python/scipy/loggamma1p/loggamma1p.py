@@ -18,7 +18,7 @@ def loggamma1p(x):
     array([ 4.44089210e-16,  0.00000000e+00,  0.00000000e+00,  0.00000000e+00,
            -2.22044605e-16])
 
-    (The precision is actually lost in the expressions ``1 + x``.)
+    (The precision is actually lost in the expression ``1 + x``.)
 
     ``loggamma1p`` computes these values correctly:
 
