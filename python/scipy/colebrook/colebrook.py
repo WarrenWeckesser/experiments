@@ -41,7 +41,7 @@ def colebrook(Re, Dh, eps):
 
     References
     ----------
-    .. [1] "Darcy friction factor formulae, Wikipedia,
+    .. [1] "Darcy friction factor formulae", Wikipedia,
            https://en.wikipedia.org/wiki/Darcy_friction_factor_formulae#Colebrook%E2%80%93White_equation
 
     Examples
