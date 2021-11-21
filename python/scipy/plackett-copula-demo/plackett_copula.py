@@ -10,9 +10,8 @@ import matplotlib.pyplot as plt
 # Generate samples from the bivariate Plackett copula with Weibull
 # marginal distributions.
 #
-# From Ch6-PlackettCopula.pdf, which is Chapter 6 of the text
-# *Copulas and their Applications in Water Resources Engineering*
-# Cambridge University Press.
+# See Chapter 6 of the text *Copulas and their Applications in Water
+# Resources Engineering*, Cambridge University Press (2019).
 
 
 def spearman_rho_log(logtheta):
@@ -74,7 +73,7 @@ def bivariate_plackett_sample(theta, m, random=None):
 
     # These calculations are based on the information in Chapter 6 of the text
     # *Copulas and their Applications in Water Resources Engineering*
-    # (Cambridge University Press).
+    # (Cambridge University Press, 2019).
     u, w2 = rng.uniform(size=(2, m))
     # w2 = rng.uniform(size=m)
     S = w2*(1 - w2)
@@ -100,7 +99,8 @@ theta = bivariate_plackett_theta(rho)
 
 print(f"Estimated theta: {theta}")
 
-rng = np.random.default_rng()
+seed = 349289898325983983
+rng = np.random.default_rng(seed)
 
 psample = bivariate_plackett_sample(theta, m, random=rng)
 
@@ -126,6 +126,8 @@ plt.figure(1)
 plt.plot(wbl0, wbl1, '.', alpha=0.2)
 plt.axis('equal')
 plt.grid()
+plt.title(f'Scatter plot of {m} samples from the bivariate distribution')
+plt.savefig('plackett_copula_figure1.png')
 
 plt.figure(2)
 nbins = 40
@@ -134,9 +136,11 @@ t = np.linspace((k < 1)*1e-8, max(wbl0.max(), wbl1.max()), 500)
 plt.hist(wbl0, bins=nbins, density=True, alpha=0.5)
 plt.plot(t, weibull_min.pdf(t, k, scale=scale), 'k', alpha=0.7)
 plt.grid()
+plt.title(f'Marginal distributions\nWeibull parameters: k={k:g}, scale={scale:g}')
 plt.subplot(2, 1, 2)
 plt.hist(wbl1, bins=nbins, density=True, alpha=0.5)
 plt.plot(t, weibull_min.pdf(t, k, scale=scale), 'k', alpha=0.7)
 plt.grid()
 
-plt.show()
+# plt.show()
+plt.savefig('plackett_copula_figure2.png')
