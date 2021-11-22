@@ -18,3 +18,6 @@ dklag6.o: dklag6.f
 
 dkutil.o: dkutil.f
 	$(FC) -c dkutil.f
+
+clean:
+	rm -rf *.o sirdelay sirdelay2
