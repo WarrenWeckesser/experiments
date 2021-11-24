@@ -22,9 +22,6 @@ int main()
         cout << fixed << setw(15) << setprecision(8) << x << " ";
         cout << scientific << setw(25) << setprecision(16) << p << " ";
         cout << scientific << setw(25) << setprecision(16) << q << " ";
-        //if (p == 0) {
-        //    cout << "!!!";
-        //}
         cout << endl;
     }
 
