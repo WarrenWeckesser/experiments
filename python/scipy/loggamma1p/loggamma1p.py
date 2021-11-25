@@ -14,7 +14,7 @@ def loggamma1p(x):
 
     >>> from scipy.special import gammaln
     >>> x = np.array([-3e-16, -1e-18, 5e-30, 2.5e-20, 3e-16])
-    >>> gammaln(1)
+    >>> gammaln(1 + x)
     array([ 4.44089210e-16,  0.00000000e+00,  0.00000000e+00,  0.00000000e+00,
            -2.22044605e-16])
 
