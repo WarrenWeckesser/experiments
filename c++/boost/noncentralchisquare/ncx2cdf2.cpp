@@ -16,13 +16,14 @@ int main()
 
     int n = sizeof(x) / sizeof(x[0]);
 
+    cout << "          x            nu           lam       cdf" << endl;
     cout << scientific;
     for (int i = 0; i < n; ++i) {
         double c = cdf(non_central_chi_squared(nu[i], lam[i]), x[i]);
 
-        cout << fixed << setw(12) << setprecision(4) << cs[i] << " ";
+        cout << fixed << setw(15) << setprecision(4) << x[i] << " ";
         cout << fixed << setw(12) << setprecision(4) << nu[i] << " ";
-        cout << fixed << setw(12) << setprecision(4) << lam[i] << " ";
+        cout << fixed << setw(15) << setprecision(4) << lam[i] << " ";
         cout << scientific << setprecision(17) << c << endl;
     }
 }
