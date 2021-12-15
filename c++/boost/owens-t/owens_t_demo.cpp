@@ -1,7 +1,6 @@
 
 #include <cmath>
 #include <cstdio>
-#include <iostream>
 #include <boost/math/special_functions/owens_t.hpp>
 
 using boost::math::owens_t;
