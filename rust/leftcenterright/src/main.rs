@@ -7,7 +7,7 @@ use structopt::StructOpt;
 
 
 #[derive(Debug, StructOpt)]
-#[structopt(name = "lcr", about = "Simulate left-center-right game.")]
+#[structopt(name = "leftcenterright", about = "Simulate left-center-right game.")]
 struct Opt {
     /// Number of players.
     #[structopt(short = "p", long = "players")]
