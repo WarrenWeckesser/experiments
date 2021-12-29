@@ -13,7 +13,7 @@ struct Opt {
     #[structopt(short = "p", long = "players")]
     players: usize,
 
-    /// Starting number of chips.
+    /// Starting number of chips per player.
     #[structopt(short = "s", long = "start", default_value = "3")]
     start: usize,
 
@@ -21,7 +21,7 @@ struct Opt {
     #[structopt(short = "g", long = "games", default_value = "1000")]
     games: usize,
 
-    // Number of parallel jobs (i.e. threads) to use; 0 implies serial.
+    /// Number of parallel jobs (i.e. threads) to use; 0 implies serial.
     #[structopt(short = "j", long = "jobs", default_value = "0")]
     jobs: usize,
 }
@@ -91,7 +91,6 @@ fn parallel_stats(opt: &Opt) -> Vec<usize> {
     let batchsizes: Vec<usize> = (0..opt.jobs).map(|k| b + (k < r) as usize).collect();
 
     let mut children = vec![];
-
     for i in 0..opt.jobs {
         let players = opt.players;
         let start = opt.start;
