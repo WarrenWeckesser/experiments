@@ -81,7 +81,7 @@ mod tests {
     }
 
     #[test]
-    fn test_basic_3_2() {
+    fn test_basic_2_3() {
         let expected = [
             [2, 0, 0],
             [1, 1, 0],
@@ -97,7 +97,7 @@ mod tests {
     }
 
     #[test]
-    fn test_basic_4_2() {
+    fn test_basic_2_4() {
         let expected = [
             [2, 0, 0, 0],
             [1, 1, 0, 0],
