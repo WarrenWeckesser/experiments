@@ -6,18 +6,18 @@
 // (which first requires deciding what that means).
 
 pub struct CombIter<const TOTAL: usize, const NBINS: usize> {
-    started: bool,
     counts: [usize; NBINS],
 }
 
 impl<const TOTAL: usize, const NBINS: usize> CombIter<TOTAL, NBINS> {
     pub fn new() -> Self {
-        let mut ci = Self {
-            started: false,
-            counts: [0; NBINS],
-        };
-        ci.counts[0] = TOTAL;
-        ci
+        Self { counts: [0; NBINS] }
+    }
+}
+
+impl<const TOTAL: usize, const NBINS: usize> Default for CombIter<TOTAL, NBINS> {
+    fn default() -> Self {
+        Self { counts: [0; NBINS] }
     }
 }
 
@@ -25,22 +25,31 @@ impl<const TOTAL: usize, const NBINS: usize> Iterator for CombIter<TOTAL, NBINS>
     type Item = [usize; NBINS];
 
     fn next(&mut self) -> Option<Self::Item> {
-        if !self.started {
-            self.started = true;
-            return Some(self.counts);
-        }
         if self.counts[NBINS - 1] == TOTAL {
             return None;
         }
-        let mut i = NBINS - 1;
-        while self.counts[i] == 0 {
-            i -= 1;
+        // Find the rightmost nonzero bin.
+        let mut rightmost_nonzero = NBINS - 1;
+        let mut found_nonzero = false;
+        for i in (0..NBINS).rev() {
+            if self.counts[i] != 0 {
+                rightmost_nonzero = i;
+                found_nonzero = true;
+                break;
+            }
         }
-        if i != NBINS - 1 {
-            self.counts[i] -= 1;
-            self.counts[i + 1] += 1;
+        if !found_nonzero {
+            // All the values in self.counts are 0.  This means
+            // this is the first call of next().  The first iterate
+            // is [TOTAL, 0, 0, ,,,, 0].
+            self.counts[0] = TOTAL;
+            return Some(self.counts);
+        }
+        if rightmost_nonzero != NBINS - 1 {
+            self.counts[rightmost_nonzero] -= 1;
+            self.counts[rightmost_nonzero + 1] += 1;
         } else {
-            let mut j = i - 1;
+            let mut j = rightmost_nonzero - 1;
             while self.counts[j] == 0 {
                 j -= 1;
             }
@@ -56,7 +65,6 @@ impl<const TOTAL: usize, const NBINS: usize> Iterator for CombIter<TOTAL, NBINS>
     // ignore `self`, and return an appropriately initialized array?
     //
     fn last(mut self) -> Option<Self::Item> {
-        self.started = true;
         for i in 0..NBINS - 1 {
             self.counts[i] = 0;
         }
@@ -74,13 +82,6 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_combiter_struct() {
-        let ci = CombIter::<2, 3>::new();
-        assert_eq!(ci.started, false);
-        assert_eq!(ci.counts, [2, 0, 0]);
-    }
-
-    #[test]
     fn test_basic_2_3() {
         let expected = [
             [2, 0, 0],
@@ -91,6 +92,22 @@ mod tests {
             [0, 0, 2],
         ];
         let ci = CombIter::<2, 3>::new();
+        for (c, expectedc) in ci.zip(expected.iter()) {
+            assert_eq!(&c, expectedc);
+        }
+    }
+
+    #[test]
+    fn test_default_2_3() {
+        let expected = [
+            [2, 0, 0],
+            [1, 1, 0],
+            [1, 0, 1],
+            [0, 2, 0],
+            [0, 1, 1],
+            [0, 0, 2],
+        ];
+        let ci = CombIter::<2, 3>::default();
         for (c, expectedc) in ci.zip(expected.iter()) {
             assert_eq!(&c, expectedc);
         }
