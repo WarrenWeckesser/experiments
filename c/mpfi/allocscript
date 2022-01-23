@@ -1,0 +1,65 @@
+o ===== Allocate 4 meg in slot 0:
+a 4000000
+w
+o === Allocate two 2 meg blocks, fill them, then free them:
+a 2000000
+w
+a 2000000
+w
+f
+f
+o === Allocate two 2 meg blocks, fill them, then free them:
+a 2000000
+w
+a 2000000
+w
+f
+f
+o === Allocate two 2 meg blocks, fill them, then free them:
+a 2000000
+w
+a 2000000
+w
+f
+f
+o === Allocate two 2 meg blocks, fill them, then free them:
+a 2000000
+w
+a 2000000
+w
+f
+f
+o === Free the 4 meg in slot 0.
+f
+o ===== Allocate 4 meg in slot 0.
+a 4000000
+w
+o === Allocate two 2 meg blocks, fill them, then free them:
+a 2000000
+w
+a 2000000
+w
+f
+f
+o == Allocate two 2 meg blocks, fill them, then free them:
+a 2000000
+w
+a 2000000
+w
+f
+f
+o === Allocate two 2 meg blocks, fill them, then free them:
+a 2000000
+w
+a 2000000
+w
+f
+f
+o == Allocate two 2 meg blocks, fill them, then free them:
+a 2000000
+w
+a 2000000
+w
+f
+f
+f
