@@ -1,3 +1,5 @@
+// Print all the ways 3 identical items can be distributed in 4 bins.
+
 use combiter::CombIterArray;
 
 fn main() {

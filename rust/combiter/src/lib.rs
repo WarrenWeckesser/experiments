@@ -106,7 +106,7 @@ impl<const TOTAL: usize, const NBINS: usize> CombData<TOTAL, NBINS> {
         }
     }
 
-    fn next<'a>(&'a mut self) -> Option<&'a [usize]> {
+    pub fn next<'a>(&'a mut self) -> Option<&'a [usize]> {
         if self.counts[NBINS - 1] == TOTAL {
             return None;
         }
@@ -150,7 +150,11 @@ impl<const TOTAL: usize, const NBINS: usize> CombData<TOTAL, NBINS> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{CombData, CombIterArray};
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // Tests of CombIterArray
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     #[test]
     fn test_basic_2_3() {
@@ -278,6 +282,10 @@ mod tests {
         let last = ci.last().unwrap();
         assert_eq!(last, [0, 0, 0, 5]);
     }
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // Tests of CombData
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     #[test]
     fn test_combdata_2_3() {
