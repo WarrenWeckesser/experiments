@@ -1,6 +1,6 @@
 name: C Check
 
-on: [push]
+# on: [push]
 
 jobs:
   build:
