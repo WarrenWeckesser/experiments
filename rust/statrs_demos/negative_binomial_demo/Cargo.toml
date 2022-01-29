@@ -1,7 +1,0 @@
-[package]
-name = "negative_binomial_demo"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-statrs = "0.15"
