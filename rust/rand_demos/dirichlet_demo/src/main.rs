@@ -1,4 +1,3 @@
-use rand;
 use rand::distributions::Distribution;
 use rand_distr::Dirichlet;
 
@@ -11,7 +10,6 @@ fn main() {
     let mut nancount = 0;
     for _ in 0..n {
         let sample: Vec<f64> = dirichlet.sample(&mut r);
-        println!("{:?}", sample);
         if sample.iter().any(|x| x.is_nan()) {
             nancount += 1;
         }
