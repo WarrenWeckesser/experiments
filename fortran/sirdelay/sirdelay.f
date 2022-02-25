@@ -272,7 +272,7 @@ C     NUMBER OF USER DEFINED ROOT FUNCTIONS
 C
 C     Parameters values:
       RPAR(1) = 0.5
-      RPAR(2) = 4.0
+      RPAR(2) = 2.5
 C
 C     INITIAL INTEGRATION TIME
       TOLD = 0.0D0
@@ -281,7 +281,7 @@ C     OUTPUT PRINT INCREMENT
       TINC = 0.05D0
 C
 C     FINAL INTEGRATION TIME
-      TFINAL = 200.0D0
+      TFINAL = 80.0D0
 C
 C     INITIAL SOLUTION YOLD(*)
       DO 20 I = 1 , N
