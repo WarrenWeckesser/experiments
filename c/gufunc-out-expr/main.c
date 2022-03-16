@@ -432,7 +432,7 @@ pow_int64(int64_t b, int64_t p, int *perror)
         *perror = -4;
         return 0;
     }
-    if (p*log(fabs(b)) < log(INT64_MAX)) {
+    if (p*log(fabs((double) b)) < log(INT64_MAX)) {
         return (p == 0) ? 1 : (p == 1) ? b : ((p % 2) ? b : 1) * pow_int64(b * b, p / 2, perror);
     }
     else {
