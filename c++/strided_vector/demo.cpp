@@ -27,14 +27,14 @@ int main(void)
     printf("stride = %ld\n", v.get_stride());
 
     printf("strided vector v:\n");
-    for (int k =0; k < v.size(); ++k) {
-        printf("v[%d] = %f\n", k, v[k]);
+    for (size_t k =0; k < v.size(); ++k) {
+        printf("v[%ld] = %f\n", k, v[k]);
     }
 
     v[1] = -1.5;
     printf("after assigning v[1] = -1.5:\n");
-    for (int k =0; k < v.size(); ++k) {
-        printf("v[%d] = %f\n", k, v[k]);
+    for (size_t k =0; k < v.size(); ++k) {
+        printf("v[%ld] = %f\n", k, v[k]);
     }
 
     free(data);
