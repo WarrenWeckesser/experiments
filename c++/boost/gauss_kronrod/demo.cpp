@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     double b = std::stod(argv[3]);
     double pdf = truncnorm_pdf(x, a, b);
 
-    printf("x = %25.17f\n", x);
+    printf("x = %25.17e\n", x);
     printf("a = %25.17e\n", a);
     printf("b = %25.17e\n", b);
 
