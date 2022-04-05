@@ -46,13 +46,13 @@ int main(int argc, char *argv[])
     z = y.exp();
     print_doubledouble("  exp(y)", z);
 
-    z = get_pi().exp();
+    z = dd_pi.exp();
     print_doubledouble(" exp(pi)", z);
 
-    z = get_pi().log();
+    z = dd_pi.log();
     print_doubledouble(" log(pi)", z);
 
-    z = get_pi().sqrt();
+    z = dd_pi.sqrt();
     print_doubledouble("sqrt(pi)", z);
     return 0;
 }

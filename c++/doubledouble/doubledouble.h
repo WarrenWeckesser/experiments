@@ -24,6 +24,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <cfloat>
+#include <cstdint>
 
 
 class DoubleDouble
@@ -44,24 +45,21 @@ public:
     DoubleDouble(double upper) : upper(upper)
     {}
 
-    DoubleDouble operator-();
-    DoubleDouble operator+(const DoubleDouble& x);
-    DoubleDouble operator-(const DoubleDouble& x);
-    DoubleDouble operator*(const DoubleDouble& x);
-    DoubleDouble operator/(const DoubleDouble& x);
+    DoubleDouble operator-() const;
+    DoubleDouble operator+(const DoubleDouble& x) const;
+    DoubleDouble operator-(const DoubleDouble& x) const;
+    DoubleDouble operator*(const DoubleDouble& x) const;
+    DoubleDouble operator/(const DoubleDouble& x) const;
 
-    DoubleDouble powi(int n);
-    DoubleDouble exp();
-    DoubleDouble log();
-    DoubleDouble sqrt();
+    DoubleDouble powi(int n) const;
+    DoubleDouble exp() const;
+    DoubleDouble log() const;
+    DoubleDouble sqrt() const;
 };
 
 
-constexpr
-DoubleDouble get_e();
-
-constexpr
-DoubleDouble get_pi();
+const DoubleDouble dd_e{2.7182818284590452, 1.44564689172925013472e-16};
+const DoubleDouble dd_pi{3.1415926535897932, 1.22464679914735317636e-16};
 
 
 DoubleDouble two_sum_quick(double x, double y)
@@ -98,13 +96,13 @@ DoubleDouble two_product(double x, double y)
 }
 
 
-DoubleDouble DoubleDouble::operator-()
+DoubleDouble DoubleDouble::operator-() const
 {
     return DoubleDouble(-upper, -lower);
 }
 
 
-DoubleDouble DoubleDouble::operator+(const DoubleDouble& x)
+DoubleDouble DoubleDouble::operator+(const DoubleDouble& x) const
 {
     DoubleDouble re = two_sum(upper, x.upper);
     re.lower += lower + x.lower;
@@ -112,7 +110,7 @@ DoubleDouble DoubleDouble::operator+(const DoubleDouble& x)
 }
 
 
-DoubleDouble DoubleDouble::operator-(const DoubleDouble& x)
+DoubleDouble DoubleDouble::operator-(const DoubleDouble& x) const
 {
     DoubleDouble re = two_difference(upper, x.upper);
     re.lower += lower - x.lower;
@@ -120,7 +118,7 @@ DoubleDouble DoubleDouble::operator-(const DoubleDouble& x)
 }
 
 
-DoubleDouble DoubleDouble::operator*(const DoubleDouble& x)
+DoubleDouble DoubleDouble::operator*(const DoubleDouble& x) const
 {
     DoubleDouble re = two_product(upper, x.upper);
     re.lower += upper*x.lower + lower*x.upper;
@@ -128,7 +126,7 @@ DoubleDouble DoubleDouble::operator*(const DoubleDouble& x)
 }
 
 
-DoubleDouble DoubleDouble::operator/(const DoubleDouble& x)
+DoubleDouble DoubleDouble::operator/(const DoubleDouble& x) const
 {
     double r = upper/x.upper;
     DoubleDouble sf = two_product(r, x.upper);
@@ -137,7 +135,7 @@ DoubleDouble DoubleDouble::operator/(const DoubleDouble& x)
 }
 
 
-DoubleDouble DoubleDouble::powi(int n)
+DoubleDouble DoubleDouble::powi(int n) const
 {
     int i = abs(n);
     DoubleDouble b = *this;
@@ -159,7 +157,7 @@ DoubleDouble DoubleDouble::powi(int n)
 }
 
 
-DoubleDouble DoubleDouble::exp()
+DoubleDouble DoubleDouble::exp() const
 {
     int n = int(round(upper));
     DoubleDouble x(upper - n, lower);
@@ -177,10 +175,10 @@ DoubleDouble DoubleDouble::exp()
                      201132771840)*x + 2514159648000)*x -
                      23465490048000)*x + 154872234316800)*x -
                      647647525324800)*x + 1295295050649600;
-    return get_e().powi(n) * (u / v);
+    return dd_e.powi(n) * (u / v);
 }
 
-DoubleDouble DoubleDouble::sqrt()
+DoubleDouble DoubleDouble::sqrt() const
 {
     double r = std::sqrt(upper);
     DoubleDouble sf = two_product(r, r);
@@ -188,25 +186,12 @@ DoubleDouble DoubleDouble::sqrt()
     return two_sum_quick(r, e);
 }
 
-DoubleDouble DoubleDouble::log()
+DoubleDouble DoubleDouble::log() const
 {
     DoubleDouble r(std::log(upper));
     DoubleDouble u = r.exp();
     r = r - DoubleDouble(2.0)*(u - *this)/(u + *this);
     return r;
-}
-
-constexpr
-DoubleDouble get_e()
-{
-    return DoubleDouble(0x1.5bf0a8b145769p+1, 1.44564689172925013472e-16 );
-}
-
-
-constexpr
-DoubleDouble get_pi()
-{
-    return DoubleDouble(0x1.921fb54442d18p+1, 1.22464679914735317636e-16);
 }
 
 #endif
