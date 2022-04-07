@@ -1,6 +1,6 @@
 
 CXX = g++
-CXXFLAGS = -Wall -Werror -I../
+CXXFLAGS = -Wall -Werror -I../include
 
 test_doubledouble: test_doubledouble.cpp
 	$(CXX) $(CXXFLAGS) test_doubledouble.cpp -o test_doubledouble
