@@ -110,5 +110,25 @@ int main(int argc, char *argv[])
     check_true(test, std::isinf(y.upper), "isinf(exp(710).upper)");
     check_equal_fp(test, y.lower, 0.0, "exp(710).lower == 0");
 
+    y = one.expm1();
+    check_equal_fp(test, y.upper, 1.7182818284590453, "expm1(1) upper");
+    check_equal_fp(test, y.lower, -7.747991575210629e-17, "expm1(1) lower");
+
+    y = DoubleDouble(0.46875).expm1();
+    check_equal_fp(test, y.upper, 0.5979954499506333, "expm1(0.46875) upper");
+    check_equal_fp(test, y.lower, 1.6864630310268093e-17, "expm1(0.46875) lower");
+
+    y = t.expm1();
+    check_equal_fp(test, y.upper, 3.7500950075008074e-15, "expm1(t) upper");
+    check_equal_fp(test, y.lower, -6.814186434788356e-32, "expm1(t) lower");
+
+    y = DoubleDouble(-0.000244140625).expm1();
+    check_equal_fp(test, y.upper, -0.00024411082510278348, "expm1(-2**-12) upper");
+    check_equal_fp(test, y.lower, -7.227720384831839e-21, "expm1(-2**-12) lower");
+
+    y = DoubleDouble(-0.46875).expm1();
+    check_equal_fp(test, y.upper, -0.37421599039540887, "expm1(-0.46875) upper");
+    check_equal_fp(test, y.lower, -7.658883125910196e-18, "expm1(-0.46875) lower");
+
     return test.print_summary("Summary: ");
 }

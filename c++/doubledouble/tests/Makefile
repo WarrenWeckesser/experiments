@@ -2,7 +2,7 @@
 CXX = g++
 CXXFLAGS = -Wall -Werror -I../include
 
-test_doubledouble: test_doubledouble.cpp
+test_doubledouble: test_doubledouble.cpp checkit.h
 	$(CXX) $(CXXFLAGS) test_doubledouble.cpp -o test_doubledouble
 
 clean:

@@ -64,6 +64,7 @@ public:
 
     DoubleDouble powi(int n) const;
     DoubleDouble exp() const;
+    DoubleDouble expm1() const;
     DoubleDouble log() const;
     DoubleDouble sqrt() const;
     DoubleDouble abs() const;
@@ -317,5 +318,90 @@ inline DoubleDouble DoubleDouble::abs() const
         return *this;
     }
 }
+
+static const std::array<DoubleDouble, 10> numer{
+    DoubleDouble(-0.028127670288085938, 1.46e-37),
+    DoubleDouble(0.5127815691121048, -4.248816580490825e-17),
+    DoubleDouble(-0.0632631785207471, 4.733650586348708e-18),
+    DoubleDouble(0.01470328560687425, -4.57569727474415e-20),
+    DoubleDouble(-0.0008675686051689528, 2.340010361165805e-20),
+    DoubleDouble(8.812635961829116e-05, 2.619804163788941e-21),
+    DoubleDouble(-2.596308786770631e-06, -1.6196413688647164e-22),
+    DoubleDouble(1.422669108780046e-07, 1.2956999470135368e-23),
+    DoubleDouble(-1.5995603306536497e-09, 5.185121944095551e-26),
+    DoubleDouble(4.526182006900779e-11, -1.9856249941108077e-27)
+};
+
+static const std::array<DoubleDouble, 11> denom{
+    DoubleDouble(1.0, 0.0),
+    DoubleDouble(-0.4544126470907431, -2.2553855773661143e-17),
+    DoubleDouble(0.09682713193619222, -4.961446925746919e-19),
+    DoubleDouble(-0.012745248725908178, -6.0676821249478945e-19),
+    DoubleDouble(0.001147361387158326, 1.3575817248483204e-20),
+    DoubleDouble(-7.370416847725892e-05, 3.720369981570573e-21),
+    DoubleDouble(3.4087499397791556e-06, -3.3067348191741576e-23),
+    DoubleDouble(-1.1114024704296196e-07, -3.313361038199987e-24),
+    DoubleDouble(2.3987051614110847e-09, 1.102474920537503e-25),
+    DoubleDouble(-2.947734185911159e-11, -9.4795654767864e-28),
+    DoubleDouble(1.32220659910223e-13, 6.440648413523595e-30)
+};
+
+
+//
+// Rational approximation of expm1(x) for -1/2 < x < 1/2
+//
+inline DoubleDouble expm1_rational_approx(const DoubleDouble& x)
+{
+    const DoubleDouble Y = DoubleDouble(1.028127670288086, 0.0);
+    const DoubleDouble num = (((((((((numer[9]*x + numer[8])
+                                              *x + numer[7])
+                                              *x + numer[6])
+                                              *x + numer[5])
+                                              *x + numer[4])
+                                              *x + numer[3])
+                                              *x + numer[2])
+                                              *x + numer[1])
+                                              *x + numer[0]);
+    const DoubleDouble den = ((((((((((denom[10]*x + denom[9])
+                                               *x + denom[8])
+                                               *x + denom[7])
+                                               *x + denom[6])
+                                               *x + denom[5])
+                                               *x + denom[4])
+                                               *x + denom[3])
+                                               *x + denom[2])
+                                               *x + denom[1])
+                                               *x + denom[0]);
+    return x*Y + x * num/den;;
+}
+
+
+//
+// This is a translation of Boost's `expm1_imp` for quad precision
+// for use with DoubleDouble.
+//
+
+#define LOG_MAX_VALUE 709.782712893384
+
+inline DoubleDouble DoubleDouble::expm1() const
+{
+    DoubleDouble a = (*this).abs();
+    if (a.upper > 0.5) {
+        if (a.upper > LOG_MAX_VALUE) {
+            if (this->upper > 0) {
+                // XXX Set overflow, and then return...
+                return DoubleDouble(INFINITY, 0.0);
+            }
+            return DoubleDouble(-1.0, 0.0);
+        }
+        return (*this).exp() - 1.0;
+    }
+    // XXX Figure out the correct bound to use here...
+    // if (a.upper < DOUBLEDOUBLE_EPSILON) {
+    //    return (*this);
+    // }
+    return expm1_rational_approx(*this);
+}
+
 
 #endif
