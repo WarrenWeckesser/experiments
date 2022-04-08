@@ -130,5 +130,13 @@ int main(int argc, char *argv[])
     check_equal_fp(test, y.upper, -0.37421599039540887, "expm1(-0.46875) upper");
     check_equal_fp(test, y.lower, -7.658883125910196e-18, "expm1(-0.46875) lower");
 
+    y = 2.0_dd;
+    check_equal_fp(test, y.upper, 2.0, "Test of 2.0_dd (upper)");
+    check_equal_fp(test, y.lower, 0.0, "Test of 2.0_dd (lower)");
+
+    y = -1.2345e-6_dd;
+    check_equal_fp(test, y.upper, -1.2345e-6, "Test of -1.2345e-6_dd (upper)");
+    check_equal_fp(test, y.lower, -3.412120026781239e-24, "Test of -1.2345e-6_dd (lower)");
+
     return test.print_summary("Summary: ");
 }

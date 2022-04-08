@@ -18,7 +18,7 @@ print_doubledouble_ee(const char *prefix, const DoubleDouble& x)
 
 int main(int argc, char *argv[])
 {
-    auto x = DoubleDouble(3.0);
+    auto x = 3.0_dd;
     auto y = DoubleDouble(1.5, 2.5e-18);
 
     print_doubledouble("x", x);

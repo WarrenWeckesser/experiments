@@ -216,7 +216,6 @@ inline DoubleDouble DoubleDouble::operator/(const DoubleDouble& x) const
     return two_sum_quick(r, e);
 }
 
-
 inline bool DoubleDouble::operator==(const DoubleDouble& x) const
 {
     // XXX Do the (upper, lower) representations need to be canonicalized first?
@@ -402,6 +401,11 @@ inline DoubleDouble DoubleDouble::expm1() const
     //    return (*this);
     // }
     return expm1_rational_approx(*this);
+}
+
+inline constexpr DoubleDouble operator "" _dd (long double x)
+{
+    return DoubleDouble(x, x - double(x));
 }
 
 
