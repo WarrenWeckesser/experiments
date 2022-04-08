@@ -26,6 +26,7 @@
 #include <cmath>
 #include <cfloat>
 #include <cstdint>
+#include <array>
 
 
 class DoubleDouble
