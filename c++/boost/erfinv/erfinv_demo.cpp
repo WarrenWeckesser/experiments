@@ -8,8 +8,11 @@ using namespace std;
 
 int main()
 {
-    double p = 1e-20;
-    double x = erf_inv(p);
-    cout << scientific << setprecision(15) << x << endl;
-    // 8.86226925452758027e-21
+    double pvals[] = {5e-30, 1e-20, 5e-16, 2e-8, 1e-7, 5e-6};
+
+    cout << "  p       erf_inv(p)" << endl;
+    for (const auto &p : pvals) {
+        double x = erf_inv(p);
+        cout << scientific << setprecision(1) << p << " " << setprecision(17) << x << endl;
+    }
 }
