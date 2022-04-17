@@ -102,5 +102,9 @@ int main(int argc, char *argv[])
 
     z = DoubleDouble(710.0).exp();
     print_doubledouble_ee(" exp(710)", z);
+
+    z = DoubleDouble(2.5e-16).expm1();
+    print_doubledouble_ee(" expm1(2.5e-16)", z);
+
     return 0;
 }
