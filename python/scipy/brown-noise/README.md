@@ -4,4 +4,7 @@ the signal to a WAV file.
 
 ![](https://github.com/WarrenWeckesser/experiments/blob/master/python/scipy/brown-noise/brown-spectrum.svg)
 
-![](https://github.com/WarrenWeckesser/experiments/blob/master/python/scipy/brown-noise/brown.wav)
+<audio controls>
+<source src="https://github.com/WarrenWeckesser/experiments/blob/master/python/scipy/brown-noise/brown.wav" type="audio/wav">
+Your browser does not support the WAV audio element.
+</audio>
