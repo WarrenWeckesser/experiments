@@ -61,7 +61,7 @@ _loggamma1p_small_x_q_coeff = [1.0, 5.23386570457449, 11.759169522860718,
                                0.33151383879069596, 0.0351480730651527,
                                0.0017788484304635968, 2.9167070790354156e-05]
 # These two polynomials form the rational Padé approximation to
-# gamma(log(1+x)) at x=0.
+# log(gamma(1+x)) at x=0.
 _loggamma1p_small_x_p = np.polynomial.Polynomial(_loggamma1p_small_x_p_coeff)
 _loggamma1p_small_x_q = np.polynomial.Polynomial(_loggamma1p_small_x_q_coeff)
 
