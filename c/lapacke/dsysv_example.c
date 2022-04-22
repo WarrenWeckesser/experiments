@@ -1,6 +1,6 @@
 //
 // An example of the use of the LAPACKE wrapper of DSYSV
-// to compute the eigenvalues of symmetric matrix.
+// to compute the solution of Ax = b for symmetric A.
 //
 
 #include <stdio.h>
