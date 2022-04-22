@@ -52,7 +52,7 @@ plt.title('Spectrum of a sample of brown noise')
 plt.savefig('brown-spectrum.svg')
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Write y2 to a WAV file.
+# Write y to a WAV file.
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # Create a window (i.e envelope) function to give the signal a smooth
