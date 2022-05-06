@@ -59,7 +59,7 @@ def random_weights(bounds, nsamples, rng=None):
     """
     Generate random weights.
 
-    A "weights" sample is a 1-e array of values in [0, 1] that sum to 1.
+    A "weights" sample is a 1-d array of values in [0, 1] that sum to 1.
 
     For this function, the length of the array is set by ``len(bounds)``.
     ``bounds`` must be a 2-d NumPy array with shape ``(n, 2)``. Each
