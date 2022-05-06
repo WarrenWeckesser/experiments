@@ -15,12 +15,6 @@ def compute_hypercube_edge_coordinate_pairs(n):
     return pairs
 
 
-def neighbors(k):
-    for j in range(len(k)):
-        if k[j] == 0:
-            yield k[:j] + (1,) + k[j+1:]
-
-
 def check_bounds(bounds):
     sum0 = bounds.sum(axis=0)
     if sum0[0] > 1:
@@ -80,34 +74,3 @@ def random_weights(bounds, nsamples, rng=None):
 
     samples = np.column_stack((s[mask], z[mask]))
     return samples
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-
-bounds = np.array([[0.04, 0.15],
-                   [0.04, 0.16],
-                   [0.04, 0.21],
-                   [0.07, 0.20],
-                   [0.07, 0.21],
-                   [0.08, 0.12],
-                   [0.08, 0.15],
-                   [0.08, 0.20],
-                   [0.00, 0.02],
-                   [0.09, 0.18]])
-
-
-"""
-bounds = np.array([[0.1, 0.40],
-                   [0.2, 0.50],
-                   [0.3, 0.40]])
-"""
-
-check_bounds(bounds)
-
-
-samples = random_weights(bounds, 1000000)
-
-# Check
-assert np.allclose(samples.sum(axis=1), 1, rtol=1e-12, atol=0)
-assert np.all((bounds[:, 0] <= samples) & (samples <= bounds[:, 1]))
