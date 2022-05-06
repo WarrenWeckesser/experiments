@@ -57,9 +57,38 @@ def compute_intersection_vertices(bounds):
 
 def random_weights(bounds, nsamples, rng=None):
     """
-    This is a rejection method.  nsamples is the number of candidates
+    Generate random weights.
+
+    A "weights" sample is a 1-e array of values in [0, 1] that sum to 1.
+
+    For this function, the length of the array is set by ``len(bounds)``.
+    ``bounds`` must be a 2-d NumPy array with shape ``(n, 2)``. Each
+    row gives the lower and upper bound of the corresponding random weight.
+
+    This is a rejection method.  ``nsamples`` is the number of *candidates*
     to be generated.  The number of samples returned will generally be
-    less than nsamples.
+    less than ``nsamples``.  Be careful: the method implemented by this
+    function has no lower bound on the acceptance rate; for some ``bounds``,
+    the acceptance rate can be *very* low.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> rng = np.random.default_rng(889834848603455)
+    >>> bounds = np.array([[0.1, 0.2], [0.2, 0.8], [0.05, 0.2], [0.05, 0.1]])
+    >>> w = random_weights(bounds, 10, rng=rng)
+    >>> w
+    array([[0.1716904 , 0.60920283, 0.13659622, 0.08251055],
+           [0.17366032, 0.64377311, 0.08603213, 0.09653444],
+           [0.18063014, 0.59238271, 0.13229396, 0.0946932 ]])
+
+    Note that 10 samples were requested but only 3 were generated.
+
+    Check that the rows sum to 1:
+
+    >>> w.sum(axis=1)
+    array([1., 1., 1.])
+
     """
     if rng is None:
         rng = np.random.default_rng()
