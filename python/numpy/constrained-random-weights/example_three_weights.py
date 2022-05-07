@@ -8,7 +8,7 @@ from random_weights_with_ineq_constraints import (random_weights,
 
 def plot_box(ax, bounds):
     alpha = 0.5
-    color = 'g'
+    color = 'c'
 
     u = [0, 0, 1, 1]
     v = [0, 1, 1, 0]
@@ -71,9 +71,9 @@ cmax = constrained_points.max(axis=0)
 ax = plt.figure().add_subplot(projection='3d')
 
 ax.plot_trisurf(*np.eye(3), linewidth=0.2, antialiased=True, alpha=0.125)
-ax.set_xlabel('x')
-ax.set_ylabel('y')
-ax.set_zlabel('z')
+ax.set_xlabel('$w_1$')
+ax.set_ylabel('$w_2$')
+ax.set_zlabel('$w_3$')
 
 plot_box(ax, bounds)
 
@@ -82,11 +82,10 @@ v = compute_intersection_vertices(bounds)
 # order that nicely encloses the intersection region.
 # The code in compute_intersection_vertices() was not intentionally
 # designed to do that, but it happens to work that way.
-ax.plot(v[:, 0], v[:, 1], v[:, 2], c='g')
-ax.plot(v[[-1, 0], 0], v[[-1, 0], 1], v[[-1, 0], 2], c='g')
+ax.plot(v[:, 0], v[:, 1], v[:, 2], c='c')
+ax.plot(v[[-1, 0], 0], v[[-1, 0], 1], v[[-1, 0], 2], c='c')
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 
 rng = np.random.default_rng(2342389820446)
 nsamples = 500
@@ -94,10 +93,12 @@ samples = random_weights(bounds, nsamples, rng)
 
 x1, y1, z1 = samples.T
 
-ax.scatter(x1, y1, z1, s=1, c='k')
+ax.scatter(x1, y1, z1, s=0.5, c='k')
 
 ax.set_xlim3d(0, 1)
 ax.set_ylim3d(0, 1)
 ax.set_zlim3d(0, 1)
+ax.view_init(elev=20, azim=20)
 
-plt.show()
+# plt.show()
+plt.savefig('example_three_weights.png', dpi=150)
