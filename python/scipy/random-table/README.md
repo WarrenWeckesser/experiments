@@ -57,24 +57,59 @@ array([[27.5 ,  8.25, 19.25],
        [22.5 ,  6.75, 15.75]])
 ```
 
-Higher dimensional tables are accepted.  Here, `c3` has shape `(2, 2, 3)`:
+Higher dimensional tables are accepted.  Here, `c3` has shape `(2, 3, 3)`.
+We use `scipy.stats.contingency.margins` to compute the marginal sums
+for `c3`.
 
 ```
-In [37]: c3 = np.array([[[24, 25, 9], [35, 15, 6]], [[24, 9, 8], [25, 8, 12]]])
+n [85]: c3 = np.array([[[24, 15, 9], [26, 15, 6], [5, 11, 14]],
+    ...:                [[40, 11, 7], [21, 10, 12], [9, 8, 7]]])
 
-In [38]: c3
-Out[38]: 
-array([[[24, 25,  9],
-        [35, 15,  6]],
+In [86]: c3
+Out[86]:
+array([[[24, 15,  9],
+        [26, 15,  6],
+        [ 5, 11, 14]],
 
-       [[24,  9,  8],
-        [25,  8, 12]]])
+       [[40, 11,  7],
+        [21, 10, 12],
+        [ 9,  8,  7]]])
 
-In [39]: random_table(c3)
-Out[39]: 
-array([[[23, 22, 11],
-        [37, 12,  9]],
+In [87]: from scipy.stats.contingency import margins
 
-       [[23, 10, 10],
-        [25, 13,  5]]])
+In [88]: margins(c3)
+Out[88]:
+[array([[[125]],
+
+        [[125]]]),
+ array([[[106],
+         [ 90],
+         [ 54]]]),
+ array([[[125,  70,  55]]])]
+```
+Generate a random table from `c3`.
+```
+In [89]: sample = random_table(c3)
+
+In [90]: sample
+Out[90]:
+array([[[20, 15, 10],
+        [21, 14, 12],
+        [22,  6,  5]],
+
+       [[28, 16, 17],
+        [21, 14,  8],
+        [13,  5,  3]]])
+```
+Verify that the marginal sums of `sample` are the same as those of `c3`:
+```
+In [91]: margins(sample)
+Out[91]:
+[array([[[125]],
+
+        [[125]]]),
+ array([[[106],
+         [ 90],
+         [ 54]]]),
+ array([[[125,  70,  55]]])]
 ```
