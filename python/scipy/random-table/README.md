@@ -62,7 +62,7 @@ We use `scipy.stats.contingency.margins` to compute the marginal sums
 for `c3`.
 
 ```
-n [85]: c3 = np.array([[[24, 15, 9], [26, 15, 6], [5, 11, 14]],
+In [85]: c3 = np.array([[[24, 15, 9], [26, 15, 6], [5, 11, 14]],
     ...:                [[40, 11, 7], [21, 10, 12], [9, 8, 7]]])
 
 In [86]: c3
