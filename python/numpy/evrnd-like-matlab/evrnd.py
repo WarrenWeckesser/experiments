@@ -19,5 +19,5 @@ def evrnd(mu, sigma, size=None, rng=None):
     """
     if rng is None:
         rng = np.random.default_rng()
-    x = mu - rng.gumbel(loc=0, scale=sigma, size=size)
+    x = -rng.gumbel(loc=-mu, scale=sigma, size=size)
     return x
