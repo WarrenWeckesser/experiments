@@ -15,12 +15,14 @@ int main()
 
     int n = sizeof(x) / sizeof(x[0]);
 
-    cout << "        x           shape   cdf" << endl;
+    cout << "        x           shape   pdf                     cdf" << endl;
     cout << scientific;
     for (int i = 0; i < n; ++i) {
+        double p = pdf(skew_normal_distribution(loc, scale, shape[i]), x[i]);
         double c = cdf(skew_normal_distribution(loc, scale, shape[i]), x[i]);
         cout << fixed << setw(12) << setprecision(4) << x[i] << " ";
         cout << fixed << setw(12) << setprecision(4) << shape[i] << " ";
+        cout << scientific << setprecision(17) << p << " ";
         cout << scientific << setprecision(17) << c << endl;
     }
 }
