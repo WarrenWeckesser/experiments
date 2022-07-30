@@ -1,34 +1,36 @@
 
 // Compile with
-//   g++ -std=c++1z beta_mean_var.cpp -o beta_mean_var
+//   g++ -std=c++17 beta_mean_var.cpp -o beta_mean_var
 
 #include <iostream>
 #include <boost/math/distributions/beta.hpp>
 
-using namespace std;
+using boost::math::mean;
+using boost::math::variance;
 using boost::math::beta_distribution;
 
+using Real = long double;
 
 int main()
 {
-    tuple<double, double> params[] = {
+    std::tuple<Real, Real> params[] = {
         //    a,     b
         {   0.50,  1.25 },
         {   3.00,  5.00 },
         {  99.00,  0.25 },
-        {    1.0,  1.00 }
+        {   1.00,  1.00 }
     };
 
-    cout << "         a          b                  mean              variance" << endl;
+    std::cout << "         a          b                  mean              variance" << std::endl;
     for (auto [a, b] : params) {
         beta_distribution<> dist(a, b);
-        double m = mean(dist);
-        double v = variance(dist);
+        long double m = mean(dist);
+        long double v = variance(dist);
 
-        cout << fixed << setw(10) << setprecision(1) << a << " ";
-        cout << fixed << setw(10) << setprecision(4) << b << " ";
-        cout << fixed << setw(21) << setprecision(15) << m << " ";
-        cout << fixed << setw(21) << setprecision(15) << v << endl;
+        std::cout << std::fixed << std::setw(10) << std::setprecision(1) << a << " ";
+        std::cout << std::fixed << std::setw(10) << std::setprecision(4) << b << " ";
+        std::cout << std::fixed << std::setw(26) << std::setprecision(21) << m << " ";
+        std::cout << std::fixed << std::setw(26) << std::setprecision(21) << v << std::endl;
     }
 
     return 0;
