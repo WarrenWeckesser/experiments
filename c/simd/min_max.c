@@ -53,7 +53,7 @@ float float_ ## name ## _sse(size_t n, float *x)                \
     __m128 arg4 = _mm_loadu_ps(x);                              \
     x += 4;                                                     \
     n -= 4;                                                     \
-    while (n > 4) {                                             \
+    while (n >= 4) {                                            \
         __m128 x4 = _mm_loadu_ps(x);                            \
         arg4 = _mm_ ## name ## _ps(arg4, x4);                   \
         x += 4;                                                 \
@@ -86,7 +86,7 @@ float float_ ## name ## _avx(size_t n, float *x)                \
     __m256 arg8 = _mm256_loadu_ps(x);                           \
     x += 8;                                                     \
     n -= 8;                                                     \
-    while (n > 8) {                                             \
+    while (n >= 8) {                                            \
         __m256 x8 = _mm256_loadu_ps(x);                         \
         arg8 = _mm256_ ## name ## _ps(arg8, x8);                \
         x += 8;                                                 \
