@@ -58,7 +58,7 @@ int cabs2f_sse(size_t n, const float *z, float *out)
         //print_m128("z4:  ", z4);
         __m128 s1 = _mm_mul_ps(z4, z4);
         //print_m128("s1:  ", s1);
-        __m128 s2 = _mm_shuffle_ps(s1, s1, _MM_SHUFFLE(3, 3, 1, 1));
+        __m128 s2 = _mm_movehdup_ps(s1);
         //print_m128("s2:  ", s2);
         __m128 ss = _mm_add_ps(s1, s2);
         //print_m128("ss:  ", ss);
