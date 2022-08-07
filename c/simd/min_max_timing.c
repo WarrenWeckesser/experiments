@@ -35,25 +35,25 @@ int main(int argc, char *argv[])
     float min1 = float_min(n, x);
     diff = clock() - start;
     msec = 1000.0 * diff / CLOCKS_PER_SEC;
-    printf("float_min:          %12.8f   %15.6f msec\n", min1, msec);
+    printf("float_min:          %12.8f   %10.3f msec\n", min1, msec);
 
     start = clock();
     float min2 = float_min_sse(n, x);
     diff = clock() - start;
     msec = 1000.0 * diff / CLOCKS_PER_SEC;
-    printf("float_min_sse:      %12.8f   %15.6f msec\n", min2, msec);
+    printf("float_min_sse:      %12.8f   %10.3f msec\n", min2, msec);
 
     start = clock();
     float min3 = float_min_avx(n, x);
     diff = clock() - start;
     msec = 1000.0 * diff / CLOCKS_PER_SEC;
-    printf("float_min_avx:      %12.8f   %15.6f msec\n", min3, msec);
+    printf("float_min_avx:      %12.8f   %10.3f msec\n", min3, msec);
 
     start = clock();
     float min4 = float_min_keep_nan(n, x);
     diff = clock() - start;
     msec = 1000.0 * diff / CLOCKS_PER_SEC;
-    printf("float_min_keep_nan: %12.8f   %15.6f msec\n", min4, msec);
+    printf("float_min_keep_nan: %12.8f   %10.3f msec\n", min4, msec);
 
     free(x);
     return 0;
