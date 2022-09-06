@@ -6,23 +6,23 @@
 
 program sgesdd_example
 
-	implicit none
-	external sgesdd
+    implicit none
+    external sgesdd
 
-	integer, parameter :: n = 9537
-	real, dimension(n, n) :: a
-	real, dimension(n) :: s
-	real, dimension(n, n) :: u
-	real, dimension(n, n) :: vt
-	real, dimension(1) :: work
-	integer lwork
-	integer, dimension(8*n) :: iwork
-	integer info
+    integer, parameter :: n = 9537
+    real, dimension(n, n) :: a
+    real, dimension(n) :: s
+    real, dimension(n, n) :: u
+    real, dimension(n, n) :: vt
+    real, dimension(1) :: work
+    integer lwork
+    integer, dimension(8*n) :: iwork
+    integer info
 
-	lwork = -1
+    lwork = -1
     call sgesdd('A', n, n, a, n, s, u, n, vt, n, work, lwork, iwork, info)
 
-	print *, info
-	print *, work(1)
+    print *, info
+    print *, work(1)
 
 end program sgesdd_example
