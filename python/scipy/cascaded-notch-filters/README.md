@@ -4,4 +4,4 @@ See the file for details.
 
 The script generates the following plot.
 
-![](https://github.com/WarrenWeckesser/experiments/blob/master/python/scipy/cascaded-notch-filters/cascaded-notch-filters.svg)
+![](https://github.com/WarrenWeckesser/experiments/blob/master/python/scipy/cascaded-notch-filters/cascaded_notch_filters.svg)
