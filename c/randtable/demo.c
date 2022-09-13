@@ -1,5 +1,4 @@
 
-
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
@@ -104,7 +103,10 @@ int main(int argc, char *argv[])
 
     intarray *ia = intarray_create(ndims, dims);
 
-    printf("Random contingency tables:\n");
+    printf("Random contingency tables: shape = (");
+    for (size_t i = 0; i < ndims; ++i) {
+        printf("%zu%s", dims[i], i < ndims - 1 ? ", " : ")\n");
+    }
     printf("-------------------------------------------------------\n");
     for (int k = 0; k < 3; ++k) {
         result = randtable(n, ndims, dims, counts, ia->data);
