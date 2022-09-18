@@ -1,7 +1,7 @@
 
 import os
 import ctypes
-from math import exp, pow
+from math import exp
 from scipy.integrate import quad
 from scipy import LowLevelCallable
 
