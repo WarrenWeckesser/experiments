@@ -78,4 +78,4 @@ minmax_pair<T> minmax(const std::vector<T>& x)
     }
 }
 
-} // namespace minmax
+}  // namespace minmax
