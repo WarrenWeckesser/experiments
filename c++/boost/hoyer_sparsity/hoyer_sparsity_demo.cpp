@@ -5,14 +5,24 @@
 
 int main(int argc, char *argv[])
 {
-    if (argc < 2) {
-        printf("use: %s x0 x1 x2 ...\n", argv[0]);
-        exit(-1);
+    if (argc < 3) {
+        std::cout << "use: " << argv[0] << " x0 x1 x2 ...\n";
+        std::cout << "At least two values must be provided." << std::endl;
+        return -1;
     }
+
     std::vector<double> x;
 
     for (int k = 1; k < argc; ++k) {
-        double arg = std::stod(argv[k]);
+        double arg;
+        try {
+            arg = std::stod(argv[k]);
+        }
+        catch(...) {
+            std::cout << "Error: unable to convert '" << argv[k]
+                      << "' to double." << std::endl;
+            return -1;
+        }
         x.push_back(arg);
     }
 
