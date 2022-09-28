@@ -30,7 +30,7 @@ from scipy.special import lambertw
 
 def colebrook(Re, Dh, eps, constant1=3.71):
     """
-    Solve the Colebrook equation for f, given Re, D and eps.
+    Solve the Colebrook equation for f, given Re, Dh and eps.
 
     The equation is also known as the Colebrook-White equation.
 
