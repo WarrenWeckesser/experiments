@@ -49,7 +49,7 @@ def colebrook(Re, Dh, eps, constant1=3.71):
             1/sqrt(f) = -2*log(eps/(3.7*Dh) + 2.51/(Re*sqrt(f))
 
     Many references use the constant 3.71 instead of 3.7, and this
-    function does, too.  If one needs to used 3.7, specify that value as
+    function does, too.  If one needs to use 3.7, specify that value as
     the parameter `constant1`.
 
     Parameters
