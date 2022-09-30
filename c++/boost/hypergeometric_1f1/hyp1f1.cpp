@@ -5,14 +5,6 @@
 
 using namespace boost::math;
 
-//
-// double hyp2f1(double a1, double a2, double b1, double x)
-// {
-//     double h = hypergeometric_pFq({a1, a2}, {b1}, x);
-//     return h;
-// }
-//
-
 
 int main(int argc, char *argv[])
 {
