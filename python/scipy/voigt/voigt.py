@@ -51,7 +51,7 @@ if __name__ == "__main__":
     plt.xlim(0, xmax)
     plt.ylim(0, 1)
     plt.legend(loc='best')
-    plt.title('Voight U(x,t)')
+    plt.title('Voigt U(x,t)')
 
     plt.subplot(2, 1, 2)
     for tval, ya, clr, sty in zip(t, y, colors, styles):
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     plt.xlim(0, xmax)
     plt.ylim(0, 0.5)
     plt.legend(loc='best')
-    plt.title('Voight V(x,t)')
+    plt.title('Voigt V(x,t)')
     plt.xlabel('x')
 
     plt.tight_layout()
