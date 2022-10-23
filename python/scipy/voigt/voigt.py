@@ -65,6 +65,6 @@ if __name__ == "__main__":
 
     plt.tight_layout()
 
-    plt.savefig('images/voight.png')
+    plt.savefig('images/voigt.svg')
 
     # plt.show()
