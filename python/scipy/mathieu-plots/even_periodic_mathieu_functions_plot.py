@@ -48,4 +48,5 @@ xaxis.set_ticklabels(labels)
 plt.grid(alpha=0.25)
 plt.title("Even Periodic Mathieu Functions\nOrders 0 - 5, q = %d" % q)
 
-plt.show()
+# plt.show()
+plt.savefig('images/even_periodic_mathieu_functions_plot.svg')
