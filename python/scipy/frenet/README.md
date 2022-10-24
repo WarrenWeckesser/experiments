@@ -6,4 +6,4 @@ differential equations, given:
 
 It creates the following plot:
 
-![](https://github.com/WarrenWeckesser/experiments/blob/master/python/scipy/frenet/images/curve.svg)
+![](https://github.com/WarrenWeckesser/experiments/blob/master/python/scipy/frenet/curve.svg)
