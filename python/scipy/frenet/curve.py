@@ -77,4 +77,5 @@ ax.plot(sol[:, 0], sol[:, 1], sol[:, 2])
 ptp = sol[:, :3].ptp(axis=0)
 ax.set_box_aspect(ptp)
 
-plt.show()
+# plt.show()
+plt.savefig('curve.svg')
