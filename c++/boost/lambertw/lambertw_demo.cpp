@@ -33,9 +33,10 @@ int main(int argc, char *argv[])
     std::cout << std::setw(w) << "W{0}(x)";
     std::cout << std::setw(w) << "W{-1}(x)";
     std::cout << std::endl;
+    double bound = -std::exp(-1);
     for (const auto& x: v) {
-        double w0 = lambert_w0(x);
-        double wm1 = lambert_wm1(x);
+        double w0 = x >= bound ? lambert_w0(x) : NAN;
+        double wm1 = (x >= bound && x < 0) ? lambert_wm1(x) : NAN;
         std::cout << std::setw(18) << std::setprecision(12) << x;
         std::cout << std::setw(w) << std::setprecision(17) << w0;
         std::cout << std::setw(w) << std::setprecision(17) << wm1;
