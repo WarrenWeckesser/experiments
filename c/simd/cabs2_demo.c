@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     if (m & 1) {
-        fprintf(stderr, "The number of values must be even.  The last value is will be ignored.\n");
+        fprintf(stderr, "The number of values must be even.  The last value will be ignored.\n");
         m -= 1;
     }
     size_t n = m / 2;
