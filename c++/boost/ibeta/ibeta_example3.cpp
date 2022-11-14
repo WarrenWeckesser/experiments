@@ -1,3 +1,4 @@
+#include <string>
 #include <iostream>
 #include <iomanip>
 #include <boost/math/special_functions/beta.hpp>
@@ -6,16 +7,24 @@ using namespace boost::math;
 
 int main(int argc, char *argv[])
 {
-	double a, b, x, y, z;
+    if (argc != 4 ) {
+        printf("use: %s a b p\n", argv[0]);
+        return -1;
+    }
 
-	a = 5;
-	b = 99996;
-	x = 0.999995;
-	y = ibeta_inv(a, b, x);
-	std::cout << std::scientific << std::setw(16)
-        << std::setprecision(12) << y << std::endl;
-    // z = ibeta(a, b, y);
-    // std::cout << std::scientific << std::setw(16)
-    //     << std::setprecision(12) << z << std::endl;
-	return 0;
+    double a = std::stod(argv[1]);
+    double b = std::stod(argv[2]);
+    double p = std::stod(argv[3]);
+
+    double x = ibeta_inv(a, b, p);
+    std::cout << std::scientific << std::setw(20)
+        << std::setprecision(10) << a;
+    std::cout << std::scientific << std::setw(20)
+        << std::setprecision(10) << b;
+    std::cout << std::scientific << std::setw(20)
+        << std::setprecision(10) << p;
+    std::cout << std::scientific << std::setw(24)
+        << std::setprecision(17) << x << std::endl;
+
+    return 0;
 }
