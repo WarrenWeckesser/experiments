@@ -1,7 +1,4 @@
 
-// Compile with
-//   g++ -std=c++1z beta_pdf.cpp -o beta_pdf
-
 #include <iostream>
 #include <boost/math/distributions/beta.hpp>
 
@@ -9,11 +6,21 @@ using namespace std;
 using boost::math::beta_distribution;
 
 
-int main()
+int main(int argc, char *argv[])
 {
-    double a = 11.0;
-    double b = 99990.0;
-    double p = 1e-11;
+    if (argc != 4) {
+        std::cout << "use: " << argv[0] << " a b p\n";
+        return -1;
+    }
+
+    double a = std::stod(argv[1]);
+    double b = std::stod(argv[2]);
+    double p = std::stod(argv[3]);
+    if (p <= 0 || p >= 1) {
+        std::cerr << "must have 0 < p < 1" << std::endl;
+        return -1;
+    }
+
     cout << "a = " << a << endl;
     cout << "b = " << b << endl;
     beta_distribution<> dist(a, b);
