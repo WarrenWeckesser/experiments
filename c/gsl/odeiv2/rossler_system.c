@@ -32,15 +32,13 @@ int rossler_system(double t, const double w[], double f[], void *params)
 
 int rossler_jac(double t, const double w[], double *jac, double *dfdt, void *params)
 {
-    double x, y, z;
-    double a, b, c;
+    double x, z;
+    double a, c;
 
     x = w[0];
-    y = w[1];
     z = w[2];
 
     a = ((double *) params)[0];
-    b = ((double *) params)[1];
     c = ((double *) params)[2];
 
     gsl_matrix_view jac_mat = gsl_matrix_view_array(jac, 3, 3);
