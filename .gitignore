@@ -51,10 +51,15 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+/c/gsl/odeiv2/rossler_solve
 /c/simd/cabs2_demo
 /c/simd/cabs2_timing
 /c/simd/min_max_demo
 /c/simd/min_max_timing
+
+/c++/boost/hypergeometric_2f1/hyp2f1
+/c++/boost/powm1/powm1_bad_input
+/c++/boost/powm1/powm1_demo
 
 /c++/xsimd/peaktopeak/demo_minmax
 /c++/xsimd/peaktopeak/demo_peaktopeak
