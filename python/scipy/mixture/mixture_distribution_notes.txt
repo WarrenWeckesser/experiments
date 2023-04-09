@@ -1,0 +1,86 @@
+Mixture distribution API notes
+
+Suppose we want to create a mixture of three distributions.
+API/design ideas
+
+API issues
+* Weights
+* Location and scale
+* Allow nested?  That is, if `mix1` and `mix2` are mixture
+  distributions, will the code allow them to be used as
+  components of another mixture?  E.g. something like
+      mix3 = Mixture(mix1, mix2, gamma)
+
+How to handle the shape, loc and scale parameters?
+
+* Inherit from rv_continuous
+  * Choose loc and scale from one distribution to be the loc and
+    scale parameters of the mixture.  The loc and scale of the
+    remaining distributions become shape parameters.
+    This requires using the mixture's loc and scale to map
+    between those loc/scale shape parameters and the more intuitive
+    "true" loc and scale of each component (unless the mixture's
+    loc=0 and scale=1, but that restricts the parameters of the
+    first component).
+  * The shape, loc and scale parameters of each component all become
+    shape parameters of the distribution.  Because rv_continuous
+    automatically includes a loc and scale for the distribuion, this
+    approach results in a distribution with too many parameters:
+    there is more than one set of parameter values corresponding
+    to any given distribution.
+    In practice, it is likely that users would leave the mixture's
+    loc and scale set to the default values 0 and 1, respectively.
+    For the `fit()` method to work, the user would have to use
+    `floc=0` and `fscale=1`.  We could even add these as the default
+    for `mixture.fit()`.
+* Create a new class, without loc and scale.
+  The class would look and act much like rv_continuous, but we
+  simply wouldn't implement the loc and scale parameters.  All
+  the parameters are handled as shape parameters.  From the user's
+  points of view, this is probably the most intuitive approach.
+
+How to parameterize the mixture weights?
+
+The issue is that the i-th component of the mixture has weight w[i].
+These weights are constrained: 0 <= w[i], and sum(w) = 1.
+
+If there are n components, there are only n-1 independent weight
+parameters.  If the n values in w are used as parameters, the
+code must impose the constraints.
+
+One can define a mapping between n-1 real values  and the interior
+of the constrained set w.  Then these n-1 parameters have no
+constraints.  This means, for example, that there is no need for a
+constrained solver in the `fit()` method.  However, these parameters
+are not intuitive for users.
+
+From the user's point of view, it is natural to give all n weights
+as parameters.  One approach to the weights API is to include only the
+restriction that the weights provided by the user are nonnegative.
+See, for example, Wolframs `MixtureDistribution`[1]. Then, for example,
+the weights [4, 2, 1, 1] mean the same as [1/2, 1/4, 1/8, 1/8].
+The code will scale the weights internally so that their sum is 1.
+The `fit` method will require some work to ensure that it correctly
+solves the constrained problem 0 <= w_i <= 1, sum(w_i) = 1.
+
+Note: The weights might themselves have parameters, e.g.
+
+CDF(x, a, b) = w1(a, b)*CDF1(x, a, b) + w2(a, b)*CDF2(x, a, b) + ...
+
+
+Mixture moments and other calculations
+--------------------------------------
+https://statisticalmodeling.wordpress.com/2011/06/16/the-variance-of-a-mixture/
+
+
+Existing APIs
+-------------
+* Wolfram [1]
+* R packages: mixtools, mixdist, others?
+* statsmodels has statsmodels.sandbox.distributions.otherdist.ParametricMixtureD
+
+Check: does pymc3 have mixtures?
+
+
+[1] https://reference.wolfram.com/language/ref/MixtureDistribution.html)
+
