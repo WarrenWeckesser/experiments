@@ -1,0 +1,9 @@
+[package]
+name = "colortext"
+version = "0.1.0"
+authors = ["warren <warren.weckesser@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+regex = "1.7.3"
+ansi_term = "0.12.1"
