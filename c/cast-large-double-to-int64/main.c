@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <stdint.h>
+#include <inttypes.h>
 
 int main(int argc, char *argv[])
 {
@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
     int64_t i = (int64_t) x;
 
     printf("x = %lf\n", x);
-    printf("i = %ld\n", i);
+    printf("i = %" PRId64 "\n", i);
 
     return 0;
 }
