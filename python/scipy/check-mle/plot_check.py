@@ -25,14 +25,16 @@ def optimizer(func, p0, args=None, disp=0):
 
 def check_mle(dist, x, fixed, gridsize=500):
     """
-    Fit the distibution `dist` to the data in `x`, and plot cross-sections
+    Fit the distribution `dist` to the data in `x`, and plot cross-sections
     of the negative log-likelihood function for the parameter values that
     were not fixed.
 
     `x` can be a 1-d array or an instance of `scipy.stats.CensoredData`.
     """
+    x = np.asarray(x)
     opt_params = dist.fit(x, **fixed, optimizer=optimizer)
-    names = dist.shapes.replace(' ', '').split(',') + ['loc', 'scale']
+    shape_names = dist.shapes.replace(' ', '').split(',') if dist.shapes else []
+    names = shape_names + ['loc', 'scale']
     for k, (name, pval) in enumerate(zip(names, opt_params)):
         print(f'{k:4d}: {name:>10s} = {pval}')
         if 'f' + name in fixed:
