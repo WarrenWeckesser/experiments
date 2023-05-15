@@ -29,22 +29,32 @@ def func(r, samples):
 
 
 def nbinom_mle(samples):
-    r = fsolve(func, 1, samples, xtol=1e-8)
+    """
+    Maximum likelihood estimation for the negative binomial distribution.
+
+    Returns *four* values: r, p, r_int, p_int
+
+    The pair (r, p) is the MLE under the assumption that r is not
+    restricted to integers values.  The pair (r_int, p_int) is the
+    MLE when r is constrained to be an integer.
+    """
+    r = fsolve(func, 1, samples, xtol=1e-10)[0]
     s = samples.sum()
     p = s / (len(samples)*r + s)
     rint = int(r)
     if rint != r:
         if loglik(rint, p, samples) < loglik(rint + 1, p, samples):
             rint += 1
-    return rint, r, p
+    m = np.mean(samples)
+    return r, p, rint, m/(rint + m)
 
 
 samples = np.array([3, 5, 2, 10, 21, 13, 5, 4, 7, 7])
+# samples = np.array([1, 2, 2, 3, 5, 2, 10, 11, 13, 5, 4, 7, 7])
 
-rint, r, p = nbinom_mle(samples)
-print("rint =", rint, "   r =", r)
-print("p =", p)
-print("mu =", p*r/(1 - p))
+r, p, rint, p1 = nbinom_mle(samples)
+print(f"{r = }  {p = }")
+print(f"{rint = }  {p1 = }")
 
 
 # Compare to R:
