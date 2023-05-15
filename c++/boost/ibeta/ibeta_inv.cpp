@@ -1,9 +1,13 @@
 #include <string>
 #include <iostream>
 #include <iomanip>
+
+#define BOOST_MATH_MAX_ROOT_ITERATION_POLICY  400
+#define BOOST_MATH_PROMOTE_DOUBLE_POLICY      false
 #include <boost/math/special_functions/beta.hpp>
 
 using namespace boost::math;
+
 
 int main(int argc, char *argv[])
 {
@@ -23,7 +27,7 @@ int main(int argc, char *argv[])
         << std::setprecision(10) << b;
     std::cout << std::scientific << std::setw(20)
         << std::setprecision(10) << p;
-    std::cout << std::scientific << std::setw(24)
+    std::cout << std::scientific << std::setw(26)
         << std::setprecision(17) << x << std::endl;
 
     return 0;
