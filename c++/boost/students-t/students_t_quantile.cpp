@@ -1,17 +1,8 @@
-
-
-#include <boost/math/distributions/students_t.hpp>
-   using boost::math::students_t;  // Probability of students_t(df, t).
-
 #include <iostream>
-#include <iomanip>
-#include <cmath>
+#include <boost/math/distributions/students_t.hpp>
 
-using std::cout;
-using std::endl;
-using std::setprecision;
-using std::setw;
-using std::sqrt;
+using namespace std;
+using boost::math::students_t;
 
 int main(int argc, char *argv[])
 {
