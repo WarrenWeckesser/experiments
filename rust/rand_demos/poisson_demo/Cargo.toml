@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-rand = {path = "/home/warren/repos/git/forks/rand"}
-rand_distr = {path = "/home/warren/repos/git/forks/rand/rand_distr"}
-rand_pcg = {path = "/home/warren/repos/git/forks/rand/rand_pcg"}
+rand = {path = "/Users/warren/repos/git/forks/rust-random/rand"}
+rand_distr = {path = "/Users/warren/repos/git/forks/rust-random/rand/rand_distr"}
+rand_pcg = {path = "/Users/warren/repos/git/forks/rust-random/rand/rand_pcg"}
 structopt = "0.3.26"
