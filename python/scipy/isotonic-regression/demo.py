@@ -15,6 +15,7 @@ interpolation is used between the compute isotonic points.
 
 import numpy as np
 from scipy.optimize import minimize
+from scipy.interpolate import interp1d, PchipInterpolator
 import matplotlib.pyplot as plt
 
 
@@ -23,12 +24,13 @@ data = np.array([[1.2, 1.5],
                  [3.0, 4.0],
                  [5.0, 6.0],
                  [5.5, 5.7],
+                 [6.0, 6.9],
                  [6.5, 5.0],
                  [7.5, 7.8],
                  [8.0, 9.0],
                  [8.5, 7.5],
                  [9.0, 9.5],
-                 [9.5, 9.0]])
+                 [9.5, 8.6]])
 
 x, y = data.T
 
@@ -49,8 +51,15 @@ result = minimize(objective, x0=y, args=(y,),
 print(result)
 yhat = result.x
 
+lerp = interp1d(x, yhat)
+pc = PchipInterpolator(x, yhat)
+
+xx = np.linspace(x.min(), x.max(), 500)
+
 plt.plot(x, y, 'k.', alpha=0.75, label='data')
-plt.plot(x, yhat, 'go-', alpha=0.4, label='isotonic + linear interp')
+plt.plot(x, yhat, 'o', alpha=0.4, label='isotonic points')
+plt.plot(xx, lerp(xx), '--', label='linear interp')
+plt.plot(xx, pc(xx), '-.', label='pchip')
 plt.grid()
 plt.xlabel('x')
 plt.ylabel('y')
