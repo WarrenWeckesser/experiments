@@ -11,8 +11,13 @@ int main(int argc, char *argv[])
     clock_t start, diff;
     float msec;
 
-    if (argc != 2) {
+    if (argc < 2) {
         fprintf(stderr, "Specify the number of complex samples to use.\n");
+        exit(-1);
+    }
+    if (argc > 2) {
+        fprintf(stderr, "Only one argument is accepted, which is "
+                        "the number of samples to use.\n");
         exit(-1);
     }
     long n = atol(argv[1]);
@@ -50,6 +55,12 @@ int main(int argc, char *argv[])
     diff = clock() - start;
     msec = 1000.0 * diff / CLOCKS_PER_SEC;
     printf("cabs2_sse:      %10.3f msec\n", msec);
+
+    start = clock();
+    cabs2f_avx(n, x, out);
+    diff = clock() - start;
+    msec = 1000.0 * diff / CLOCKS_PER_SEC;
+    printf("cabs2_avx:      %10.3f msec\n", msec);
 
     free(out);
     free(x);

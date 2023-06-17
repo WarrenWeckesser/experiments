@@ -71,3 +71,28 @@ int cabs2f_sse(size_t n, const float *z, float *out)
     }
     return 0;
 }
+
+int cabs2f_avx(size_t n, const float *z, float *out)
+{
+    __m256i idx = _mm256_set_epi32(7, 5, 3, 1, 6, 4, 2, 0);
+    __m256i storemask = _mm256_set_epi32(0, 0, 0, 0, -1, -1, -1, -1);
+
+    size_t r = n % 8;
+    size_t k = 0;
+    for (; k < n - r; k += 8) {
+        __m256 z8 = _mm256_loadu_ps(z + k);
+        //print_m256("z8: ", z8);
+        __m256 s1 = _mm256_mul_ps(z8, z8);
+        //print_m256("s1: ", s1);
+        // XXX FIXME: Replace 177 with the appropriate macro.
+        __m256 s2 = _mm256_permute_ps(s1, 177);
+        //print_m256("s2: ", s2);
+        __m256 ss = _mm256_add_ps(s1, s2);
+        //print_m256("ss: ", ss);
+        __m256 as = _mm256_permutevar8x32_ps(ss, idx);
+        //print_m256("as: ", as);
+        _mm256_maskstore_ps(out + k/2, storemask, as);
+    }
+    cabs2f(r, z + k, out + k/2);
+    return 0;
+}

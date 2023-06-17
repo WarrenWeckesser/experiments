@@ -50,5 +50,8 @@ int main(int argc, char *argv[])
     cabs2f_sse(n, x, out);
     print_float_array(n, out);
 
+    cabs2f_avx(n, x, out);
+    print_float_array(n, out);
+
     return 0;
 }
