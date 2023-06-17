@@ -36,8 +36,12 @@ fn get_rng(seed: u64) -> impl rand::Rng {
 
 fn main() {
     let opt = Opt::from_args();
-
-    let nb = NegativeBinomial::<f32>::new(opt.r as f32, opt.p as f32).unwrap();
+    let p = opt.p as f32;
+    if p <= 0f32 {
+        println!("p = {} is not a valid input for NegativeBinomial.", p);
+        std::process::exit(-1);
+    }
+    let nb = NegativeBinomial::<f32>::new(opt.r as f32, p).unwrap();
     let mut rng = get_rng(opt.s);
 
     for _ in 0..opt.n {
