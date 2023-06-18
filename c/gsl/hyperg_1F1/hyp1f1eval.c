@@ -18,7 +18,8 @@ int main(int argc, char *argv[])
     printf("a = %24.16f\n", a);
     printf("b = %24.16f\n", b);
     printf("x = %24.16f\n", x);
-    gsl_error_handler_t *original_handler = gsl_set_error_handler_off();
+    // The return value of gsl_set_error_handler_off() is ignored.
+    gsl_set_error_handler_off();
     int status = gsl_sf_hyperg_1F1_e(a, b, x, &result);
     printf("status = %d\n", status);
     if (status == 0) {
