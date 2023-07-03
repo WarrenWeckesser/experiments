@@ -2,7 +2,6 @@ use rand;
 use rand::distributions::Distribution;
 use statrs::distribution::Dirichlet;
 
-
 fn main() {
     let n = 1000;
     println!("Checking {} Dirichlet samples", n);

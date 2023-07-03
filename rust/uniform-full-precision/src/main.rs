@@ -75,16 +75,23 @@ fn uniform_sample<R: Rng + ?Sized>(a: f32, b: f32, rng: &mut R) -> f32 {
 
     if (ae == be) | (((ae + 1) == be) & (bm == 0)) {
         // The interval is contained within one octave.
-        let upper = if bm == 0 { floats_per_octave as u32 } else { bm };
+        let upper = if bm == 0 {
+            floats_per_octave as u32
+        } else {
+            bm
+        };
         let u = Uniform::new(am, upper);
         let m = rng.sample(u);
-        return
-        f32::from_bits((ae << (f32::MANTISSA_DIGITS - 1)) + m)
+        return f32::from_bits((ae << (f32::MANTISSA_DIGITS - 1)) + m)
             .try_into()
-            .unwrap()
+            .unwrap();
     }
 
-    let num_low = if am > 0 { floats_per_octave - am as u64 } else { 0 };
+    let num_low = if am > 0 {
+        floats_per_octave - am as u64
+    } else {
+        0
+    };
 
     // eprintln!("num_low = {}", num_low);
 
@@ -164,7 +171,10 @@ fn main() {
     let opt = Opt::from_args();
     let mut rng = get_rng(opt.s);
     if opt.a < f32::MIN_POSITIVE {
-        eprintln!("error: `a` must not be less than f32::MIN_POSITIVE ({:e})", f32::MIN_POSITIVE);
+        eprintln!(
+            "error: `a` must not be less than f32::MIN_POSITIVE ({:e})",
+            f32::MIN_POSITIVE
+        );
         std::process::exit(1);
     }
     if opt.b <= opt.a {
