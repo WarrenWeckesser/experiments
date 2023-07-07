@@ -153,14 +153,14 @@ try:
     solver = 'newton-cg'
     # Because x already has a column of ones to allow for an intercept,
     # we pass `fit_intercept=False` to LogisticRegression.
-    sklog = LogisticRegression(solver=solver, penalty='none',
+    sklog = LogisticRegression(solver=solver, penalty=None,
                                fit_intercept=False,
                                max_iter=100, tol=1e-8).fit(x, admit)
 
     print_params(sklog.coef_[0],
                  "fit_intercept=False; x includes 1s column\n")
 
-    sklogi = LogisticRegression(solver=solver, penalty='none',
+    sklogi = LogisticRegression(solver=solver, penalty=None,
                                 max_iter=5000, tol=1e-8).fit(x[:, 1:], admit)
 
     print_params(np.r_[sklogi.intercept_, sklogi.coef_[0]],
