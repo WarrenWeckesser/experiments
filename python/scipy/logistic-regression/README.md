@@ -4,7 +4,8 @@ Apply logistic regression to a data set, using
 * statsmodels
 * scikit-learn
 
-The script `logistic-regression.py` outputs the following:
+The script `logistic-regression.py` is shown below.  As expected,
+all the MLE-based methods produce the same results.
 
 ```
 
