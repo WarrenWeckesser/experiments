@@ -447,10 +447,9 @@ evaluate_instructions(instruction *instructions, int64_t *vars, int *error)
 {
     // XXX This function assumes:
     // (1) The arguments in the instructions array that refer to variables
-    //     are all valid indicees into the vars array.
+    //     are all valid indices into the vars array.
     // (2) There is at least one instruction in the instructions array, and
-    //     the instructions array is ended with an instruction that has
-    //     opcode 0.
+    //     the last element in the instructions array has opcode 0.
 
     int overflow;
     int64_t value;
@@ -633,7 +632,7 @@ int main(int argc, char *argv[])
 
     if (argc < 3) {
         printf("use: ./main names expr\n");
-        printf("where names is a space-dilimited list of dimension names\n");
+        printf("where names is a space-delimited list of dimension names\n");
         printf("and expr is a dimension expression.\n");
         printf("Example: ./main \"m n\" \"1 + min(m, n)\"\n");
         exit(-1);
