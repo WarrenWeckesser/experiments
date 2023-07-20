@@ -37,6 +37,7 @@ plt.title("OLS Residuals versus x")
 plt.xlabel("x")
 plt.ylabel("e")
 plt.grid()
+plt.tight_layout()
 
 # --- WLS ---------------------------------------------------------------
 #
@@ -136,5 +137,6 @@ plt.title("WLS Residuals versus weighted x")
 plt.xlabel(r"$\sqrt{w} x$", fontsize=18)
 plt.ylabel("e")
 plt.grid()
+plt.tight_layout()
 
 plt.show()
