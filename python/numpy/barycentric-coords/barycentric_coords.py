@@ -23,6 +23,20 @@ def barycentric_coords(p, simplex):
     -------
     Array with shape (n,) or (m, n) holding the barycentric coordinates
     of each input point.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from barycentric_coords import barycentric_coords
+
+    >>> simplex = np.array([[1.0, 3.0], [5.0, 2.0], [2.0, -3]])
+    >>> pts = np.array([[2.0, 2.0], [1.0, 3.0], [4.0, -1.0], [2.5, 0]])
+    >>> w = barycentric_coords(pts, simplex)
+    >>> print(w)
+    [[ 0.65217391  0.2173913   0.13043478]
+     [ 1.          0.          0.        ]
+     [-0.17391304  0.60869565  0.56521739]
+     [ 0.2826087   0.26086957  0.45652174]]
+
     """
-    A = np.vstack((simplex.T, np.ones(simplex.shape[0])))
-    return np.linalg.solve(A, pad1(p).T).T
+    return np.linalg.solve(pad1(simplex).T, pad1(p).T).T
