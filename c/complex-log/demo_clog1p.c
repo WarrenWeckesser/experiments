@@ -22,10 +22,12 @@ int main(int argc, char *argv[])
 
     printf("Computing w = log1p(z):\n\n");
     for (int k = 0; k < sizeof(z_ref)/sizeof(z_ref[0]); ++k) {
-        printf("z   = %25.17e + %25.17e j\n", creal(z_ref[k][0]), cimag(z_ref[k][0]));
-        double complex w = clog1p(z_ref[k][0]);
-        printf("w   = %25.17e + %25.17e j\n", creal(w), cimag(w));
-        printf("ref = %25.17e + %25.17e j\n", creal(z_ref[k][1]), cimag(z_ref[k][1]));
+        printf("z   = %25.16e + %25.16e j\n", creal(z_ref[k][0]), cimag(z_ref[k][0]));
+        double complex w1 = clog1p(z_ref[k][0]);
+        double complex w2 = clog1p_doubledouble(z_ref[k][0]);
+        printf("w1  = %25.16e + %25.16e j\n", creal(w1), cimag(w1));
+        printf("w2  = %25.16e + %25.16e j\n", creal(w2), cimag(w2));
+        printf("ref = %25.16e + %25.16e j\n", creal(z_ref[k][1]), cimag(z_ref[k][1]));
         printf("\n");
     }
 
