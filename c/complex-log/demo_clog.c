@@ -111,15 +111,24 @@ my_clog(double complex z)
 
 int main(int argc, char *argv[])
 {
-    double complex z = CMPLX(0.5469835951544786, 0.8371433277465153);
+    double complex z[] = {
+        CMPLX(0.5469835951544786, 0.8371433277465153),
+        CMPLX(0.9689124217106447, -0.24740395925452294),
+        CMPLX(-0.9958083245390612, 0.0914646422324372)
+    };
 
-    printf("z          = %25.17e + %25.17ej\n", creal(z), cimag(z));
+    for (int k = 0; k < sizeof(z)/sizeof(z[0]); ++k) {
+        printf("z          = %25.17e + %25.17ej  cabs(z) = %25.17e\n",
+               creal(z[k]), cimag(z[k]), cabs(z[k]));
 
-    double complex w1 = clog(z);
-    printf("clog(z)    = %25.17e + %25.17ej\n", creal(w1), cimag(w1));
+        double complex w1 = clog(z[k]);
+        printf("clog(z)    = %25.17e + %25.17ej\n", creal(w1), cimag(w1));
 
-    double complex w2 = my_clog(z);
-    printf("my_clog(z) = %25.17e + %25.17ej\n", creal(w2), cimag(w2));
+        double complex w2 = my_clog(z[k]);
+        printf("my_clog(z) = %25.17e + %25.17ej\n", creal(w2), cimag(w2));
+
+        printf("\n");
+    }
 
     return 0;
 }
