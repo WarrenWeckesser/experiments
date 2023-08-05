@@ -4,8 +4,8 @@
 #include <math.h>
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// Double-double functions used by log1p to avoid loss of precision
-// when the complex input z is close to the unit circle centered at -1+0j.
+// Double-double functions used by my_clog to avoid loss of precision
+// when the complex input z is close to the unit circle centered at 0.
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 struct _doubledouble_t {
