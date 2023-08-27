@@ -6,7 +6,7 @@ _PI_2 = np.pi/2
 
 # _LANDAU_XSTAR was found numerically.  It is the mode of the "standard"
 # Landau distribution.
-_LANDAU_XSTAR = -0.22278296
+_LANDAU_XSTAR = -0.2227829812564085
 
 
 def landau_gen(mpv=None, scale=1):
@@ -14,7 +14,8 @@ def landau_gen(mpv=None, scale=1):
     Create a Landau distribution with its mode at mpv (the "most
     probable value") and with the given scale.  If mpv is not given,
     the default distribution is the one that is often called *the*
-    Landau distribution; it corresponds to mpv approximately -0.22278296.
+    Landau distribution; it corresponds to mpv approximately
+    -0.2227829812564085.
 
     The return value is a SciPy "frozen" distribution, with methods
     `pdf(x)`, `cdf(x)`,  etc.
