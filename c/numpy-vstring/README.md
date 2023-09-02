@@ -77,24 +77,30 @@ Then the final definition of the array structure is a C union:
         short_string_buffer direct_buffer;
     } npy_static_string;
 
-When the most significant bit of `size` is set, it means the struct
-is not a standard `size` & `buf` pair.  For SSO, we need to store the
-actual size of the string stored in the struct.  We can use the lowest
-4 bits of `size` for this, which can represent sizes up to 15.  That
-is sufficient for the case where `sizeof(size_t)` and `sizeof(char *)`
-are 8 (i.e. typical modern 64 bit platforms).  Up to 6 bits can be
-reserved for the SSO length, if we anticipate platforms where the sizes
-of those types are larger.
+For example, if `string` is an instance of `npy_static_string`, we can
+access the high byte of the `size` field as `string.direct_buffer.high_byte`,
+and if we know that `string` is using the `npy_static_string_t` part of
+the union, we can access `buf` as `string.vstring.buf`.
 
-(Note: for the platform-dependent layout described above to work, it
-is essential that `sizeof(size_t) == sizeof(char *)`.  If this is not
-the case on some platforms to be supported, some more design work is
-needed.)
+When the most significant bit of `size` is set, it means the struct is not
+a standard `size` and `buf` pair.  For SSO, we need to store the actual size
+of the string stored in the struct.  We can use the lowest 4 bits of the
+most significant byte of `size` for this, which can represent sizes up to 15.
+That is sufficient for the case where `sizeof(size_t)` and `sizeof(char *)`
+are 8 (i.e. typical modern 64 bit platforms).  Up to 6 bits can be reserved
+for the SSO length (leaving one more bit for the `not-a-string` flag
+described below), if we anticipate platforms where the sizes of those types
+are larger.
+
+(Note: for the platform-dependent layout described above to work, it is
+essential that `sizeof(size_t) == sizeof(char *)`.  If this is not the case
+on some platforms to be supported, some more design work is needed.)
 
 When the most significant bit of `size` is set, the second most significant
 bit is reserved as the `not-a-string` flag.  In other words, if the two
 most significant bits of `size` are `11`, the element represents `not-a-string`
-(analogous to `nan` for floats and `nat` for datetimes and timedeltas).
+(analogous to `nan` for floats and `nat` for datetimes and timedeltas, and
+also interpretable as a missing value).
 
 The use of a simple bit pattern for `not-a-string` is similar to how
 `np.nan` and `np.nat` work.  To expose this in the Python API, a Python
@@ -102,7 +108,10 @@ object (maybe called `nastring` or `notastring` or something similar)
 would allow users to created elements containing the `not-a-string`
 value, e.g.
 
-    arr = np.array(["abc", np.nastring, "defghi"], dtype=StringDType)
+    arr = np.array(["abc", np.nastring, "defghi"], dtype=StringDType())
+
+(With this flag stored in `npy_static_string`, there is no need for
+`StringDType` to have the `na_object` parameter.)
 
 
 Here's a summary of how the highest order byte of `size` is handled:
