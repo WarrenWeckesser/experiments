@@ -96,6 +96,9 @@ are larger.
 essential that `sizeof(size_t) == sizeof(char *)`.  If this is not the case
 on some platforms to be supported, some more design work is needed.)
 
+With this convention, each string is limited to a maximum of `2**(N-1) - 1`
+bytes, where `N` is the number of bits of `size_t`.
+
 When the most significant bit of `size` is set, the second most significant
 bit is reserved as the `not-a-string` flag.  In other words, if the two
 most significant bits of `size` are `11`, the element represents `not-a-string`
@@ -144,3 +147,59 @@ Benefits
 * `not-a-string` is indicated by setting two bits in the `size` field.  Like
   the `size == 0` case, the `buf` pointer is unused in this case.  No special
   object is required to be stored internally to represent the `not-a-string`.
+
+Demo program
+------------
+The Makefile can be used to generate two executables, `vstring_demo` and
+`vstring_demo_mock_be`.  This demo code is currently for little-endian
+platforms only.  I don't have access to a big-endian system, so I added
+some hacks to mock the big-endian storage format.
+
+The programs accept strings on the command line and put them into an array
+of `npy_static_string` instances.  The special input `"?"` tells the code
+to store a `not-a-string` instance.  The programs will dumpy the raw bytes
+of the array for inspection (i.e. to check little-endian or big-endian
+stored, and to verify SSO values), and then will print each string in the
+array, prefixed by the type of storage of the string.
+
+Here's an example (little-endian):
+
+    % ./vstring_demo "ABC" "?" "" "012345678901234" "0123456789012345" "Lorem ipsum dolor sit amet"
+    n = 6
+    raw dump:
+    41 42 43 00 00 00 00 00 00 00 00 00 00 00 00 83 
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 c0 
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+    30 31 32 33 34 35 36 37 38 39 30 31 32 33 34 8f 
+    36 79 32 6f 01 00 00 00 10 00 00 00 00 00 00 00 
+    47 79 32 6f 01 00 00 00 1a 00 00 00 00 00 00 00 
+    vstring array:
+    short string: "ABC"
+    notastring
+    standard:     ""
+    short string: "012345678901234"
+    standard:     "0123456789012345"
+    standard:     "Lorem ipsum dolor sit amet"
+
+Here's the same example, with `MOCK_BE` enabled, so the `size` fields
+are stored in big-endian format (even though I'm on a little-endian
+system).  The latter part of the output is the same, but the differences
+are visible in the raw dump of the bytes:
+
+    % ./vstring_demo_mock_be "ABC" "?" "" "012345678901234" "0123456789012345" "Lorem ipsum dolor sit amet"
+    MOCK_BE is enabled.
+    n = 6
+    raw dump:
+    83 41 42 43 00 00 00 00 00 00 00 00 00 00 00 00 
+    c0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+    8f 30 31 32 33 34 35 36 37 38 39 30 31 32 33 34 
+    00 00 00 00 00 00 00 10 2e 79 46 6d 01 00 00 00 
+    00 00 00 00 00 00 00 1a 3f 79 46 6d 01 00 00 00 
+    vstring array:
+    short string: "ABC"
+    notastring
+    standard:     ""
+    short string: "012345678901234"
+    standard:     "0123456789012345"
+    standard:     "Lorem ipsum dolor sit amet"
