@@ -38,7 +38,7 @@ typedef union _npy_static_string {
 // of npy_static_string_t.
 #define HIGH_BYTE_NOTSTANDARD  0x80
 #define HIGH_BYTE_NOTASTRING   0x40
-#define SHORT_STRING_SIZE_MASK 0x1F
+#define SHORT_STRING_SIZE_MASK 0x0F
 #define SHORT_STRING_MAX_SIZE  (sizeof(npy_static_string) - 1)
 
 void raw_dump(npy_static_string *string);
