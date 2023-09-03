@@ -105,18 +105,6 @@ most significant bits of `size` are `11`, the element represents `not-a-string`
 (analogous to `nan` for floats and `nat` for datetimes and timedeltas, and
 also interpretable as a missing value).
 
-The use of a simple bit pattern for `not-a-string` is similar to how
-`np.nan` and `np.nat` work.  To expose this in the Python API, a Python
-object (maybe called `nastring` or `notastring` or something similar)
-would allow users to created elements containing the `not-a-string`
-value, e.g.
-
-    arr = np.array(["abc", np.nastring, "defghi"], dtype=StringDType())
-
-(With this flag stored in `npy_static_string`, there is no need for
-`StringDType` to have the `na_object` parameter.)
-
-
 Here's a summary of how the highest order byte of `size` is handled:
 
     Highest order byte
