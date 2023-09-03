@@ -132,8 +132,8 @@ Here's a summary of how the highest order byte of `size` is handled:
                         5 or 6 bits of the highest byte.  Here I have suggested 4.
                         Ideally, we need enough bits to represent
                         `sizeof(npy_static_string) - 1`.)
-    11xxxxxx            "Not-a-string" (i.e. like np.nan or np.nat, but for
-                        strings).
+    11xxxxxx            "Not-a-string"/missing value (i.e. like np.nan or np.nat,
+                        but for strings).
 
 
 Benefits
