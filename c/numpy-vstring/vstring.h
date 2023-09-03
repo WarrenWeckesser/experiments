@@ -4,6 +4,10 @@
 
 #ifndef MOCK_BE
 
+//
+// Little-endian memory layout.
+//
+
 typedef struct _npy_static_string_t {
     char *buf;
     size_t size;
@@ -15,6 +19,10 @@ typedef struct _short_string_buffer {
 } short_string_buffer;
 
 #else  // MOCK_BE
+
+//
+// Big-endian memory layout.
+//
 
 typedef struct _npy_static_string_t {
     size_t size;
