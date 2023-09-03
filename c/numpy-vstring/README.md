@@ -140,13 +140,12 @@ Benefits
 --------
 
 * `size == 0` *always* means a string of length 0; `buf` is ignored in that
-  case (and of course C code must never dereference `buf` that case, because
+  case (and of course C code must never dereference `buf` in that case, because
   there is no value to get from memory).  If the memory for an array of
   `StringDType` is created with `calloc()` (or the equivalent from the Python
   C API), it will automatically result in an array of empty strings.
-* `not-a-string` is indicated by setting two bits in the `size` field.  Like
-  the `size == 0` case, the `buf` pointer is unused in this case.  No special
-  object is required to be stored internally to represent the `not-a-string`.
+* `not-a-string` is indicated by setting the high two bits in the `size` field.
+  Like the `size == 0` case, the `buf` pointer is unused in this case.
 
 Demo program
 ------------
