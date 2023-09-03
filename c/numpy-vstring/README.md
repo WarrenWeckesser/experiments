@@ -1,7 +1,7 @@
 This directory contains some C code that is proof-of-concept for a
 variation of the variable-length string type proposed in NEP 55.
 This variation/refinement of the proposal in NEP 55 includes the implementation
-of small string optimization and a simpler definition for the `not-a-string`
+of small string optimization and a different definition for the `not-a-string`
 (a.k.a. missing value) element.
 
 The simplest form of the data stored in the array is this `npy_static_string_t`
