@@ -2,7 +2,9 @@ This directory contains some C code that is proof-of-concept for a
 variation of the variable-length string type proposed in NEP 55.
 This variation/refinement of the proposal in NEP 55 includes the implementation
 of small string optimization and a different definition for the `not-a-string`
-(a.k.a. missing value) element.
+(a.k.a. missing value) element.  This is not an implementation of the NumPy
+dtype.  The code demonstrates just the memory layout and conventions that could
+be used in the `npy_static_string` struct.
 
 The simplest form of the data stored in the array is this `npy_static_string_t`
 struct (note: I have changed the name of the `size_t` field from `len`--as used
