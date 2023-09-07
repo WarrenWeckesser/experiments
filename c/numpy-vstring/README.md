@@ -115,7 +115,7 @@ Here's a summary of how the highest order byte of `size` is handled:
                         string).
     10xxbbbb            Short string direct storage; the bits marked `bbbb` hold
                         the length of the short string.  The remaining bytes of
-                        `len` and `buf` are used as the storage buffer for the
+                        `size` and `buf` are used as the storage buffer for the
                         string. (Design choice: the short string size could use 4,
                         5 or 6 bits of the highest byte.  Here I have suggested 4.
                         Ideally, we need enough bits to represent
