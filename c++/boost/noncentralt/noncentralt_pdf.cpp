@@ -1,7 +1,3 @@
-
-// Compile with
-//   g++ -std=c++1z noncentralt_pdf.cpp -o noncentralt_pdf
-
 #include <iostream>
 #include <boost/math/distributions/non_central_t.hpp>
 

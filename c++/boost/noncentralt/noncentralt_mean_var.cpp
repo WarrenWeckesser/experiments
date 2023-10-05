@@ -1,7 +1,3 @@
-
-// Compile with
-//   g++ -std=c++1z noncentralt_mean_var.cpp -o noncentralt_mean_var
-
 #include <iostream>
 #include <boost/math/distributions/non_central_t.hpp>
 
