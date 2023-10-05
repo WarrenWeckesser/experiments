@@ -9,22 +9,23 @@ using namespace std;
 using boost::math::non_central_t;
 
 
-int main()
+int main(int argc, char *argv[])
 {
-    double df = 8.0;
-    double nc = 8.5;
+    if (argc != 4) {
+        cout << "use: " << argv[0] << " x df nc\n";
+        return -1;
+    }
+
+    double x = stod(argv[1]);
+    double df = stod(argv[2]);
+    double nc = stod(argv[3]);
+
+    cout << "x  = " << x << endl;
     cout << "df = " << df << endl;
     cout << "nc = " << nc << endl;
-    auto ncf = non_central_t(df, nc);
-    for (double x = -10.0; x < 5.0; x += 1.0) {
-        double p = pdf(ncf, x);
-        cout << fixed << setw(8) << setprecision(2) << x << " ";
-        cout << scientific << setw(23) << setprecision(16) << p << " ";
-        if (p == 0) {
-            cout << "!!!";
-        }
-        cout << endl;
-    }
+    auto nct = non_central_t(df, nc);
+    double p = pdf(nct, x);
+    cout << "p  = " << scientific << setw(23) << setprecision(16) << p << endl;
 
     return 0;
 }
