@@ -6,8 +6,11 @@
 #include <boost/math/distributions/non_central_t.hpp>
 
 using namespace std;
-using boost::math::non_central_t;
+using namespace boost::math::policies;
+using boost::math::non_central_t_distribution;
 
+typedef policy<promote_double<false>> no_double_promotion;
+typedef policy<promote_double<true>> double_promotion;
 
 int main(int argc, char *argv[])
 {
@@ -23,9 +26,15 @@ int main(int argc, char *argv[])
     cout << "x  = " << x << endl;
     cout << "df = " << df << endl;
     cout << "nc = " << nc << endl;
-    auto nct = non_central_t(df, nc);
-    double p = pdf(nct, x);
-    cout << "p  = " << scientific << setw(23) << setprecision(16) << p << endl;
+    auto nct1 = non_central_t_distribution<double, no_double_promotion>(df, nc);
+    double p1 = pdf(nct1, x);
+    cout << "p  = " << scientific << setw(23) << setprecision(16) << p1
+         << " (with no_double_promotion policy)" << endl;
+
+    auto nct2 = non_central_t_distribution<double, double_promotion>(df, nc);
+    double p2 = pdf(nct2, x);
+    cout << "p  = " << scientific << setw(23) << setprecision(16) << p2
+         << " (with double_promotion policy)" << endl;
 
     return 0;
 }
