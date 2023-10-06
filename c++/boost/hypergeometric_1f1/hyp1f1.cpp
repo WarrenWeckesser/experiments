@@ -19,11 +19,11 @@ int main(int argc, char *argv[])
     double x = std::stod(argv[3]);
 
     double y1 = hypergeometric_1F1(a, b, x);
-    std::cout << std::scientific << std::setw(25)
+    std::cout << "1F1 = " << std::scientific << std::setw(25)
         << std::setprecision(17) << y1 << std::endl;
 
     double y2 = hypergeometric_pFq({a}, {b}, x);
-    std::cout << std::scientific << std::setw(25)
+    std::cout << "pFq = " << std::scientific << std::setw(25)
         << std::setprecision(17) << y2 << std::endl;
 
     return 0;
