@@ -1,6 +1,6 @@
 
 from mpmath import mp
-from mpsci.distributions import lognormal, Initial
+from mpsci.distributions import lognormal
 import matplotlib.pyplot as plt
 
 

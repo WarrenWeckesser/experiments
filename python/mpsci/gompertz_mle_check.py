@@ -1,6 +1,6 @@
 
 from mpmath import mp
-from mpsci.distributions import gompertz, Initial
+from mpsci.distributions import gompertz
 import matplotlib.pyplot as plt
 
 
