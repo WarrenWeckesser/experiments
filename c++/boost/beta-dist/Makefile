@@ -1,5 +1,5 @@
 
-EXECUTABLES = beta_cdf beta_mean beta_mean_var beta_pdf beta_pdf_cli beta_quantile
+EXECUTABLES = beta_cdf beta_mean beta_mean_var beta_pdf beta_pdf_cli beta_quantile beta_quantile_literal
 
 all: $(EXECUTABLES)
 
@@ -20,6 +20,9 @@ beta_pdf_cli: beta_pdf_cli.cpp
 
 beta_quantile: beta_quantile.cpp
 	g++ -std=c++14 $(CPPFLAGS) beta_quantile.cpp -o beta_quantile
+
+beta_quantile_literal: beta_quantile_literal.cpp
+	g++ -std=c++14 $(CPPFLAGS) beta_quantile_literal.cpp -o beta_quantile_literal
 
 clean:
 	rm -rf $(EXECUTABLES)
