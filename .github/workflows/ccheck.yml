@@ -1,3 +1,7 @@
+# This github action workflow allows c/powl/main.c to be compiled
+# and run on the 'macos-latest' platform in github actions.  Use the
+# github "Actions" web interface to manually trigger the action.
+
 name: C Check
 
 on: workflow_dispatch
