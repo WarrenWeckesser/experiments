@@ -5,9 +5,9 @@ Use cvxopt to solve the LP:
     s.t.     x >= 0
              y >= 0
              z >= 0
-             x +   y + z  = 1
-                   z     <= 0.75
+                       z <= 0.75
              x + 3*y     >= 1
+             x +   y + z  = 1
 
 """
 

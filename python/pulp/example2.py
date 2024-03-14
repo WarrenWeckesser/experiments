@@ -5,9 +5,9 @@ Use pulp to solve the LP:
     s.t.     x >= 0
              y >= 0
              z >= 0
-             x +   y + z  = 1
-                   z     <= 0.75
+                       z <= 0.75
              x + 3*y     >= 1
+             x +   y + z  = 1
 
 """
 
@@ -20,9 +20,9 @@ z = pulp.LpVariable('z', lowBound=0)
 
 prob = pulp.LpProblem('example2', pulp.LpMinimize)
 prob += x + 2*y - 0.5*z   # Objective
-prob += x + y + z == 1.0  # Equality constraint
 prob += z <= 0.75         # Inequality constraint
 prob += x + 3.0*y >= 1.0  # Inequality constraint
+prob += x + y + z == 1.0  # Equality constraint
 
 status = prob.solve()
 
