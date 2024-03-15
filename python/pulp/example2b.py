@@ -53,7 +53,7 @@ prob += pulp.lpDot(c, vars)
 for row, bound in zip(G, h):
     prob += pulp.lpDot(row, vars) <= bound
 
-# Define the equality constrains.
+# Define the equality constraints.
 for row, value in zip(A, b):
     prob += pulp.lpDot(row, vars) == value
 
