@@ -18,17 +18,20 @@ from cvxopt import matrix, solvers
 # The variables names are chosen to match the names used
 # in the docstring of cvxopt.solvers.lp.
 
-# Object function coefficients
+# Objective function coefficients
 c = matrix([1.0, 2.0, -0.5])
 
+# Inequality constraint coefficients
 G = matrix([[-1.0,  0.0,  0.0, 0.0, -1.0],
             [ 0.0, -1.0,  0.0, 0.0, -3.0],
             [ 0.0,  0.0, -1.0, 1.0,  0.0]])
 h = matrix([0.0, 0.0, 0.0, 0.75, -1.0])
 
+# Equality constraint coefficients
 A = matrix([[1.0], [1.0], [1.0]])
 b = matrix([1.0])
 
+# Just experimenting; these options aren't necessary for this problem.
 solvers.options['maxiters'] = 500
 solvers.options['abstol'] = 1e-14
 solvers.options['reltol'] = 1e-10
