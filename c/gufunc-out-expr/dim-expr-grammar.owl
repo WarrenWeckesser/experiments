@@ -4,6 +4,7 @@ expr =
    [ '(' expr ')' ] : parens
    identifier : variable
    integer : int
+   'abs' [ '(' expr@arg1 ')' ] : abs
    'min' [ '(' expr@arg1 ',' expr@arg2 ')' ]   : min
    'max' [ '(' expr@arg1 ',' expr@arg2 ')' ]   : max
  .operators infix left

@@ -51,4 +51,19 @@ m = 5
 n = 12
 evaluate_instructions returned 6
 
+$ ./main "m n" "abs(m - n) - 1"
+Instructions
+opcode  arg   symbolic opcodes and args
+   12     0   PUSH VARIABLE m
+   12     1   PUSH VARIABLE n
+   11         SUBTRACT
+    1         ABS
+    3     1   PUSH CONSTANT 1
+   11         SUBTRACT
+
+Demonstrate evaluation...
+m = 5
+n = 12
+evaluate_instructions returned 6
+
 ```

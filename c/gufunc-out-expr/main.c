@@ -12,6 +12,7 @@
 static char *opcode_names[] = {
     [0]                = "END",
     [PARSED_INT]       = "PUSH CONSTANT",
+    [PARSED_ABS]       = "ABS",
     [PARSED_MAX]       = "MAXIMUM",
     [PARSED_MIN]       = "MINIMUM",
     [PARSED_ADD]       = "ADD" ,
@@ -28,7 +29,7 @@ static char *opcode_names[] = {
 
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
-
+#define ABS(X) (((X) < 0) ? -(X) : (X))
 
 //
 // The return value of get_names must be freed.
@@ -153,6 +154,17 @@ create_instructions_recursive(instruction *instructions, int *num_instructions,
             parsed_int = parsed_integer_get(expr.integer);
             instructions[*num_instructions].opcode = PARSED_INT;
             instructions[*num_instructions].argument = parsed_int.integer;
+            ++*num_instructions;
+            break;
+
+        case PARSED_ABS:
+            status = create_instructions_recursive(instructions, num_instructions,
+                                                   parsed_expr_get(expr.arg1),
+                                                   names, num_names, input);
+            if (status < 0) {
+                return status;
+            }
+            instructions[*num_instructions].opcode = expr.type;
             ++*num_instructions;
             break;
 
@@ -289,6 +301,7 @@ print_instructions(instruction *instructions, char **names, int num_names)
         }
         switch (opcode) {
         case 0:
+        case PARSED_ABS:
         case PARSED_MAX:
         case PARSED_MIN:
         case PARSED_ADD:
@@ -324,6 +337,10 @@ print_stack_recursive(struct parsed_expr expr,
             printf("%s ", opcode_names[expr.type]);
             print_range(input, expr.range.start, expr.range.end);
             printf("\n");
+            break;
+        case PARSED_ABS:
+            print_stack_recursive(parsed_expr_get(expr.arg1), names, num_names, input);
+            printf("%s\n", opcode_names[expr.type]);
             break;
         case PARSED_MAX:
         case PARSED_MIN:
@@ -562,6 +579,15 @@ evaluate_instructions(instruction *instructions, int64_t *vars, int *error)
                 break;
             }
             stack[stack_counter-1] = -stack[stack_counter-1];
+            break;
+        case PARSED_ABS:
+            if (stack[stack_counter-1] == INT64_MIN) {
+                // Can't compute absolute value of INT64_MIN;
+                // flag it as an overflow error.
+                *error = -3;
+                break;
+            }
+            stack[stack_counter-1] = ABS(stack[stack_counter-1]);
             break;
         case PARSED_VARIABLE:
             stack[stack_counter] = vars[instructions[k].argument];
