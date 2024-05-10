@@ -4,4 +4,4 @@ not the most efficient method for computing isotonic regression.
 
 The script produces the following plot:
 
-![](https://github.com/WarrenWeckesser/experiments/blob/master/python/scipy/isotonic-regression/demo.svg)
+![](https://github.com/WarrenWeckesser/experiments/blob/main/python/scipy/isotonic-regression/demo.svg)

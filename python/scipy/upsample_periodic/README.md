@@ -9,4 +9,4 @@ The sample spacing Δt = 0.5; i.e. the sampling frequency is 2 samples per time
 unit.  (Note that the data set does not repeat the redundant sample at t=3,
 nor do the graphs in the plot below.)
 
-![](https://github.com/WarrenWeckesser/experiments/blob/master/python/scipy/upsample_periodic/upsample_periodic_example.svg)
+![](https://github.com/WarrenWeckesser/experiments/blob/main/python/scipy/upsample_periodic/upsample_periodic_example.svg)

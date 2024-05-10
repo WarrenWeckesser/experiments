@@ -11,4 +11,4 @@ $ gnuplot -e 'set term svg; set output "rossler.svg"; plot "rossler.dat" using 3
 
 The Gnuplot command generates this plot:
 
-![Rossler plot](https://github.com/WarrenWeckesser/experiments/blob/master/java/apache-commons-math/rossler-odes/rossler.svg)
+![Rossler plot](https://github.com/WarrenWeckesser/experiments/blob/main/java/apache-commons-math/rossler-odes/rossler.svg)
