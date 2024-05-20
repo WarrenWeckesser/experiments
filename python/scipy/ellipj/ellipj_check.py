@@ -1,3 +1,8 @@
+#
+# See
+#    https://github.com/scipy/scipy/issues/8480
+#    https://github.com/scipy/scipy/pull/8548
+#
 
 import mpmath
 import numpy as np
@@ -10,6 +15,7 @@ def F(phi, k):
     return quad(lambda t: 1 / np.sqrt((1 - k*np.sin(t))*(1 + k*np.sin(t))),
                 0, phi,
                 limit=250, epsabs=5e-15)[0]
+
 
 def F1m(phi, eps):
     return quad(lambda t: 1 / np.sqrt(np.cos(t)**2 +
