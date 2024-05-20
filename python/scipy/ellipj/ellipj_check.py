@@ -7,9 +7,9 @@ from scipy.optimize import fsolve
 
 
 def F(phi, k):
-    return quad(lambda t: 1 / np.sqrt(1 - k**2*np.sin(t)**2), 0, phi,
+    return quad(lambda t: 1 / np.sqrt((1 - k*np.sin(t))*(1 + k*np.sin(t))),
+                0, phi,
                 limit=250, epsabs=5e-15)[0]
-
 
 def F1m(phi, eps):
     return quad(lambda t: 1 / np.sqrt(np.cos(t)**2 +
@@ -21,13 +21,13 @@ def F1m(phi, eps):
 def ellipj_quad(u, k):
     phi = fsolve(lambda t: F(t, k) - u, 1.0, xtol=1e-12).item()
     sinphi = np.sin(phi)
-    return sinphi, np.cos(phi), np.sqrt(1 - k**2*sinphi**2), phi
+    return sinphi, np.cos(phi), np.sqrt((1 - k*sinphi)*(1 + k*sinphi)), phi
 
 
 def ellipj1m_quad(u, eps):
     phi = fsolve(lambda t: F1m(t, eps) - u, 1.0, xtol=1e-12).item()
     sinphi = np.sin(phi)
-    return sinphi, np.cos(phi), np.sqrt(1 - k**2*sinphi**2), phi
+    return sinphi, np.cos(phi), np.sqrt((1 - k*sinphi)*(1 + k*sinphi)), phi
 
 
 k = 0.99999999997
