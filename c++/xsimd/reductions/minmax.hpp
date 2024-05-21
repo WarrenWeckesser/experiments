@@ -2,10 +2,6 @@
 #include "xsimd/xsimd.hpp"
 
 
-// Note: this code uses xsimd::reduce_min and xsimd::reduce_max,
-// which were added to xsimd on 27 July 2022.
-// See https://github.com/xtensor-stack/xsimd/pull/794
-
 namespace minmax {
 
 template<typename T>
