@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <immintrin.h>
 
 #include "cabs2.h"
 
@@ -25,13 +26,17 @@ int main(int argc, char *argv[])
         m -= 1;
     }
     size_t n = m / 2;
-    float *mem = malloc((3*n) * sizeof(float));
-    if (mem == NULL) {
-        fprintf(stderr, "malloc failed\n");
+    float *x = aligned_alloc(sizeof(__m256), (2*n) * sizeof(float));
+    if (x == NULL) {
+        fprintf(stderr, "aligned_alloc failed\n");
         exit(-1);
     }
-    float *x = mem;
-    float *out = mem + m;
+    float *out = aligned_alloc(sizeof(__m256), n * sizeof(float));
+    if (out == NULL) {
+        fprintf(stderr, "aligned_alloc failed\n");
+        free(x);
+        exit(-1);
+    }
 
     for (size_t i = 0; i < m; ++i) {
         x[i] = strtof(argv[i+1], NULL);
@@ -52,6 +57,12 @@ int main(int argc, char *argv[])
 
     cabs2f_avx(n, x, out);
     print_float_array(n, out);
+
+    cabs2f_avx_v2(n, x, out);
+    print_float_array(n, out);
+
+    free(out);
+    free(x);
 
     return 0;
 }

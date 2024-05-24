@@ -1,6 +1,3 @@
-// XXX No one should use this code as an example of
-//     *good* SIMD programming!
-
 #include <math.h>
 #include <immintrin.h>
 #include <stdio.h>
@@ -55,15 +52,10 @@ int cabs2f_sse(size_t n, const float *z, float *out)
     size_t k = 0;
     for (; k < m - r; k += 4) {
         __m128 z4 = _mm_loadu_ps(z + k);
-        //print_m128("z4:  ", z4);
         __m128 s1 = _mm_mul_ps(z4, z4);
-        //print_m128("s1:  ", s1);
         __m128 s2 = _mm_movehdup_ps(s1);
-        //print_m128("s2:  ", s2);
         __m128 ss = _mm_add_ps(s1, s2);
-        //print_m128("ss:  ", ss);
         __m128 as2 = _mm_shuffle_ps(ss, ss, _MM_SHUFFLE(1,3,2,0));
-        //print_m128("as2: ", as2);
         _mm_store_sd((double *) (out+k/2), _mm_castps_pd(as2));
     }
     if (r > 0) {
@@ -81,17 +73,38 @@ int cabs2f_avx(size_t n, const float *z, float *out)
     size_t k = 0;
     for (; k < n - r; k += 8) {
         __m256 z8 = _mm256_loadu_ps(z + k);
-        //print_m256("z8: ", z8);
         __m256 s1 = _mm256_mul_ps(z8, z8);
-        //print_m256("s1: ", s1);
         // XXX FIXME: Replace 177 with the appropriate macro.
         __m256 s2 = _mm256_permute_ps(s1, 177);
-        //print_m256("s2: ", s2);
         __m256 ss = _mm256_add_ps(s1, s2);
-        //print_m256("ss: ", ss);
         __m256 as = _mm256_permutevar8x32_ps(ss, idx);
-        //print_m256("as: ", as);
         _mm256_maskstore_ps(out + k/2, storemask, as);
+    }
+    cabs2f(r, z + k, out + k/2);
+    return 0;
+}
+
+int cabs2f_avx_v2(size_t n, const float *z, float *out)
+{
+    __m256i idx = _mm256_set_epi32(6, 7, 2, 3, 4, 5, 0, 1);
+
+    size_t r = n % 8;
+    size_t k;
+    for (k = 0; k < n - r; k += 16) {
+        __m256 z1 = _mm256_loadu_ps(z + k);
+        __m256 z2 = _mm256_loadu_ps(z + k + 8);
+
+        __m256 s1 = _mm256_mul_ps(z1, z1);
+        __m256 s2 = _mm256_mul_ps(z2, z2);
+
+        __m256 xx_mix = _mm256_shuffle_ps(s1, s2, 119);
+        __m256 yy_mix = _mm256_shuffle_ps(s1, s2, 34);
+
+        __m256 ss_mix = _mm256_add_ps(xx_mix, yy_mix);
+
+        __m256 ss = _mm256_permutevar8x32_ps(ss_mix, idx);
+
+        _mm256_store_ps(out + k/2, ss);
     }
     cabs2f(r, z + k, out + k/2);
     return 0;
