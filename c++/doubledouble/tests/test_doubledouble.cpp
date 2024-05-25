@@ -1,7 +1,10 @@
 
 #include <cstdio>
+#include <vector>
 #include "checkit.h"
 #include "doubledouble.h"
+
+using namespace doubledouble;
 
 //
 // Some of the equality tests of the lower parts of the results might be
@@ -142,6 +145,22 @@ int main(int argc, char *argv[])
     } else {
         check_equal_fp(test, y.lower, 0.0, "Test of -1.2345e-6_dd (lower)");
     }
+
+    double data1[]{1.0, 3.0, 99.0};
+    double s1 = dsum(3, data1);
+    check_equal_fp(test, s1, 103.0, "Test dsum([1.0, 2.0, 99.0])");
+
+    double data2[]{1.0, 2.0, 2e-17, -2.0, 10.0, -1.0, -10.0};
+    double s2 = dsum(7, data2);
+    check_equal_fp(test, s2, 2e-17, "Test of dsum()");
+
+    std::vector<double> data3{1.0, 2.0, 2e-17, -2.0, 10.0, -1.0, -10.0};
+    double s3 = dsum(data3);
+    check_equal_fp(test, s3, 2e-17, "Test of dsum(vector)");
+
+    std::array<double, 7> data4{1.0, 2.0, 2e-17, -2.0, 10.0, -1.0, -10.0};
+    double s4 = dsum(data4);
+    check_equal_fp(test, s4, 2e-17, "Test of dsum(vector)");
 
     return test.print_summary("Summary: ");
 }

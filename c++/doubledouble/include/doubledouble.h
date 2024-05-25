@@ -49,7 +49,9 @@
 #include <cfloat>
 #include <cstdint>
 #include <array>
+#include <vector>
 
+namespace doubledouble {
 
 class DoubleDouble
 {
@@ -430,5 +432,30 @@ inline constexpr DoubleDouble operator "" _dd (long double x)
     return DoubleDouble(x, x - double(x));
 }
 
+//
+// dsum() sums an array of doubles. DoubleDouble is used internally.
+//
+
+double dsum(size_t n, const double *x)
+{
+    DoubleDouble sum{0.0, 0.0};
+    for (size_t i = 0; i < n; ++i) {
+        sum = sum + x[i];
+    }
+    return sum.upper;
+}
+
+double dsum(const std::vector<double>& x)
+{
+    return dsum(x.size(), &x[0]);
+}
+
+template <std::size_t N>
+double dsum(const std::array<double, N>& x)
+{
+    return dsum(x.size(), &x[0]);
+}
+
+} // namespace
 
 #endif

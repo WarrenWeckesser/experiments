@@ -2,6 +2,7 @@
 #include <cstdio>
 #include "doubledouble.h"
 
+using namespace doubledouble;
 
 void
 print_doubledouble(const char *prefix, const DoubleDouble& x)
