@@ -136,7 +136,12 @@ int main(int argc, char *argv[])
 
     y = -1.2345e-6_dd;
     check_equal_fp(test, y.upper, -1.2345e-6, "Test of -1.2345e-6_dd (upper)");
-    check_equal_fp(test, y.lower, -3.412120026781239e-24, "Test of -1.2345e-6_dd (lower)");
+    if (sizeof(long double) > sizeof(double)) {
+        // XXX The value of y.lower probably depends on the compiler and platform.
+        check_equal_fp(test, y.lower, -3.412120026781239e-24, "Test of -1.2345e-6_dd (lower)");
+    } else {
+        check_equal_fp(test, y.lower, 0.0, "Test of -1.2345e-6_dd (lower)");
+    }
 
     return test.print_summary("Summary: ");
 }
