@@ -1,13 +1,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <immintrin.h>
 
 #include "cabs2.h"
 
 
-void print_float_array(size_t n, float *a)
+void print_float_array(char *label, size_t n, float *a)
 {
+    printf("%-20s", label);
     for (size_t k = 0; k < n; ++k) {
         printf("%9.3f ", a[k]);
     }
@@ -46,20 +48,24 @@ int main(int argc, char *argv[])
     }
 
     cabs2f(n, x, out);
-    print_float_array(n, out);
+    print_float_array("cabs2f:", n, out);
 
     for (size_t k = 0; k < n; ++k) {
         out[k] = 0.0f;
     }
 
     cabs2f_sse(n, x, out);
-    print_float_array(n, out);
+    print_float_array("cabs2f_sse:", n, out);
+
+    memset(out, 0, n*sizeof(float));
+
+    cabs2f_sse_v2(n, x, out);
+    print_float_array("cabs2f_sse_v2:", n, out);
+
+    memset(out, 0, n*sizeof(float));
 
     cabs2f_avx(n, x, out);
-    print_float_array(n, out);
-
-    cabs2f_avx_v2(n, x, out);
-    print_float_array(n, out);
+    print_float_array("cabs2f_avx:", n, out);
 
     free(out);
     free(x);

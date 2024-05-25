@@ -2,11 +2,22 @@
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include <immintrin.h>
 
 #include "cabs2.h"
 
+void *aligned_calloc(size_t align, size_t n, size_t size)
+{
+    void *out = aligned_alloc(align, n*size);
+    if (out == NULL) {
+        fprintf(stderr, "aligned_calloc failed.\n");
+        exit(-1);
+    }
+    memset(out, 0, n*sizeof(float));
+    return out;
+}
 
 void compare_arrays(char *name, size_t n, float* out1, float *out2, float *x)
 {
@@ -57,39 +68,10 @@ int main(int argc, char *argv[])
         x[i] = random() / (float)((1L << 31) - 1);
     }
 
-    float *out1 = aligned_alloc(sizeof(__m256), n*sizeof(float));
-    if (out1 == NULL) {
-        fprintf(stderr, "aligned_alloc failed.\n");
-        free(x);
-        exit(-1);
-    }
-
-    float *out2 = aligned_alloc(sizeof(__m256), n*sizeof(float));
-    if (out2 == NULL) {
-        fprintf(stderr, "aligned_alloc failed.\n");
-        free(x);
-        free(out1);
-        exit(-1);
-    }
-
-    float *out3 = aligned_alloc(sizeof(__m256), n*sizeof(float));
-    if (out3 == NULL) {
-        fprintf(stderr, "aligned_alloc failed.\n");
-        free(x);
-        free(out1);
-        free(out2);
-        exit(-1);
-    }
-
-    float *out4 = aligned_alloc(sizeof(__m256), n*sizeof(float));
-    if (out4 == NULL) {
-        fprintf(stderr, "aligned_alloc failed.\n");
-        free(x);
-        free(out1);
-        free(out2);
-        free(out3);
-        exit(-1);
-    }
+    float *out1 = aligned_calloc(sizeof(__m256), n, sizeof(float));
+    float *out2 = aligned_calloc(sizeof(__m256), n, sizeof(float));
+    float *out3 = aligned_calloc(sizeof(__m256), n, sizeof(float));
+    float *out4 = aligned_calloc(sizeof(__m256), n, sizeof(float));
 
     start = clock();
     cabs2f(n, x, out1);
@@ -104,21 +86,21 @@ int main(int argc, char *argv[])
     printf("cabs2f_sse:      %10.3f msec\n", msec);
 
     start = clock();
-    cabs2f_avx(n, x, out3);
+    cabs2f_sse(n, x, out3);
+    diff = clock() - start;
+    msec = 1000.0 * diff / CLOCKS_PER_SEC;
+    printf("cabs2f_sse_v2:   %10.3f msec\n", msec);
+
+    start = clock();
+    cabs2f_avx(n, x, out4);
     diff = clock() - start;
     msec = 1000.0 * diff / CLOCKS_PER_SEC;
     printf("cabs2f_avx:      %10.3f msec\n", msec);
 
-    start = clock();
-    cabs2f_avx_v2(n, x, out4);
-    diff = clock() - start;
-    msec = 1000.0 * diff / CLOCKS_PER_SEC;
-    printf("cabs2f_avx_v2:   %10.3f msec\n", msec);
-
     printf("\n");
     compare_arrays("cabs2f_sse", n, out1, out2, x);
-    compare_arrays("cabs2f_avx", n, out1, out3, x);
-    compare_arrays("cabs2f_avx_v2", n, out1, out4, x);
+    compare_arrays("cabs2f_sse_v2", n, out1, out3, x);
+    compare_arrays("cabs2f_avx", n, out1, out4, x);
 
     free(out1);
     free(out2);
