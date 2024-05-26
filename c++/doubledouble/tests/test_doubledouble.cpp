@@ -29,6 +29,36 @@ int main(int argc, char *argv[])
     check_equal_fp(test, x.upper, 10.0, "Simple test of constructor: upper");
     check_equal_fp(test, x.lower, 3e-18, "Simple test of constructor: lower");
 
+    auto z = DoubleDouble(1.0, 1e-18) + DoubleDouble(1.5, 5e-19);
+    check_equal_fp(test, z.upper, 2.5, "(1, 1e-18) + (1.5, 5e-19) (upper)");
+    check_close_fp(test, z.lower, 1.5e-18, 5e-16, "(1, 1e-18) + (1.5, 5e-19) (lower)");
+
+    z += 3.5;
+    check_equal_fp(test, z.upper, 6.0, "Check z += 3.5 (upper)");
+    check_close_fp(test, z.lower, 1.5e-18, 5e-16, "Check z += 3.5 (lower)");
+
+    z += DoubleDouble(3.0, 1e-18);
+    check_equal_fp(test, z.upper, 9.0, "Check z += (3.5, 1e-18) (upper)");
+    check_close_fp(test, z.lower, 2.5e-18, 5e-16, "Check z += (3.5, 1e-18) (lower)");
+
+    z *= -3.0;
+    check_equal_fp(test, z.upper, -27.0, "Check z *= -3.0 (upper)");
+    check_close_fp(test, z.lower, -7.5e-18, 5e-16, "Check z *= -3.0 (lower)");
+
+    z *= DoubleDouble(-2.0, 2e-18);
+    check_equal_fp(test, z.upper, 54.0, "Check z *= (-2.0, 2e-18) (upper)");
+    check_close_fp(test, z.lower, -27*2e-18 + -7.5e-18*-2.0, 5e-16, "Check z *= (-2.0, 2e-18) (lower)");
+
+    z = DoubleDouble(5.0, 4e-21);
+    z /= 5.0;
+    check_equal_fp(test, z.upper, 1.0, "Check z /= 5.0 (upper)");
+    check_close_fp(test, z.lower, 8e-22, 5e-16, "Check z /= 5.0 (lower)");
+
+    z = DoubleDouble(5.0, 4e-21);
+    z /= DoubleDouble(5.0, 1e-20);
+    check_equal_fp(test, z.upper, 1.0, "Check z /= (5.0, 1e-20) (upper)");
+    check_close_fp(test, z.lower, -1.2e-21, 5e-16, "Check z /= (5.0, 1e-20) (lower)");
+
     auto y = 1.0 / three;
     check_equal_fp(test, y.upper, 0.3333333333333333, "1/3 (upper)");
     check_equal_fp(test, y.lower, 1.850371707708594e-17, "1/3 (lower)");

@@ -81,6 +81,15 @@ public:
     DoubleDouble operator/(double x) const;
     DoubleDouble operator/(const DoubleDouble& x) const;
 
+    DoubleDouble& operator+=(double x);
+    DoubleDouble& operator+=(const DoubleDouble& x);
+    DoubleDouble& operator-=(double x);
+    DoubleDouble& operator-=(const DoubleDouble& x);
+    DoubleDouble& operator*=(double x);
+    DoubleDouble& operator*=(const DoubleDouble& x);
+    DoubleDouble& operator/=(double x);
+    DoubleDouble& operator/=(const DoubleDouble& x);
+
     bool operator==(const DoubleDouble& x) const;
     bool operator<(double x) const;
     bool operator<(const DoubleDouble& x) const;
@@ -100,27 +109,27 @@ public:
 //
 
 // sqrt(2)
-const DoubleDouble dd_sqrt2{1.4142135623730951, -9.667293313452913e-17};
+inline const DoubleDouble dd_sqrt2{1.4142135623730951, -9.667293313452913e-17};
 // sqrt(1/2)
-const DoubleDouble dd_sqrt1_2{0.7071067811865476, -4.833646656726457e-17};
+inline const DoubleDouble dd_sqrt1_2{0.7071067811865476, -4.833646656726457e-17};
 // e
-const DoubleDouble dd_e{2.7182818284590452, 1.44564689172925013472e-16};
+inline const DoubleDouble dd_e{2.7182818284590452, 1.44564689172925013472e-16};
 // ln(2)
-const DoubleDouble dd_ln2{0.6931471805599453, 2.3190468138462996e-17};
+inline const DoubleDouble dd_ln2{0.6931471805599453, 2.3190468138462996e-17};
 // pi
-const DoubleDouble dd_pi{3.1415926535897932, 1.22464679914735317636e-16};
+inline const DoubleDouble dd_pi{3.1415926535897932, 1.22464679914735317636e-16};
 // pi/2
-const DoubleDouble dd_pi_2{1.5707963267948966, 6.123233995736766e-17};
+inline const DoubleDouble dd_pi_2{1.5707963267948966, 6.123233995736766e-17};
 // 1/pi
-const DoubleDouble dd_1_pi{0.3183098861837907, -1.9678676675182486e-17};
+inline const DoubleDouble dd_1_pi{0.3183098861837907, -1.9678676675182486e-17};
 // 1/sqrt(pi)
-const DoubleDouble dd_1_sqrtpi{0.5641895835477563,7.66772980658294e-18};
+inline const DoubleDouble dd_1_sqrtpi{0.5641895835477563,7.66772980658294e-18};
 // 2/sqrt(pi)
-const DoubleDouble dd_2_sqrtpi{1.1283791670955126, 1.533545961316588e-17};
+inline const DoubleDouble dd_2_sqrtpi{1.1283791670955126, 1.533545961316588e-17};
 // sqrt(pi/2)
-const DoubleDouble dd_sqrt_pi_2{1.2533141373155003, -9.164289990229583e-17};
+inline const DoubleDouble dd_sqrt_pi_2{1.2533141373155003, -9.164289990229583e-17};
 // sqrt(2/pi)
-const DoubleDouble dd_sqrt_2_pi{0.7978845608028654, -4.98465440455546e-17};
+inline const DoubleDouble dd_sqrt_2_pi{0.7978845608028654, -4.98465440455546e-17};
 
 
 inline DoubleDouble two_sum_quick(double x, double y)
@@ -238,6 +247,72 @@ inline DoubleDouble DoubleDouble::operator/(const DoubleDouble& x) const
     DoubleDouble sf = two_product(r, x.upper);
     double e = (upper - sf.upper - sf.lower + lower - r*x.lower)/x.upper;
     return two_sum_quick(r, e);
+}
+
+inline DoubleDouble& DoubleDouble::operator+=(double x)
+{
+    DoubleDouble re = two_sum(upper, x);
+    re.lower += lower;
+    *this = two_sum_quick(re.upper, re.lower);
+    return *this;
+}
+
+inline DoubleDouble& DoubleDouble::operator+=(const DoubleDouble& x)
+{
+    DoubleDouble re = two_sum(upper, x.upper);
+    re.lower += lower + x.lower;
+    *this = two_sum_quick(re.upper, re.lower);
+    return *this;
+}
+
+inline DoubleDouble& DoubleDouble::operator-=(double x)
+{
+    DoubleDouble re = two_difference(upper, x);
+    re.lower += lower;
+    *this = two_sum_quick(re.upper, re.lower);
+    return *this;
+}
+
+inline DoubleDouble& DoubleDouble::operator-=(const DoubleDouble& x)
+{
+    DoubleDouble re = two_difference(upper, x.upper);
+    re.lower += lower - x.lower;
+    *this = two_sum_quick(re.upper, re.lower);
+    return *this;
+}
+
+inline DoubleDouble& DoubleDouble::operator*=(double x)
+{
+    DoubleDouble re = two_product(upper, x);
+    re.lower += lower * x;
+    *this = two_sum_quick(re.upper, re.lower);
+    return *this;
+}
+
+inline DoubleDouble& DoubleDouble::operator*=(const DoubleDouble& x)
+{
+    DoubleDouble re = two_product(upper, x.upper);
+    re.lower += upper*x.lower + lower*x.upper;
+    *this = two_sum_quick(re.upper, re.lower);
+    return *this;
+}
+
+inline DoubleDouble& DoubleDouble::operator/=(double x)
+{
+    double r = upper/x;
+    DoubleDouble sf = two_product(r, x);
+    double e = (upper - sf.upper - sf.lower + lower)/x;
+    *this = two_sum_quick(r, e);
+    return *this;
+}
+
+inline DoubleDouble& DoubleDouble::operator/=(const DoubleDouble& x)
+{
+    double r = upper/x.upper;
+    DoubleDouble sf = two_product(r, x.upper);
+    double e = (upper - sf.upper - sf.lower + lower - r*x.lower)/x.upper;
+    *this = two_sum_quick(r, e);
+    return *this;
 }
 
 inline bool DoubleDouble::operator==(const DoubleDouble& x) const
