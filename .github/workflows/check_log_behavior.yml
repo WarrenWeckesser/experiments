@@ -22,5 +22,5 @@ jobs:
       run: |
         clang --version
         cd c/check-log-behavior
-        clang-cl main.c -o main.exe
+        clang-cl -m64 main.c -o main.exe
         ./main.exe
