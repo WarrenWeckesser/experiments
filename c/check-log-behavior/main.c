@@ -27,7 +27,7 @@ void show_fp_exception_flags()
 
 int main()
 {
-    double x = NAN;
+    double x = -INFINITY;
 
     feclearexcept(FE_ALL_EXCEPT);
     errno = 0;
