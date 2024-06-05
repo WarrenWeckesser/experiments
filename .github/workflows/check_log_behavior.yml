@@ -1,0 +1,25 @@
+# This github action workflow allows c/check-log-behavior/main.c
+# to be compiled and run on Windows in github actions.  Use the
+# github "Actions" web interface to manually trigger the action.
+
+name: Check log behavior
+
+on: workflow_dispatch
+
+jobs:
+  some_job_name:
+    runs-on: windows-2019
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        
+    - name: Install llvm
+      run: |
+        choco install llvm -y --version=16.0.6
+
+    - name: Compile and run
+      run: |
+        cd c/check-log-behavior
+        clang main.c -lm -o main.exe
+        ./main.exe
