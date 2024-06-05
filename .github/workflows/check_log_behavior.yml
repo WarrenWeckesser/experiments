@@ -20,7 +20,7 @@ jobs:
 
     - name: Compile and run
       run: |
-        clang version
+        clang --version
         cd c/check-log-behavior
-        clang-cl main.c -lm -o main.exe
+        clang-cl main.c -o main.exe
         ./main.exe
