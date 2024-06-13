@@ -1,5 +1,0 @@
-# TODO: Fix this Makefile duplication.  This file just adds the
-# compiler option -mmacosx-version-min=13.3
-
-main: main.cpp log1p_complex.h print_stuff.h
-	g++ -pedantic -std=c++17 -mmacosx-version-min=13.3 main.cpp -o main
