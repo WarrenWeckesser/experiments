@@ -9,7 +9,7 @@
 int main()
 {
     // complex<long double> z(-0.2L, 0.6L);
-    complex<double> z(-0.2f, 0.6f);
+    complex<double> z(-0.2, 0.6);
     // complex<float> z(-0.2f, 0.6f);
     // complex<long double> z(-1.0L, 1.0L);
     // complex<long double> z(-8.0L/13.0L, 12.0L/13.0L);
