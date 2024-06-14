@@ -29,7 +29,7 @@ public:
 //   Computational Geometry 18(3):305-363, October 1997.
 //
 template<typename T>
-static inline void
+inline void
 split(T x, doubled_t<T>& out)
 {
     if (std::numeric_limits<T>::digits == 106) {
@@ -48,7 +48,7 @@ split(T x, doubled_t<T>& out)
 }
 
 template<typename T>
-static inline void
+inline void
 two_sum_quick(T x, T y, doubled_t<T>& out)
 {
     T r = x + y;
@@ -58,7 +58,7 @@ two_sum_quick(T x, T y, doubled_t<T>& out)
 }
 
 template<typename T>
-static inline void
+inline void
 two_sum(T x, T y, doubled_t<T>& out)
 {
     T s = x + y;
@@ -69,7 +69,7 @@ two_sum(T x, T y, doubled_t<T>& out)
 }
 
 template<typename T>
-static inline void
+inline void
 double_sum(const doubled_t<T>& x, const doubled_t<T>& y,
            doubled_t<T>& out)
 {
@@ -79,7 +79,7 @@ double_sum(const doubled_t<T>& x, const doubled_t<T>& y,
 }
 
 template<typename T>
-static inline void
+inline void
 square(T x, doubled_t<T>& out)
 {
     doubled_t<T> xsplit;
@@ -101,7 +101,7 @@ square(T x, doubled_t<T>& out)
 // precision that can occur in the expression when x**2 + y**2 ≈ -2*x.
 //
 template<typename T>
-static inline T
+inline T
 xsquared_plus_2x_plus_ysquared(T x, T y)
 {
     doubled_t<T> x2, y2, twox, sum1, sum2;
@@ -119,7 +119,7 @@ xsquared_plus_2x_plus_ysquared(T x, T y)
 // For the float type, the intermediate calculation is done
 // with the double type, instead of a doubled-float.
 //
-static inline float
+inline float
 xsquared_plus_2x_plus_ysquared(float x, float y)
 {
     double xd = x;
@@ -137,7 +137,7 @@ xsquared_plus_2x_plus_ysquared(float x, float y)
 // C is the complex type.
 //
 template<typename T>
-static complex<T>
+complex<T>
 log1p_complex(complex<T> z)
 {
     T lnr;
