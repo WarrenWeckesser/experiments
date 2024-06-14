@@ -1,77 +1,71 @@
 # Functions for generating reference values of log1p(z)
 # for different input types of z.
+#
+# This code has not been tested on platforms where long double is
+# IEEE float128 or IBM double-double.  In the case of IBM double-double,
+# the function doubledouble_log1p_from_xy_mp(x, y) can be used to
+# generate test cases by passing in the already split x and y components
+# of the np.clongdouble instance.
 
 import numpy as np
 from mpmath import mp
 
 
-def longdouble80_to_mpf(x):
-    """
-    Convert np.longdouble (80 bit extended precision) to mp.mpf.
-
-    mp.mpf(x) does not work if x is np.longdouble.  This function
-    will create an mp.mpf instance that matches the full precision
-    of x (assuming mp.dps is sufficiently large).
-
-    x must be an instance of np.longdouble with 80 bit extended
-    precision format.
-    """
-    if np.finfo(x).machep != -63:
-        raise ValueError('x must be an instance of np.longdouble where the '
-                         'longdouble type is 80 bit extended precision.')
-    man, p = np.frexp(x)
-    u = x.view(np.dtype((np.uint64, 2)))[0]
-    return np.sign(x)*mp.mpf((u.item(0), int(p) - 64))
-
-
-def mpf_to_longdouble80(x):
+def mpf_to_longdouble(x):
     """
     Convert an mp.mpf instance to a np.longdouble.
-
-    This only works on platforms where np.longdouble is actually 80 bit
-    extended precision floating point.
-
-    Note that if the current precision of x is greater than 64, this
-    conversion is lossy.
     """
-    # This function is for 80 bit extended precision format.
-    if np.finfo(np.longdouble).machep != -63:
-        raise RuntimeError("np.longdouble is not 80 bit extended precision")
-    with mp.workprec(64):
+    machep = np.finfo(np.longdouble).machep
+    if machep == -52:
+        # long double is the same as double.
+        return np.longdouble(float(x))
+    prec = 1 - machep
+    with mp.workprec(prec):
         man, exp = mp.mpf(x).man_exp
     sum = np.longdouble(0)
-    for k in range(64):
-        n = 63 - k
+    for k in range(prec):
+        n = prec - 1 - k
         if man & (1 << n):
             sum += np.longdouble(2)**(n + exp)
     return sum
 
 
-def mpz_to_clongdouble80(z):
-    # z is assumed to be an mp.mpc instance.
-    re = mpf_to_longdouble80(z.real)
-    im = mpf_to_longdouble80(z.imag)
-    return np.clongdouble(re + im*1j)
+def mpz_to_clongdouble(z):
+    x = mpf_to_longdouble(z.real)
+    y = mpf_to_longdouble(z.imag)
+    return np.clongdouble(x + y*1j)
 
 
-def clongdouble80_to_mpz(z):
-    # x is assumed to be np.clongdouble.
-    return mp.mpc(longdouble80_to_mpf(z.real), longdouble80_to_mpf(z.imag))
-
-
-def clongdouble80_log1p_mp(z):
+def longdouble_to_mpf(x):
     """
-    Compute log1p(z) where z is np.clongdouble, using mpmath.
+    Convert a np.longdouble instance to mp.mpf.
 
-    The intent is for this function to be used to generate test cases
-    for np.log1p(z).
+    x must be an instance of np.longdouble.
     """
-    z = clongdouble80_to_mpz(z)
-    w = mp.log1p(z)
-    return mpz_to_clongdouble80(w)
+    fi = np.finfo(x)
+    if fi.machep == -52:
+        # long double is the same as double.
+        return mp.mpf(float(x))
+    if fi.machep == -63:
+        # Special case: np.longdouble is 80 bit extended precision.
+        man, p = np.frexp(x)
+        u = x.view(np.dtype((np.uint64, 2)))[0]
+        return np.sign(x)*mp.mpf((u.item(0), int(p) - 64))
+    prec = 1 - fi.machep
+    with mp.workprec(prec):
+        # XXX I don't know how safe this is. It might not get the ULP correct.
+        x_mp = mp.mpf(str(x))
+    return x_mp
 
 
-def doubledouble_log1p_mp(x, y):
+def clongdouble_to_mpz(z):
+    """
+    Convert an instance of np.clongdouble to mp.mpf.
+    """
+    return mp.mpc(longdouble_to_mpf(z.real), longdouble_to_mpf(z.imag))
+
+
+def doubledouble_log1p_from_xy_mp(x, y):
     """
     Compute log1p(z), where z = x + y*i, with x and y in double-double format.
 
@@ -98,6 +92,29 @@ def doubledouble_log1p_mp(x, y):
     return w
 
 
+def split_doubledouble(x):
+    """
+    x must be an instance of np.longdouble.
+
+    Use this function only when the platform implements np.longdouble
+    using the IBM double-double format.
+    """
+    if np.finfo(np.longdouble).machep != -105:
+        raise RuntimeError('np.longdouble is not implemented as double-double')
+    xhi, xlo = np.array([x]).view(np.float64)
+    return (xhi, xlo)
+
+
+def doubledouble_log1p_mp(z):
+    """
+    Compute log1p(z) when np.longdouble uses double-double format.
+    """
+    xhilo = split_doubledouble(z.real)
+    yhilo = split_doubledouble(z.imag)
+    w_mp = doubledouble_log1p_from_xy_mp(xhilo, yhilo)
+    return mpz_to_clongdouble(w_mp)
+
+
 def complex64_log1p_mp(z):
     """
     Compute log1p(z), where z is an instance of np.complex64.
@@ -122,11 +139,25 @@ def complex128_log1p_mp(z):
     return np.complex128(w_mp)
 
 
+def clongdouble_log1p_mp(z):
+    """
+    Compute log1p(z), where z is an instance of np.clongdouble.
+
+    Returns an instance of np.clongdouble.
+
+    Warning: This function has not been tested for the case where
+    np.longdouble is IEEE float128.
+    """
+    z_mp = clongdouble_to_mpz(z)
+    w_mp = mp.log1p(z_mp)
+    return mpz_to_clongdouble(w_mp)
+
+
 def log1p_mp(z):
     """
-    Generate the "correct" value of log1p(z) for complex z.
+    Compute log1p(z) for complex z.
 
-    z must an instance of a numpy complex type (or a Python complex()).
+    z must an instance of a numpy complex type or a Python complex().
 
     Intermediate calculations use mpmath.  Be sure mpmath.mp.dps is set
     sufficiently high so there is no doubt that the mpmath calculations
@@ -141,15 +172,13 @@ def log1p_mp(z):
         if fi.machep == -52:
             # long double is the same as double.
             return np.clongdouble(complex128_log1p_mp(np.cdouble(z)))
-        if fi.machep == -63:
-            # long double is 80 bit extended precision.
-            return clongdouble80_log1p_mp(z)
+        if fi.machep == -63 or fi.machep == -112:
+            # 80 bit extended precision or IEEE float128
+            return clongdouble_log1p_mp(z)
+        if fi.machep == -105:
+            # long double is IBM double-double.
+            return doubledouble_log1p_mp(z)
         msg = ("z is a np.clongdouble, but the underlying floating point "
-               "format is not 80 bit extended precision, and it is not "
-               "equivalent to np.float64. (It is probably IEEE float128 "
-               "or IBM double-double.) The format is not yet handled by "
-               "log1p_mp(z).\n"
-               "If the platform uses IBM double-double format, use "
-               "doubledouble_log1p_mp(x, y) to compute expected values.")
+               "format is not handled by this function.")
         raise RuntimeError(msg)
     raise TypeError('z is not a numpy complex type.')
