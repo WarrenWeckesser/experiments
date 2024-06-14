@@ -67,3 +67,54 @@ def clongdouble_log1p_mp(z):
     z = clongdouble_to_mpz(z)
     w = mp.log1p(z)
     return mpz_to_clongdouble(w)
+
+
+def doubledouble_log1p_mp(x, y):
+    """
+    Compute log1p(z), where z = x + y*i, with x and y in double-double format.
+
+    x and y must be tuples of length 2 contain the upper and lower parts
+    of their double-double represention (i.e. x = (xhi, xlo)).
+
+    The return value is an mp.mpc instance.  To check this value againts
+    a value computed in C/C++, print the real and imaginary parts in a
+    context where mp.prec = 106.  E.g.
+
+        x = (-1.2500111249898924, 7.43809241772238e-17)
+        y = (0.6666666666666666, 3.700743415417188e-17)
+        w = doubledouble_log1p_mp(x, y)
+        with mp.workprec(106):
+            print(w.real)
+            print(w.imag)
+    """
+    xhi, xlo = x
+    yhi, ylo = y
+    x_mp = mp.mpf(xhi) + mp.mpf(xlo)
+    y_mp = mp.mpf(yhi) + mp.mpf(ylo)
+    z = mp.mpc(x_mp, y_mp)
+    w = mp.log1p(z)
+    return w
+
+
+def complex64_log1p_mp(z):
+    """
+    Compute log1p(z), where z is an instance of np.complex64.
+
+    Returns an instance of np.complex64.
+    """
+    x = mp.mpf(float(z.real))
+    y = mp.mpf(float(z.imag))
+    z_mp = mp.mpc(x, y)
+    w_mp = mp.log1p(z_mp)
+    return np.complex64(w_mp)
+
+
+def complex128_log1p_mp(z):
+    """
+    Compute log1p(z), where z is an instance of np.complex128.
+
+    Returns an instance of np.complex128.
+    """
+    z_mp = mp.mpc(z)
+    w_mp = mp.log1p(z_mp)
+    return np.complex128(w_mp)
