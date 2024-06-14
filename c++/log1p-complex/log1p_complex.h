@@ -28,11 +28,19 @@ template<typename T>
 static inline void
 split(T x, doubled_t<T>& out)
 {
-    constexpr int halfprec = (std::numeric_limits<T>::digits + 1)/2;
-    T t = ((1ul << halfprec) + 1)*x;
-    // The compiler must not be allowed to simplify this expression:
-    out.upper = t - (t - x);
-    out.lower = x - out.upper;
+    if (std::numeric_limits<T>::digits == 106) {
+        // Special case: IBM double-double format.  The value is already
+        // split in memory, so there is no need for any calculations.
+        out.upper = static_cast<long double>(reinterpret_cast<double *>(&x)[0]);
+        out.lower = static_cast<long double>(reinterpret_cast<double *>(&x)[1]);
+    }
+    else {
+        constexpr int halfprec = (std::numeric_limits<T>::digits + 1)/2;
+        T t = ((1ul << halfprec) + 1)*x;
+        // The compiler must not be allowed to simplify this expression:
+        out.upper = t - (t - x);
+        out.lower = x - out.upper;
+    }
 }
 
 template<typename T>
