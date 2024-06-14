@@ -120,3 +120,22 @@ def complex128_log1p_mp(z):
     z_mp = mp.mpc(z)
     w_mp = mp.log1p(z_mp)
     return np.complex128(w_mp)
+
+
+def log1p_mp(z):
+    if isinstance(z, np.complex64):
+        return complex64_log1p_mp(z)
+    if isinstance(z, (np.complex128, complex)):
+        return complex128_log1p_mp(z)
+    if isinstance(z, np.complex256):
+        fi = np.finfo(z)
+        if fi.machep == -63:
+            # long double is 80 bit extended precision.
+            return clongdouble80_log1p_mp(z)
+    msg = [f'z has type {type(z)}']
+    if isinstance(z, np.complex256):
+        msg.append(' (which is not 80 bit extended precision)')
+    msg.append(". This type is not handled by log1p_mp.\n")
+    msg.append("For IBM double-double format, use doubledouble_log1p_mp(x, y).")
+    raise RuntimeError("".join(msg))
+
