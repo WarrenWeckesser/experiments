@@ -1,4 +1,4 @@
-# Functions for generating expected values of log1p(z)
+# Functions for generating reference values of log1p(z)
 # for different input types of z.
 
 import numpy as np
@@ -123,19 +123,33 @@ def complex128_log1p_mp(z):
 
 
 def log1p_mp(z):
+    """
+    Generate the "correct" value of log1p(z) for complex z.
+
+    z must an instance of a numpy complex type (or a Python complex()).
+
+    Intermediate calculations use mpmath.  Be sure mpmath.mp.dps is set
+    sufficiently high so there is no doubt that the mpmath calculations
+    maintain enough precision for the final output.
+    """
     if isinstance(z, np.complex64):
         return complex64_log1p_mp(z)
     if isinstance(z, (np.complex128, complex)):
         return complex128_log1p_mp(z)
-    if isinstance(z, np.complex256):
+    if isinstance(z, np.clongdouble):
         fi = np.finfo(z)
+        if fi.machep == -52:
+            # long double is the same as double.
+            return np.clongdouble(complex128_log1p_mp(np.cdouble(z)))
         if fi.machep == -63:
             # long double is 80 bit extended precision.
             return clongdouble80_log1p_mp(z)
-    msg = [f'z has type {type(z)}']
-    if isinstance(z, np.complex256):
-        msg.append(' (which is not 80 bit extended precision)')
-    msg.append(". This type is not handled by log1p_mp.\n")
-    msg.append("For IBM double-double format, use doubledouble_log1p_mp(x, y).")
-    raise RuntimeError("".join(msg))
-
+        msg = ("z is a np.clongdouble, but the underlying floating point "
+               "format is not 80 bit extended precision, and it is not "
+               "equivalent to np.float64. (It is probably IEEE float128 "
+               "or IBM double-double.) The format is not yet handled by "
+               "log1p_mp(z).\n"
+               "If the platform uses IBM double-double format, use "
+               "doubledouble_log1p_mp(x, y) to compute expected values.")
+        raise RuntimeError(msg)
+    raise TypeError('z is not a numpy complex type.')
