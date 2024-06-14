@@ -1,9 +1,11 @@
+# Functions for generating expected values of log1p(z)
+# for different input types of z.
 
 import numpy as np
 from mpmath import mp
 
 
-def longdouble_to_mpf(x):
+def longdouble80_to_mpf(x):
     """
     Convert np.longdouble (80 bit extended precision) to mp.mpf.
 
@@ -22,7 +24,7 @@ def longdouble_to_mpf(x):
     return np.sign(x)*mp.mpf((u.item(0), int(p) - 64))
 
 
-def mpf_to_longdouble(x):
+def mpf_to_longdouble80(x):
     """
     Convert an mp.mpf instance to a np.longdouble.
 
@@ -45,28 +47,28 @@ def mpf_to_longdouble(x):
     return sum
 
 
-def mpz_to_clongdouble(z):
+def mpz_to_clongdouble80(z):
     # z is assumed to be an mp.mpc instance.
-    re = mpf_to_longdouble(z.real)
-    im = mpf_to_longdouble(z.imag)
+    re = mpf_to_longdouble80(z.real)
+    im = mpf_to_longdouble80(z.imag)
     return np.clongdouble(re + im*1j)
 
 
-def clongdouble_to_mpz(z):
+def clongdouble80_to_mpz(z):
     # x is assumed to be np.clongdouble.
-    return mp.mpc(longdouble_to_mpf(z.real), longdouble_to_mpf(z.imag))
+    return mp.mpc(longdouble80_to_mpf(z.real), longdouble80_to_mpf(z.imag))
 
 
-def clongdouble_log1p_mp(z):
+def clongdouble80_log1p_mp(z):
     """
     Compute log1p(z) where z is np.clongdouble, using mpmath.
 
     The intent is for this function to be used to generate test cases
     for np.log1p(z).
     """
-    z = clongdouble_to_mpz(z)
+    z = clongdouble80_to_mpz(z)
     w = mp.log1p(z)
-    return mpz_to_clongdouble(w)
+    return mpz_to_clongdouble80(w)
 
 
 def doubledouble_log1p_mp(x, y):
