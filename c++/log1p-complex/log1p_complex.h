@@ -5,10 +5,8 @@
 #include <cmath>
 #include <complex>
 #include <limits>
-
-
+ 
 using namespace std;
-
 
 template<typename T>
 class doubled_t {
@@ -23,6 +21,12 @@ public:
 //   Seppa Linnainmaa, Software for Double-Precision Floating-Point
 //   Computations, ACM Transactions on Mathematical Software, Vol 7, No 3,
 //   September 1981, pages 272-283.
+//
+// or Theorem 17 of
+//
+//   J. R. Shewchuk, Adaptive Precision Floating-Point Arithmetic and
+//   Fast Robust Geometric Predicates, CMU-CS-96-140R, from Discrete &
+//   Computational Geometry 18(3):305-363, October 1997.
 //
 template<typename T>
 static inline void
