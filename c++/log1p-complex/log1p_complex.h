@@ -1,7 +1,6 @@
 #ifndef LOG1P_COMPLEX_H
 #define LOG1P_COMPLEX_H
 
-#include <cstdio>
 #include <cmath>
 #include <complex>
 #include <limits>
