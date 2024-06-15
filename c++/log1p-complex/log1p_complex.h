@@ -5,6 +5,9 @@
 #include <complex>
 #include <limits>
 
+namespace log1p_complex
+{
+
 template<typename T>
 class doubled_t {
 public:
@@ -164,5 +167,7 @@ log1p_complex(std::complex<T> z)
     }
     return std::complex<T>(lnr, atan2(y, x + 1.0));
 }
+
+} // namespace log1p_complex
 
 #endif

@@ -24,7 +24,7 @@ print_value(const T x)
 
 template<typename T>
 static void
-print_doubled_t(const doubled_t<T>& x)
+print_doubled_t(const log1p_complex::doubled_t<T>& x)
 {
     print_value(x.upper);
     printf("\n");

@@ -39,7 +39,7 @@ int main()
     print_value(z.imag());
     printf("i\n");
 
-    auto w = log1p_complex(z);
+    auto w = log1p_complex::log1p_complex(z);
 
     printf("w: ");
     print_value(w.real());
