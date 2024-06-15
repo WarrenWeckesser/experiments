@@ -2,6 +2,7 @@ Some examples of the use of the [CLN](https://www.ginac.de/CLN/).
 
 * `exp_example.cpp`: exponentiate a high precision number.
 * `asin_example.cpp`: compute the arcsine of a real number greater than 1.
+* `log1p_example.cpp`: compute log1p(z) for a complex z.
 * `benktander2_cdf_demo.cpp`: CLN is used to compute the CDF of the
 [Benktander type II probability distribution](https://en.wikipedia.org/wiki/Benktander_type_II_distribution).
 
