@@ -85,9 +85,6 @@ square(T x, doubled_t<T>& out)
     doubled_t<T> xsplit;
     out.upper = x*x;
     split(x, xsplit);
-    // out.lower = (xsplit.upper*xsplit.upper - out.upper)
-    //               + 2*xsplit.upper*xsplit.lower
-    //               + xsplit.lower*xsplit.lower;
     out.lower = xsplit.lower*xsplit.lower
                 - ((out.upper - xsplit.upper*xsplit.upper)
                    - 2*xsplit.lower*xsplit.upper);
@@ -95,14 +92,16 @@ square(T x, doubled_t<T>& out)
 
 //
 // As the name makes clear, this function computes x**2 + 2*x + y**2.
-// It uses doubled_t for the intermediate calculations.
+// It uses doubled_t<T> for the intermediate calculations.
+// (That is, we give the floating point type T an upgrayedd, spelled with
+// two d's for a double dose of precision.)
 //
 // The function is used in log1p_complex() to avoid the loss of
 // precision that can occur in the expression when x**2 + y**2 ≈ -2*x.
 //
 template<typename T>
 inline T
-xsquared_plus_2x_plus_ysquared(T x, T y)
+xsquared_plus_2x_plus_ysquared_dd(T x, T y)
 {
     doubled_t<T> x2, y2, twox, sum1, sum2;
 
@@ -117,7 +116,7 @@ xsquared_plus_2x_plus_ysquared(T x, T y)
 
 //
 // For the float type, the intermediate calculation is done
-// with the double type, instead of a doubled-float.
+// with the double type.  We don't need to use doubled_t<float>.
 //
 inline float
 xsquared_plus_2x_plus_ysquared(float x, float y)
@@ -127,21 +126,47 @@ xsquared_plus_2x_plus_ysquared(float x, float y)
     return xd*(2.0 + xd) + yd*yd;
 }
 
+//
+// For double, we used doubled_t<double> if long double doesn't have
+// at least 106 bits of precision.
+//
+inline double
+xsquared_plus_2x_plus_ysquared(double x, double y)
+{
+    if (std::numeric_limits<long double>::digits >= 106) {
+        // Cast to long double for the calculation.
+        long double xd = x;
+        long double yd = y;
+        return xd*(2.0L + xd) + yd*yd;
+    }
+    else {
+        // Use doubled_t<double> for the calculation.
+        return xsquared_plus_2x_plus_ysquared_dd<double>(x, y);
+    }
+}
 
 //
-// Implement log1p(z) using double-double near the unit circle |z + 1| = 1
-// to avoid loss of precision.
+// For long double, we always use doubled_t<long double> for the
+// calculation.
+//
+inline long double
+xsquared_plus_2x_plus_ysquared(long double x, long double y)
+{
+    return xsquared_plus_2x_plus_ysquared_dd<long double>(x, y);
+}
+
+//
+// Implement log1p(z) for complex inputs, using higher precision near
+// the unit circle |z + 1| = 1 to avoid loss of precision that can occur
+// when x**2 + y**2 ≈ -2*x.
 //
 // This function assumes that neither part of z is nan.
-//
-// C is the complex type.
 //
 template<typename T>
 std::complex<T>
 log1p_complex(std::complex<T> z)
 {
     T lnr;
-
     T x = z.real();
     T y = z.imag();
     if (x > -2.2 && x < 0.2 && y > -1.2 && y < 1.2) {
@@ -151,11 +176,12 @@ log1p_complex(std::complex<T> z)
         // overflow when x and y are sufficiently large.
         if (fabs(x*(2.0 + x) + y*y) < 0.4) {
             // The input is close to the unit circle centered at -1+0j.
-            // Use doubled_t to evaluate the real part of the result.
-            // This is equivalent to 0.5*log((1+x)**2 + y**2), since
-            //   log((1 + x)**2 + y**2) = log(1 + 2*x + x**2 + y**2)
-            //                          = log1p(x**2 + 2*x + y**2)
-            T t = xsquared_plus_2x_plus_ysquared<T>(x, y);
+            // Compute x**2 + 2*x + y**2 with higher precision than T.
+            // The calculation here is equivalent to log(hypot(x+1, y)),
+            // since
+            //    log(hypot(x+1, y)) = 0.5*log(x**2 + 2*x + 1 + y**2)
+            //                       = 0.5*log1p(x**2 + 2*x + y**2)
+            T t = xsquared_plus_2x_plus_ysquared(x, y);
             lnr = 0.5*log1p(t);
         }
         else {
