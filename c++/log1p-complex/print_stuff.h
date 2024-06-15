@@ -13,8 +13,8 @@ static inline void
 print_value(const T x)
 {
     char buf[100];
-    const to_chars_result res = std::to_chars(buf, buf + sizeof(buf), x);
-    if (res.ec == errc{}) {
+    const std::to_chars_result res = std::to_chars(buf, buf + sizeof(buf), x);
+    if (res.ec == std::errc{}) {
         printf("%.*s", static_cast<int>(res.ptr - buf), buf);
     }
     else {

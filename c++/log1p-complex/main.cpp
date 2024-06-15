@@ -5,6 +5,7 @@
 #include "log1p_complex.h"
 #include "print_stuff.h"
 
+using namespace std;
 
 int main()
 {

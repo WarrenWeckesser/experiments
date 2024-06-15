@@ -4,8 +4,6 @@
 #include <cmath>
 #include <complex>
 #include <limits>
- 
-using namespace std;
 
 template<typename T>
 class doubled_t {
@@ -136,8 +134,8 @@ xsquared_plus_2x_plus_ysquared(float x, float y)
 // C is the complex type.
 //
 template<typename T>
-complex<T>
-log1p_complex(complex<T> z)
+std::complex<T>
+log1p_complex(std::complex<T> z)
 {
     T lnr;
 
@@ -164,7 +162,7 @@ log1p_complex(complex<T> z)
     else {
         lnr = log(hypot(x + 1, y));
     }
-    return complex<T>(lnr, atan2(y, x + 1.0));
+    return std::complex<T>(lnr, atan2(y, x + 1.0));
 }
 
 #endif
