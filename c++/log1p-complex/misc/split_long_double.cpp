@@ -2,7 +2,7 @@
 #include <cmath>
 #include <limits>
 
-#include "../print_stuff.h"
+#include "../print_floating_point.h"
 
 
 int main()
@@ -12,7 +12,8 @@ int main()
         printf("format is IBM double-double.\n");
         exit(-1);
     }
-    long double x = -0.52941176470588235294117647058823L;
+    // long double x = -0.52941176470588235294117647058823L;
+    long double x = 0.6L;
 
     printf("x:          ");
     print_value(x);

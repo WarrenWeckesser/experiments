@@ -5,6 +5,7 @@
 #include <complex>
 #include <limits>
 
+
 namespace log1p_complex
 {
 
@@ -182,16 +183,16 @@ log1p_complex(std::complex<T> z)
             //    log(hypot(x+1, y)) = 0.5*log(x**2 + 2*x + 1 + y**2)
             //                       = 0.5*log1p(x**2 + 2*x + y**2)
             T t = xsquared_plus_2x_plus_ysquared(x, y);
-            lnr = 0.5*log1p(t);
+            lnr = 0.5*std::log1p(t);
         }
         else {
-            lnr = log(hypot(x + 1, y));
+            lnr = std::log(std::hypot(x + 1, y));
         }
     }
     else {
-        lnr = log(hypot(x + 1, y));
+        lnr = std::log(std::hypot(x + 1, y));
     }
-    return std::complex<T>(lnr, atan2(y, x + 1.0));
+    return std::complex<T>(lnr, std::atan2(y, x + 1.0));
 }
 
 } // namespace log1p_complex
