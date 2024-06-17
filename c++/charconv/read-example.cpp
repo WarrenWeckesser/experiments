@@ -23,6 +23,7 @@ T parse(const char *start, const char *end)
 {
     T value;
     const std::from_chars_result result = std::from_chars(start, end, value);
+    // XXX Should check result for errors!
     return value;
 }
 
@@ -30,9 +31,20 @@ using namespace std;
 
 int main()
 {
-    const char text[] = "1.2345";
-    double x = parse<double>(text, text + strlen(text));
+    const char text[] = "1.234567890123456789012345678901234567890";
+
+    float x = parse<float>(text, text + strlen(text));
     printf("x = ");
     print_value(x);
+    printf("\n");
+
+    double y = parse<double>(text, text + strlen(text));
+    printf("y = ");
+    print_value(y);
+    printf("\n");
+
+    long double z = parse<long double>(text, text + strlen(text));
+    printf("z = ");
+    print_value(z);
     printf("\n");
 }
