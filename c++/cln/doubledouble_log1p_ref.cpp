@@ -5,7 +5,6 @@
 #include <cstring>
 #include <cstdio>
 #include <charconv>
-//#include <cstring>
 #include <system_error>
 
 
@@ -25,7 +24,6 @@ print_value(const T x)
 
 using namespace cln;
 using namespace std;
-
 
 class doubledouble_t {
 public:
