@@ -48,7 +48,7 @@ def rolling_max_dd(x, window_size, min_periods=1):
 
 
 def max_dd(ser):
-    max2here = pd.expanding_max(ser)
+    max2here = ser.expanding().max()
     dd2here = ser - max2here
     return dd2here.min()
 
@@ -60,12 +60,12 @@ if __name__ == "__main__":
 
     window_length = 10
 
-    rolling_dd = pd.rolling_apply(s, window_length, max_dd, min_periods=0)
+    rolling_dd = s.rolling(window_length, min_periods=0).apply(max_dd)
     df = pd.concat([s, rolling_dd], axis=1)
     df.columns = ['s', 'rol_dd_%d' % window_length]
-    df.plot(linewidth=3, alpha=0.4)
+    df.plot(linewidth=2.5, alpha=0.5)
 
     my_rmdd = rolling_max_dd(s.values, window_length, min_periods=1)
     plt.plot(my_rmdd, 'g.')
-
+    plt.grid()
     plt.show()
