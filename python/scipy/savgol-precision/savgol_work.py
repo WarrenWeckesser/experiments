@@ -107,7 +107,7 @@ if __name__ == "__main__":
     e_cs = check_savgol_coeffs(cs, coeffs)
 
     plt.plot(e_cnp, 'o', alpha=0.65,
-             label=f'numpy polyfit\n(rel err: max {e_cnp.max():8.2e}, mean {np.mean(e_cnp):8.2e})')
+             label=f'numpy Polynomial.fit\n(rel err: max {e_cnp.max():8.2e}, mean {np.mean(e_cnp):8.2e})')
     plt.plot(e_cs, 'd', alpha=0.65,
              label=f'stabilised_savgol_coeffs\n(rel err: max {e_cs.max():8.2e}, mean {np.mean(e_cs):8.2e}')
     plt.legend(shadow=True, framealpha=1)
