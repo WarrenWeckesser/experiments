@@ -1,3 +1,6 @@
+# I originally published this code as an answer on stackoverflow:
+# https://stackoverflow.com/questions/21058333/compute-rolling-maximum-drawdown-of-pandas-series
+
 import numpy as np
 from numpy.lib.stride_tricks import as_strided
 import pandas as pd
