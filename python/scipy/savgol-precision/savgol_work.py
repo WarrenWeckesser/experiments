@@ -1,4 +1,4 @@
-from math import comb, fsum
+from math import comb
 from typing import Literal, Optional, Union
 
 import numpy as np
@@ -9,7 +9,7 @@ from scipy._lib._util import float_factorial
 import mpsig
 
 
-def _pinv_correction_factors_normalized_polyvander(
+def _pinv_correction_factors_stabilized_polyvander(
     pinv_row_idx: int,
     polyorder: int,
     polyvander_column_scales: np.ndarray,
@@ -17,7 +17,7 @@ def _pinv_correction_factors_normalized_polyvander(
     x_scale: float,
 ) -> np.ndarray:
     """
-    Computes the correction factors for the pseudo-inverse of a normalized polynomial
+    Computes the correction factors for the pseudo-inverse of a stabilized polynomial
     Vandermonde matrix where the x-variable was normalized as ``x_scaled = (x - x_center) / x_scale``.
     After this normalization, the columns of the Vandermonde matrix ``A`` given by
     ``A = polyvander(x_scaled, polyorder)`` are scaled to have unit Euclidean norm.
@@ -75,35 +75,43 @@ def _pinv_correction_factors_normalized_polyvander(
 
     """  # noqa: E501
 
-    # first, the signs are determined by the (-1)**(i - k) factor ...
-    i_vect = np.arange(start=pinv_row_idx, stop=polyorder + 1, dtype=np.int64)
-    signs = (-1) ** (i_vect - pinv_row_idx)
-    # ... followed by the binomial coefficients ...
-    binomials = np.array([comb(i, pinv_row_idx) for i in i_vect], dtype=np.int64)
-    # ... then the factors for the x-variable
-    x_factors = (
-        (x_center ** (i_vect - pinv_row_idx))
-        / (x_scale**i_vect)
-        / polyvander_column_scales[pinv_row_idx::]
+    # first, the signs are computed
+    # incorporating the signs as -1 and 1 is not efficient, especially not when they
+    # are computed by raising -1 to the power of the iterator
+    # therefore, the signs are already pre-multiplied with the only constant factor in
+    # the formula, namely ``x_center ** (-pinv_row_idx)``
+    x_center_to_pinv_row_idx = x_center ** (-pinv_row_idx)
+    # the following is equivalent to a multiplication of the factor with the signs,
+    # however, since the signs are alternating, they are simply repeated as often as
+    # necessary
+    prefactors = [x_center_to_pinv_row_idx, -x_center_to_pinv_row_idx]
+    n_full_repetitions, n_rest_repetitions = divmod(polyorder + 1 - pinv_row_idx, 2)
+    prefactors = np.array(
+        prefactors * n_full_repetitions + prefactors[:n_rest_repetitions]
     )
 
-    return signs * binomials * x_factors
+    # then, the binomial coefficients are computed ...
+    i_vect = np.arange(start=pinv_row_idx, stop=polyorder + 1, dtype=np.int64)
+    binomials = np.array([comb(i, pinv_row_idx) for i in i_vect], dtype=np.int64)
+    # ... followed by the x-factors
+    x_factors = ((x_center / x_scale) ** i_vect) / polyvander_column_scales[
+        pinv_row_idx::
+    ]
+
+    return prefactors * binomials * x_factors
 
 
-def _correct_pinv_row_normalized_polyvander(
+def _get_corrected_pinv_row_from_stabilized_polyvander(
     pinv_row_idx: int,
-    pinv_scaled_polyvander: np.ndarray,
+    normalized_polyvander: np.ndarray,
     polyorder: int,
     polyvander_column_scales: np.ndarray,
     x_center: float,
     x_scale: float,
 ) -> np.ndarray:
     """
-    Corrects the ``k``-th row of pseudo-inverse of a normalized polynomial Vandermonde
-    matrix to obtain the ``k``-th row of the pseudo-inverse of the polynomial fit based
-    on the original columns of the Vandermonde matrix.
-    For the correction it relies on floating point accurate summation to avoid loss of
-    precision due to cancellation errors with high polynomial orders.
+    Obtains the corrected ``k``-th row of the pseudo-inverse of a polynomial Vandermonde
+    matrix from a stabilized version of the latter.
     Please refer to the documentation of the function :func:`_pinv_correction_factors_normalized_polyvander`
     for a detailed explanation of the correction factors.
 
@@ -112,8 +120,9 @@ def _correct_pinv_row_normalized_polyvander(
     pinv_row_idx : int
         The row index of the pseudo-inverse matrix to be corrected. This corresponds to
         ``k`` in the above equation.
-    pinv_scaled_polyvander : np.ndarray of shape (polyorder + 1, m)
-        The pseudo-inverse of the normalized polynomial Vandermonde matrix.
+    normalized_polyvander : np.ndarray of shape (m, polyorder + 1)
+        The normalized polynomial Vandermonde matrix. The columns of this matrix are
+        scaled to have unit Euclidean norm after the x-variable was normalized.
     polyorder : int
         The polynomial order of the polynomial fit.
     polyvander_column_scales : np.ndarray of shape (polyorder + 1,)
@@ -123,25 +132,36 @@ def _correct_pinv_row_normalized_polyvander(
 
     Returns
     -------
-    pinv_corrected_polyvander : np.ndarray of shape (polyorder + 1, m)
-        The corrected pseudo-inverse of the polynomial fit that corresponds to the
-        original columns of the polynomial Vandermonde matrix.
+    pinv_corrected_row : np.ndarray of shape (m,)
+        The corrected row of the pseudo-inverse of the polynomial fit that corresponds
+        to the original columns of the polynomial Vandermonde matrix.
 
     """  # noqa: E501
 
-    correction_factors = _pinv_correction_factors_normalized_polyvander(
+    # first, the correction factors are computed
+    correction_factors = _pinv_correction_factors_stabilized_polyvander(
         pinv_row_idx=pinv_row_idx,
         polyorder=polyorder,
         polyvander_column_scales=polyvander_column_scales,
         x_center=x_center,
         x_scale=x_scale,
     )
-    return np.array(
-        [
-            fsum(pinv_scaled_polyvander[pinv_row_idx::, j] * correction_factors)
-            for j in range(pinv_scaled_polyvander.shape[1])
-        ]
-    )
+
+    # then, the Singular Value Decomposition is obtained and prepared for the
+    # pseudo-inverse computation
+    u, s, vt = np.linalg.svd(normalized_polyvander, full_matrices=False)
+    rcond = np.finfo(normalized_polyvander.dtype).eps * max(normalized_polyvander.shape)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        s = np.where(s > rcond * s.max(), np.reciprocal(s), 0.0)
+
+    # finally, the pseudo-inversion is applied without explicitly forming the
+    # pseudo-inverse matrix
+    # NOTE: the pseudo-inverse is the one of the transposed Vandermonde matrix, hence
+    #       its not V @ inv(S) @ U.T, but U @ inv(S) @ V.T
+    # NOTE: the order here is very important to avoid unnecessary operations by ensuring
+    #       that only matrix-vector products are computed rather than matrix-matrix
+    #       products
+    return u @ (s * (vt[::, pinv_row_idx::] @ correction_factors))
 
 
 def super_stabilised_savgol_coeffs(
@@ -189,23 +209,20 @@ def super_stabilised_savgol_coeffs(
     x_center = 0.5 * (x_min + x_max)
     x_scale = 0.5 * (x_max - x_min)
     x_normalized = (x - x_center) / x_scale
-    A_scaled_polyvander = np.polynomial.polynomial.polyvander(x_normalized, polyorder)
+    A_normalized_polyvander = np.polynomial.polynomial.polyvander(
+        x_normalized, polyorder
+    )
 
     # to stabilize the pseudo-inverse computation, the columns of the polynomial
     # Vandermonde matrix are normalized to have unit Euclidean norm
-    a_column_scales = np.linalg.norm(A_scaled_polyvander, axis=0)
-    A_scaled_polyvander /= a_column_scales[np.newaxis, ::]
-
-    # then, the pseudo-inverse is computed and corrected to obtain the pseudo-inverse
-    # of the polynomial fit based on the columns the original polynomial Vandermonde
-    # matrix based on the original x-values
-    A_pinv_distorted = np.linalg.pinv(A_scaled_polyvander)
+    a_column_scales = np.linalg.norm(A_normalized_polyvander, axis=0)
+    A_normalized_polyvander /= a_column_scales[np.newaxis, ::]
 
     return (
         float_factorial(deriv) / delta**deriv
-    ) * _correct_pinv_row_normalized_polyvander(
+    ) * _get_corrected_pinv_row_from_stabilized_polyvander(
         pinv_row_idx=deriv,
-        pinv_scaled_polyvander=A_pinv_distorted,
+        normalized_polyvander=A_normalized_polyvander,
         polyorder=polyorder,
         polyvander_column_scales=a_column_scales,
         x_center=x_center,
