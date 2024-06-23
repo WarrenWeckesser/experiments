@@ -69,9 +69,10 @@ def _pinv_correction_factors_stabilized_polyvander(
 
     Returns
     -------
-    pinv_correction_factors : np.ndarray of shape (polyorder + 1 - pinv_row_idx,)
+    pinv_correction_factors : np.ndarray of shape (polyorder + 1)
         The correction factors for the pseudo-inverse matrix row corresponding to
         ``pinv_row_idx``.
+        All the elements that are not required are set to zero.
 
     """  # noqa: E501
 
@@ -98,7 +99,9 @@ def _pinv_correction_factors_stabilized_polyvander(
         pinv_row_idx::
     ]
 
-    return prefactors * binomials * x_factors
+    pinv_correction_factors = np.zeros(shape=(polyorder + 1,), dtype=np.float64)
+    pinv_correction_factors[pinv_row_idx::] = prefactors * binomials * x_factors
+    return pinv_correction_factors
 
 
 def _get_corrected_pinv_row_from_stabilized_polyvander(
@@ -147,21 +150,15 @@ def _get_corrected_pinv_row_from_stabilized_polyvander(
         x_scale=x_scale,
     )
 
-    # then, the Singular Value Decomposition is obtained and prepared for the
-    # pseudo-inverse computation
-    u, s, vt = np.linalg.svd(normalized_polyvander, full_matrices=False)
-    rcond = np.finfo(normalized_polyvander.dtype).eps * max(normalized_polyvander.shape)
-    with np.errstate(divide="ignore", invalid="ignore"):
-        s = np.where(s > rcond * s.max(), np.reciprocal(s), 0.0)
+    # then, the corrected row is computed by solving the Least Squares problem
+    # normalized_polyvander.T @ pinv_corrected_row = correction_factors
+    pinv_corrected_row, _, _, _ = np.linalg.lstsq(
+        normalized_polyvander.transpose(),
+        correction_factors,
+        rcond=None,
+    )
 
-    # finally, the pseudo-inversion is applied without explicitly forming the
-    # pseudo-inverse matrix
-    # NOTE: the pseudo-inverse is the one of the transposed Vandermonde matrix, hence
-    #       its not V @ inv(S) @ U.T, but U @ inv(S) @ V.T
-    # NOTE: the order here is very important to avoid unnecessary operations by ensuring
-    #       that only matrix-vector products are computed rather than matrix-matrix
-    #       products
-    return u @ (s * (vt[::, pinv_row_idx::] @ correction_factors))
+    return pinv_corrected_row
 
 
 def super_stabilised_savgol_coeffs(
