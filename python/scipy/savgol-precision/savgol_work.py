@@ -1,10 +1,9 @@
-from math import comb
+from math import comb, factorial
 from typing import Literal, Optional, Union
 
 import numpy as np
 from matplotlib import pyplot as plt
 from mpmath import mp
-from scipy._lib._util import float_factorial
 
 import mpsig
 
@@ -92,7 +91,7 @@ def _savgol_pinv_correction_factors(
     # are computed by raising -1 to the power of the iterator
     # therefore, the signs are already pre-multiplied with the only constant factor in
     # the formula, namely ``deriv! * ((x_center * delta) ** (-deriv))``
-    x_center_modified_for_deriv = float_factorial(deriv) * ((x_center * delta) ** (-deriv))
+    x_center_modified_for_deriv = factorial(deriv) * ((x_center * delta) ** (-deriv))
     # the following is equivalent to a multiplication of the factor with the signs,
     # however, since the signs are alternating, they are simply repeated as often as
     # necessary
