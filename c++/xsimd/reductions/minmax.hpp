@@ -1,4 +1,5 @@
 #include <vector>
+#include <algorithm>
 #include "xsimd/xsimd.hpp"
 
 
@@ -22,12 +23,8 @@ minmax_pair<T> minmax_scalar_loop(std::size_t size, const T* x)
     auto xmin = x[0];
     auto xmax = x[0];
     for (std::size_t i = 1; i < size; ++i) {
-        if (x[i] < xmin) {
-            xmin = x[i];
-        }
-        if (x[i] > xmax) {
-            xmax = x[i];
-        }
+        xmin = std::min(xmin, x[i]);
+        xmax = std::max(xmax, x[i]);
     }
     return minmax_pair<T>{xmin, xmax};
 }
@@ -38,11 +35,7 @@ minmax_pair<T> minmax_scalar_loop(const std::vector<T>& x)
     return minmax_scalar_loop(x.size(), &x[0]);
 }
 
-//
-// XXX FIXME:
-// This templated function assumes that T will be a type that can
-// be used in an XSIMD batch.
-//
+
 template<typename T>
 minmax_pair<T> minmax(const std::vector<T>& x)
 {
