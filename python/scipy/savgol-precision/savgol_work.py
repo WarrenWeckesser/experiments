@@ -170,6 +170,7 @@ def super_stabilised_savgol_coeffs(
     # to stabilize the pseudo-inverse computation, the columns of the polynomial
     # Vandermonde matrix are normalized to have unit Euclidean norm
     j_column_scales = np.linalg.norm(J_normalized_polyvander, axis=0)
+    j_column_scales[j_column_scales == 0.0] = 1.0
     J_normalized_polyvander /= j_column_scales[np.newaxis, ::]
 
     # then, the correction factors for the subsequent least squares problem are computed
