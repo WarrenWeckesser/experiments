@@ -126,13 +126,14 @@ def super_stabilised_savgol_coeffs(
 
     halflen, rem = divmod(window_length, 2)
 
-    if pos is None:
+    pos_internal = pos
+    if pos_internal is None:
         if rem == 0:
-            pos = halflen - 0.5
+            pos_internal = halflen - 0.5
         else:
-            pos = halflen
+            pos_internal = halflen
 
-    if not (0 <= pos < window_length):
+    if not (0 <= pos_internal < window_length):
         raise ValueError("pos must be nonnegative and less than " "window_length.")
 
     if use not in ["conv", "dot"]:
@@ -146,7 +147,12 @@ def super_stabilised_savgol_coeffs(
     # from -pos to window_length - pos - 1. The powers (i.e., rows) range
     # from 0 to polyorder. (That is, A is a vandermonde matrix, but not
     # necessarily square.)
-    x = np.arange(-pos, window_length - pos, dtype=float)
+    x = np.arange(
+        start=-pos_internal,
+        stop=window_length - pos_internal,
+        step=1.0,
+        dtype=float,
+    )
 
     if use == "conv":
         # Reverse so that result can be used in a convolution.
