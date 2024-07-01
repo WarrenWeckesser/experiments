@@ -176,7 +176,11 @@ def super_stabilised_savgol_coeffs(
 
     # of ``x_center != 0``, the correction factors for the subsequent least squares
     # problem are a bit more involved to compute
-    if x_center != 0.0:
+    # NOTE: this is not checked via ``x_center`` which can suffer from floating point
+    #       errors, but via the internal variable ``pos_internal`` which is ensured to
+    #       be an integer for the cases where ``x_center == 0`` (so this is a safe
+    #       check)
+    if pos_internal != halflen:
         correction_factors = _savgol_pinv_correction_factors_with_x_center(
             deriv=deriv,
             polyorder=polyorder,
