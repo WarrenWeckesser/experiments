@@ -8,7 +8,7 @@ from mpmath import mp
 import mpsig
 
 
-def _savgol_pinv_correction_factors(
+def _savgol_pinv_correction_factors_with_x_center(
     deriv: int,
     polyorder: int,
     x_center: float,
@@ -18,7 +18,8 @@ def _savgol_pinv_correction_factors(
 ) -> np.ndarray:
     """
     Computes the correction factors for the pseudoinversion for the Savitzky Golay
-    coefficient computations. Please refer to the Notes section for more details.
+    coefficient computations when the filter is not centered within its window, i.e.,
+    ``x_center != 0``. Please refer to the Notes section for more details.
 
     Parameters
     ----------
@@ -173,15 +174,27 @@ def super_stabilised_savgol_coeffs(
     j_column_scales[j_column_scales == 0.0] = 1.0
     J_normalized_polyvander /= j_column_scales[np.newaxis, ::]
 
-    # then, the correction factors for the subsequent least squares problem are computed
-    correction_factors = _savgol_pinv_correction_factors(
-        deriv=deriv,
-        polyorder=polyorder,
-        polyvander_column_scales=j_column_scales,
-        x_center=x_center,
-        x_scale=x_scale,
-        delta=delta,
-    )
+    # of ``x_center != 0``, the correction factors for the subsequent least squares
+    # problem are a bit more involved to compute
+    if x_center != 0.0:
+        correction_factors = _savgol_pinv_correction_factors_with_x_center(
+            deriv=deriv,
+            polyorder=polyorder,
+            polyvander_column_scales=j_column_scales,
+            x_center=x_center,
+            x_scale=x_scale,
+            delta=delta,
+        )
+
+    # for ``x_center == 0``, the correction factors are highly simplified
+    else:
+        # in this case, the correction factors just a column vector whose ``d``-th
+        # entry is given by
+        # ``(d! / delta**d) * 1.0 / col_scale[d] * 1.0 / (x_scale ** d)``
+        correction_factors = np.zeros(shape=(polyorder + 1,), dtype=np.float64)
+        correction_factors[deriv] = factorial(deriv) / (
+            j_column_scales[deriv] * ((delta * x_scale) ** deriv)
+        )
 
     # finally, the coefficients are obtained from solving the least squares problem
     # J.T @ coeffs = correction_factors
@@ -271,21 +284,22 @@ def simple_savgol_coeffs(window_length, polyorder, pos=None):
 
 
 def check_savgol_coeffs(c, cref):
-    relerr = np.array(
-        [
-            float(abs((c0 - cref0) / cref0)) if cref != 0 else np.inf
-            for c0, cref0 in zip(c, cref)
-        ]
-    )
+    relerr = np.empty_like(c)
+    for i, (c0, cref0) in enumerate(zip(c, cref)):
+        if cref0 != 0:
+            relerr[i] = abs((c0 - cref0) / cref0)
+        else:
+            relerr[i] = np.nan
+
     return relerr
 
 
 if __name__ == "__main__":
     mp.dps = 150
 
-    window_len = 51
+    window_len = 55
     order = 10
-    pos = 35
+    pos = 27
     deriv = 5
     delta = 0.5
 
@@ -343,3 +357,22 @@ if __name__ == "__main__":
     ax.set_ylabel("Coefficient value")
 
     plt.show()
+
+
+# Long Test section
+
+if __name__ == "__main__" and True:
+
+    for order in [0, 1, 9, 10]:  # odd and even
+        for deriv in [0, 1, 2, 3, 4, 5, 6]:
+            for window_len in [11, 31]:  # to keep computation time reasonable
+                for pos in range(0, window_len):  # all possible positions
+                    print(f"Checking {window_len=}  {order=}  {deriv=}  {pos=}")
+                    coeffs = mpsig.savgol_coeffs(
+                        window_len, order, pos=pos, deriv=deriv
+                    )
+                    c_sup_s = super_stabilised_savgol_coeffs(
+                        window_len, order, pos=pos, deriv=deriv
+                    )
+
+                    assert np.allclose(coeffs, c_sup_s)
