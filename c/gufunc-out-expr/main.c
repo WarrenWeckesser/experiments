@@ -459,6 +459,18 @@ pow_int64(int64_t b, int64_t p, int *perror)
 }
 
 
+//
+// Error conditions
+//
+// *error   Meaning
+// ------   ----------------------------------------------------
+//    -1    out of memory (calloc failed)
+//    -2    program error: at end, the number of items remaining
+//          on the stack was not 1.
+//    -3    overflow
+//    -4    negative power
+//    -5    division by 0 (in // or %)
+//
 int64_t
 evaluate_instructions(instruction *instructions, int64_t *vars, int *error)
 {
