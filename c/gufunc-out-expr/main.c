@@ -253,6 +253,15 @@ create_instructions_recursive(instruction *instructions, int *num_instructions,
 #define CREATE_STATUS_PARSE_ERROR -2
 
 
+//
+// Error codes
+//
+// *perror                     Meaniing
+// -----------------------     -----------------------------------------------------
+// CREATE_STATUS_NO_MEMORY     out of memory (calloc failed)
+// CREATE_STATUS_PARSE_ERROR   parsed failed to parse the expression
+//
+//
 instruction *
 create_instructions(struct owl_tree *tree, char **names, int num_names, char *input,
                     int *perror)
@@ -398,12 +407,12 @@ void print_stack(struct owl_tree *tree, char **names, int num_names, char *input
 //
 // *error   Meaning
 // ------   ----------------------------------------------------
-//    -1    out of memory (calloc failed)
-//    -2    program error: at end, the number of items remaining
+//   -1     out of memory (calloc failed)
+//   -2     program error: at end, the number of items remaining
 //          on the stack was not 1.
-//    -3    overflow
-//    -4    negative power
-//    -5    division by 0 (in // or %)
+//   -3     overflow
+//   -4     negative power
+//   -5     division by 0 (in division or remainder)
 //
 int64_t
 evaluate_instructions(instruction *instructions, int64_t *vars, int *error)
