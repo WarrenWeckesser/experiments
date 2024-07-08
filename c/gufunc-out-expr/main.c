@@ -574,72 +574,91 @@ void print_alloc_failed(void)
 
 
 int demonstrate_evaluation(instruction *instructions,
-                           char **name_ptrs,
+                           char **var_names,
+                           int64_t var_values[],
                            int num_names)
 {
     int error;
 
     printf("\n");
     printf("Demonstrate evaluation...\n");
-    int64_t *vars = calloc(num_names, sizeof(int64_t));
-    if (vars == NULL) {
-        return -1;
-    }
 
     // Fill vars with some numbers for the demonstration.
     for (int k = 0; k < num_names; ++k) {
-        vars[k] = 7*k + 5;
-        printf("%s = %" PRId64 "\n", name_ptrs[k], vars[k]);
+        printf("%s = %" PRId64 "\n", var_names[k], var_values[k]);
     }
 
-    int64_t result = evaluate_instructions(instructions, vars, &error);
+
+    int64_t result = evaluate_instructions(instructions, var_values, &error);
     if (error < 0) {
         printf("evaluate_instructions failed; error = %d\n", error);
     }
     else {
         printf("evaluate_instructions returned %" PRId64 "\n", result);
     }
-    free(vars);
     return 0;
 }
 
 
+// For this demo, limit the number of variables.
+#define MAX_VARS 8
+
 int main(int argc, char *argv[])
 {
     int status;
-    char **name_ptrs;
+    //char **name_ptrs;
     int num_names;
     int retval = 0;
+    char *var_names[MAX_VARS];
+    int64_t var_values[MAX_VARS];
 
-    if (argc < 3) {
-        printf("use: ./main names expr\n");
-        printf("where names is a space-delimited list of dimension names\n");
-        printf("and expr is a dimension expression.\n");
-        printf("Example: ./main \"m n\" \"1 + min(m, n)\"\n");
+    if (argc < 2) {
+        printf("use: ./main expr name=value name=value ...\n");
+        printf("expr is a dimension expression.\n");
+        printf("and each parameter of the form name=value defines a value \n");
+        printf("to be used to evaluate expr.\n");
+        printf("Example: ./main \"1 + min(m, n)\" m=5 n=12\n");
         exit(-1);
     }
 
-    // Note that get_names modifies characters in argv[1].
-    name_ptrs = get_names(argv[1], &num_names);
-    if (name_ptrs == NULL) {
-        if (num_names < 0) {
-            print_alloc_failed();
-        }
-        else {
-            printf("no names\n");
-        }
+    num_names = argc - 2;
+    if (num_names > MAX_VARS) {
+        fprintf(stderr, "too many variable definitions\n");
         exit(-1);
     }
+    for (size_t k = 2; k < argc; ++k) {
+        char *v = argv[k];
+        while (*v) {
+            if (*v == '=') {
+                break;
+            }
+            ++v;
+        }
+        if (!*v) {
+            fprintf(stderr, "invalid variable definition: '%s'\n", argv[k]);
+            exit(-1);
+        }
+        char *pe = v;
+        *v = '\0';
+        var_names[k - 2] = argv[k];
+        ++v;
+        char *endptr;
+        var_values[k - 2] = strtol(v, &endptr, 10);
+        if (endptr == v || *endptr != '\0') {
+            *pe = '=';
+            fprintf(stderr, "invalid value in variable definition: '%s'\n", argv[k]);
+            exit(-1);
+        }
+    }
 
-    struct owl_tree *tree = owl_tree_create_from_string(argv[2]);
+    struct owl_tree *tree = owl_tree_create_from_string(argv[1]);
     if (owl_tree_get_error(tree, NULL) != ERROR_NONE) {
         owl_tree_print(tree);
-        free(name_ptrs);
         exit(-1);
     }
 
-    instruction *instructions = create_instructions(tree, name_ptrs, num_names,
-                                                    argv[2], &status);
+    instruction *instructions = create_instructions(tree, var_names, num_names,
+                                                    argv[1], &status);
     // Done with tree
     owl_tree_destroy(tree);
     if (instructions == NULL) {
@@ -649,20 +668,17 @@ int main(int argc, char *argv[])
         else {
             printf("failed to create instructions\n");
         }
-        free(name_ptrs);
         exit(-1);
     }
 
-    print_instructions(instructions, name_ptrs, num_names);
+    print_instructions(instructions, var_names, num_names);
 
-    status = demonstrate_evaluation(instructions, name_ptrs, num_names);
+    status = demonstrate_evaluation(instructions, var_names, var_values, num_names);
     if (status < 0) {
         print_alloc_failed();
         retval = -1;
     }
 
     free(instructions);
-    free(name_ptrs);
-
     return retval;
 }
