@@ -30,7 +30,7 @@
 "\n"\
 "hypot_v2(x, y)\n"\
 "    A wrapper of the standard libary hypot function.  This does the\n"\
-"    same calculation as hypot_v1, but the iterator does not set the the flags\n"\
+"    same calculation as hypot_v1, but the iterator does not set the flags\n"\
 "    NPY_ITER_EXTERNAL_LOOP, NPY_ITER_BUFFERED and NPY_ITER_GROWINNER.\n"\
 "\n"
 
