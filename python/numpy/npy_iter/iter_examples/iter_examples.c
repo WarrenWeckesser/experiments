@@ -1,7 +1,7 @@
 //
-// Example of wrapping the cos function from math.h using the NumPy-C-API.
+// Example of wrapping some functions from math.h using the NumPy C API.
 //
-// This example was copied from
+// The code for cos_v1 was copied from
 //   https://lectures.scientific-python.org/advanced/interfacing_with_c/interfacing_with_c.html#numpy-support
 // and then modified.
 //
