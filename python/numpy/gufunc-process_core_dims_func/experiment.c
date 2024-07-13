@@ -218,22 +218,6 @@ static struct PyModuleDef moduledef = {
 };
 
 
-int reset_core_signature(PyUFuncObject *gufunc, char *new_signature)
-{
-    size_t buffer_size = strlen(new_signature) + 1;
-    char *sigbuffer = PyArray_realloc(gufunc->core_signature, buffer_size);
-    if (sigbuffer == NULL) {
-        PyErr_SetString(PyExc_MemoryError,
-                        "unable to allocate memory for the new "
-                        "signature of a gufunc.");
-        return -1;
-    }
-    strcpy(sigbuffer, new_signature);
-    gufunc->core_signature = sigbuffer;
-    return 0;
-}
-
-
 PyMODINIT_FUNC PyInit_experiment(void)
 {
     PyObject *module;
@@ -270,12 +254,9 @@ PyMODINIT_FUNC PyInit_experiment(void)
         Py_DECREF(module);
         return NULL;
     }
+
     gufunc->process_core_dims_func = &euclidean_pdist_process_core_dims;
-    if (reset_core_signature(gufunc, "(m),(n)->(m*(m - 1)/2)") != 0) {
-        Py_DECREF(gufunc);
-        Py_DECREF(module);
-        return NULL;
-    }
+
     status = PyModule_AddObject(module, "euclidean_pdist",
                                 (PyObject *) gufunc);
     if (status == -1) {
@@ -300,12 +281,8 @@ PyMODINIT_FUNC PyInit_experiment(void)
         Py_DECREF(module);
         return NULL;
     }
+
     gufunc->process_core_dims_func = &conv1d_full_process_core_dims;
-    if (reset_core_signature(gufunc, "(m),(n)->(m + n - 1)") != 0) {
-        Py_DECREF(gufunc);
-        Py_DECREF(module);
-        return NULL;
-    }
 
     status = PyModule_AddObject(module, "conv1d_full",
                                 (PyObject *) gufunc);
