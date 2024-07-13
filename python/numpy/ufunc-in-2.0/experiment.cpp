@@ -53,6 +53,7 @@ deadzone_strided_loop(PyArrayMethod_Context *NPY_UNUSED(context),
 
 extern "C" {
 
+
 static int
 deadzone_float_strided_loop(PyArrayMethod_Context *context,
                             char **args, npy_intp const *dimensions,
@@ -60,6 +61,7 @@ deadzone_float_strided_loop(PyArrayMethod_Context *context,
 {
     return deadzone_strided_loop<float>(context, args, dimensions, steps, func);
 }
+
 
 static int
 deadzone_double_strided_loop(PyArrayMethod_Context *context,
@@ -72,38 +74,13 @@ deadzone_double_strided_loop(PyArrayMethod_Context *context,
 }  // extern "C"
 
 static int
-add_deadzone(PyObject *module, PyObject *dict) {
+add_deadzone(PyObject *module) {
     PyObject* deadzone = PyUFunc_FromFuncAndData(NULL, NULL, NULL, 0, 3, 1,
                                                  PyUFunc_None, "deadzone", NULL, 0);
     if (deadzone == NULL) {
         return -1;
     }
 
-    PyArray_DTypeMeta *dtypes[] = {
-        &PyArray_DoubleDType, &PyArray_DoubleDType, &PyArray_DoubleDType, &PyArray_DoubleDType
-    };
-
-    PyType_Slot slots[] = {
-        {NPY_METH_strided_loop, (void *) deadzone_double_strided_loop},
-        {0, NULL}
-    };
-
-    PyArrayMethod_Spec spec = {
-        .name = "deadzone_double_strided_loop",
-        .nin = 3,
-        .nout = 1,
-        .casting = NPY_UNSAFE_CASTING,
-        .flags = NPY_METH_NO_FLOATINGPOINT_ERRORS,
-        .dtypes = dtypes,
-        .slots = slots
-    };
-
-    if (PyUFunc_AddLoopFromSpec(deadzone, &spec) < 0) {
-        Py_DECREF(deadzone);
-        return -1;
-    }
-
-/*
     {
         PyArray_DTypeMeta *dtypes[] = {
             &PyArray_FloatDType, &PyArray_FloatDType, &PyArray_FloatDType, &PyArray_FloatDType
@@ -118,7 +95,7 @@ add_deadzone(PyObject *module, PyObject *dict) {
             .name = "deadzone_float_strided_loop",
             .nin = 3,
             .nout = 1,
-            .casting = NPY_UNSAFE_CASTING,
+            .casting = NPY_SAME_KIND_CASTING,
             .flags = NPY_METH_NO_FLOATINGPOINT_ERRORS,
             .dtypes = dtypes,
             .slots = slots
@@ -129,23 +106,48 @@ add_deadzone(PyObject *module, PyObject *dict) {
             return -1;
         }
     }
-*/
- 
-    PyDict_SetItemString(dict, "deadzone", deadzone);
-    Py_DECREF(deadzone);
+
+    {
+        PyArray_DTypeMeta *dtypes[] = {
+            &PyArray_DoubleDType, &PyArray_DoubleDType, &PyArray_DoubleDType, &PyArray_DoubleDType
+        };
+
+        PyType_Slot slots[] = {
+            {NPY_METH_strided_loop, (void *) deadzone_double_strided_loop},
+            {0, NULL}
+        };
+
+        PyArrayMethod_Spec spec = {
+            .name = "deadzone_double_strided_loop",
+            .nin = 3,
+            .nout = 1,
+            .casting = NPY_SAME_KIND_CASTING,
+            .flags = NPY_METH_NO_FLOATINGPOINT_ERRORS,
+            .dtypes = dtypes,
+            .slots = slots
+        };
+
+        if (PyUFunc_AddLoopFromSpec(deadzone, &spec) < 0) {
+            Py_DECREF(deadzone);
+            return -1;
+        }
+    }
+
+    PyModule_AddObject(module, "deadzone", deadzone);
+    //Py_DECREF(deadzone);
     return 0;
 }
 
-static PyMethodDef ExperimentPPMethods[] = {
+static PyMethodDef ExperimentMethods[] = {
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
 static struct PyModuleDef moduledef = {
         PyModuleDef_HEAD_INIT,
-        "experimentpp",
+        "experiment",
         NULL,
         -1,
-        ExperimentPPMethods,
+        ExperimentMethods,
         NULL,
         NULL,
         NULL,
@@ -155,9 +157,8 @@ static struct PyModuleDef moduledef = {
 
 extern "C" {
 
-PyMODINIT_FUNC PyInit_experimentpp(void) {
+PyMODINIT_FUNC PyInit_experiment(void) {
     PyObject *module;
-    PyObject *module_dict;
 
     module = PyModule_Create(&moduledef);
     if (module == NULL) {
@@ -173,9 +174,7 @@ PyMODINIT_FUNC PyInit_experimentpp(void) {
         return NULL;
     }
 
-    module_dict = PyModule_GetDict(module);
-
-    if (add_deadzone(module, module_dict) < 0) {
+    if (add_deadzone(module) < 0) {
         Py_DECREF(module);
         PyErr_Print();
         PyErr_SetString(PyExc_RuntimeError,
