@@ -201,6 +201,105 @@ static void *const conv1d_full_data[] = {NULL};
 static const char conv1d_full_typecodes[] = {NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE};
 
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// Define the gufunc 'cross'
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+int cross_process_core_dims(PyUFuncObject *ufunc,
+                            npy_intp *core_dim_sizes)
+{
+    //
+    // core_dim_sizes will hold the core dimensions [m, p].
+    // p will be -1 if the caller did not provide the out argument.
+    //
+    npy_intp m = core_dim_sizes[0];
+    npy_intp p = core_dim_sizes[1];
+
+    if (m != 2 && m != 3) {
+        PyErr_Format(PyExc_ValueError,
+                "cross: core dimension of the input must be 2 or 3; "
+                "got %zd.", m);
+    }
+
+    npy_intp required_p = (m == 2) ? 1 : 3;
+
+    if (p == -1) {
+        core_dim_sizes[1] = required_p;
+        return 0;
+    }
+    if (p != required_p) {
+        PyErr_Format(PyExc_ValueError,
+                "cross: the core dimension p of the out parameter "
+                "must be 1 or 3 if the input core dimension is 2 or 3, "
+                "respectively. Got input core dimension %zd, but p is %zd",
+                m, p);
+        return -1;
+    }
+    return 0;
+}
+
+static void
+cross_double_loop(char **args,
+                  npy_intp const *dimensions,
+                  npy_intp const *steps,
+                  void *NPY_UNUSED(func))
+{
+    // Input and output arrays
+    char *p_x = args[0];
+    char *p_y = args[1];
+    char *p_out = args[2];
+    // Number of loops of pdist calculations to execute.
+    npy_intp nloops = dimensions[0];
+    // Core dimensions
+    npy_intp m = dimensions[1];
+    // npy_intp p = dimensions[2];  // Unused here; will be 1 or 3, depending on m.
+    // Core strides
+    npy_intp x_stride = steps[0];
+    npy_intp y_stride = steps[1];
+    npy_intp out_stride = steps[2];
+    // Inner strides
+    npy_intp x_inner_stride = steps[3];
+    npy_intp y_inner_stride = steps[4];
+    npy_intp out_inner_stride = steps[5];
+
+    if (m == 3) {
+        for (npy_intp loop = 0; loop < nloops; ++loop, p_x += x_stride,
+                                                       p_y += y_stride,
+                                                       p_out += out_stride) {
+            double x0 = *(double *)(p_x);
+            double x1 = *(double *)(p_x + x_inner_stride);
+            double x2 = *(double *)(p_x + 2*x_inner_stride);
+            double y0 = *(double *)(p_y);
+            double y1 = *(double *)(p_y + y_inner_stride);
+            double y2 = *(double *)(p_y + 2*y_inner_stride);
+            *(double *)(p_out)                      = x1*y2 - x2*y1;
+            *(double *)(p_out + out_inner_stride)   = x2*y0 - x0*y2;
+            *(double *)(p_out + 2*out_inner_stride) = x0*y1 - x1*y0;
+        }
+    }
+    else {
+        // m == 2
+        for (npy_intp loop = 0; loop < nloops; ++loop, p_x += x_stride,
+                                                       p_y += y_stride,
+                                                       p_out += out_stride) {
+            double x0 = *(double *)(p_x);
+            double x1 = *(double *)(p_x + x_inner_stride);
+            double y0 = *(double *)(p_y);
+            double y1 = *(double *)(p_y + y_inner_stride);
+            *(double *)p_out = x0*y1 - x1*y0;
+        }
+    }
+}
+
+
+static PyUFuncGenericFunction cross_functions[] = {
+    (PyUFuncGenericFunction) &cross_double_loop
+};
+static void *const cross_data[] = {NULL};
+static const char cross_typecodes[] = {NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE};
+
+
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // Extension module boilerplate...
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -285,6 +384,35 @@ PyMODINIT_FUNC PyInit_experiment(void)
     gufunc->process_core_dims_func = &conv1d_full_process_core_dims;
 
     status = PyModule_AddObject(module, "conv1d_full",
+                                (PyObject *) gufunc);
+    if (status == -1) {
+        Py_DECREF(gufunc);
+        Py_DECREF(module);
+        return NULL;
+    }
+
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // Define the gufunc 'cross'
+    // Shape signature is (m),(m)->(p) where m must be 2 or 3, and p must
+    // be 0 if m is 2 or 3 is m is 3.
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    gufunc = (PyUFuncObject *) PyUFunc_FromFuncAndDataAndSignature(
+                                cross_functions,
+                                cross_data,
+                                cross_typecodes,
+                                1, 2, 1, PyUFunc_None, "cross",
+                                "cross product (2-d or 3-d)",
+                                0, "(m),(m)->(p)");
+    if (gufunc == NULL) {
+        Py_DECREF(module);
+        return NULL;
+    }
+
+    gufunc->process_core_dims_func = &cross_process_core_dims;
+
+    status = PyModule_AddObject(module, "cross",
                                 (PyObject *) gufunc);
     if (status == -1) {
         Py_DECREF(gufunc);

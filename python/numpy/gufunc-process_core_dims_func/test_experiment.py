@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 from numpy.testing import assert_allclose, assert_equal
 
-from experiment import euclidean_pdist, conv1d_full
+from experiment import euclidean_pdist, conv1d_full, cross
 
 
 class TestEuclideanPDist:
@@ -85,3 +85,18 @@ class TestConv1dFull:
         out = np.zeros((2, 3))  # Not the correct shape.
         with pytest.raises(ValueError, match=r'does not equal m \+ n - 1'):
             conv1d_full(x, y, out=out)
+
+
+class TestCross:
+
+    def test_basic_2d(self):
+        x = np.array([1.0, 2.5])
+        y = np.array([3.0, -0.5])
+        z = cross(x, y)
+        assert_equal(z[0], np.cross(x, y))
+
+    def test_basic_3d(self):
+        x = np.array([2.0, 3.0, -4.0])
+        y = np.array([-1.0, 7.0, 5.0])
+        z = cross(x, y)
+        assert_equal(z, np.cross(x, y))
