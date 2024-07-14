@@ -61,7 +61,7 @@ class TestConv1dFull:
         x = np.array([1, 2, 4, 10, -1])
         y = np.array([2, 3, 0, 1])
         out = np.full(len(x) + len(y) - 1, fill_value=np.nan)
-        z = conv1d_full(x, y, out=out)
+        conv1d_full(x, y, out=out)
         assert_equal(out, np.convolve(x, y, mode='full'))
 
     def test_basic_broadcast(self):
@@ -77,7 +77,7 @@ class TestConv1dFull:
         assert result.shape == (2, 3, 12)
         for i in range(2):
             for j in range(3):
-                assert_equal(result[i, j], np.convolve(x[j], y[i,0]))
+                assert_equal(result[i, j], np.convolve(x[j], y[i, 0]))
 
     def test_bad_out_shape(self):
         x = np.ones((1, 2))
