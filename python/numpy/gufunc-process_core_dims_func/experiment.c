@@ -8,7 +8,6 @@
 #include "numpy/ndarraytypes.h"
 #include "numpy/ufuncobject.h"
 
-
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define MAX(a, b) (((a) < (b)) ? (b) : (a))
 
@@ -162,7 +161,7 @@ conv1d_full_double_loop(char **args,
     char *p_x = args[0];
     char *p_y = args[1];
     char *p_out = args[2];
-    // Number of loops of pdist calculations to execute.
+    // Number of core calculations to execute.
     npy_intp nloops = dimensions[0];
     // Core dimensions
     npy_intp m = dimensions[1];
@@ -199,6 +198,81 @@ static PyUFuncGenericFunction conv1d_full_functions[] = {
 };
 static void *const conv1d_full_data[] = {NULL};
 static const char conv1d_full_typecodes[] = {NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE};
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// Define the gufunc 'all_equal'
+// Shape signature is (m?),(n?)->().
+// Requires m == n, or m == 1, or n == 1, to allow broadcasting within
+// the core dimensions (implemented in the loop function).
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+int all_equal_process_core_dims(PyUFuncObject *ufunc,
+                                npy_intp *core_dim_sizes)
+{
+    npy_intp m = core_dim_sizes[0];
+    npy_intp n = core_dim_sizes[1];
+
+    if (!(m == n || m == 1 || n == 1 )) {
+        PyErr_Format(PyExc_ValueError,
+                "all_equal: the core dimensions m and n must satisfy "
+                "m == n, or m == 1, or n == 1.  Got m = %zd, n = %zd.",
+                m, n);
+        return -1;
+    }
+    return 0;
+}
+
+static void
+all_equal_double_loop(char **args,
+                      npy_intp const *dimensions,
+                      npy_intp const *steps,
+                      void *NPY_UNUSED(func))
+{
+    // Input and output arrays
+    char *p_x = args[0];
+    char *p_y = args[1];
+    char *p_out = args[2];
+    // Number of core calculations to execute.
+    npy_intp nloops = dimensions[0];
+    // Core dimensions
+    npy_intp m = dimensions[1];
+    npy_intp n = dimensions[2];
+    // Core strides
+    npy_intp x_stride = steps[0];
+    npy_intp y_stride = steps[1];
+    npy_intp out_stride = steps[2];
+    // Inner strides
+    npy_intp x_inner_stride = steps[3];
+    npy_intp y_inner_stride = steps[4];
+
+    if (m == 0 || n == 0) {
+        // Trivially true.
+        *(npy_bool *)p_out = 1;
+        return;
+    }
+
+    for (npy_intp loop = 0; loop < nloops; ++loop, p_x += x_stride,
+                                                   p_y += y_stride,
+                                                   p_out += out_stride) {
+        npy_bool result = 1;
+        for (npy_intp i = 0; i < MAX(m, n); ++i) {
+            double x_i = *(double *)(p_x + i*x_inner_stride);
+            double y_i = *(double *)(p_y + i*y_inner_stride);
+            if (x_i != y_i) {
+                result = 0;
+                break;
+            }
+        }
+        *(npy_bool *)p_out = result;
+    }
+}
+
+
+static PyUFuncGenericFunction all_equal_functions[] = {
+    (PyUFuncGenericFunction) &all_equal_double_loop
+};
+static void *const all_equal_data[] = {NULL};
+static const char all_equal_typecodes[] = {NPY_DOUBLE, NPY_DOUBLE, NPY_BOOL};
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -248,7 +322,7 @@ cross_double_loop(char **args,
     char *p_x = args[0];
     char *p_y = args[1];
     char *p_out = args[2];
-    // Number of loops of pdist calculations to execute.
+    // Number of core calculations to execute.
     npy_intp nloops = dimensions[0];
     // Core dimensions
     npy_intp m = dimensions[1];
@@ -393,9 +467,38 @@ PyMODINIT_FUNC PyInit_experiment(void)
 
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // Define the gufunc 'all_equal'
+    // Shape signature is (m?),(n?)->().
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    gufunc = (PyUFuncObject *) PyUFunc_FromFuncAndDataAndSignature(
+                                all_equal_functions,
+                                all_equal_data,
+                                all_equal_typecodes,
+                                1, 2, 1, PyUFunc_None, "all_equal",
+                                "Return true if x1[i] == x2[i] for all i.\n"
+                                "\n"
+                                "Functionally equivalent to `np.logical_and.reduce(np.equal(x1, x2), axis=-1)`.\n",
+                                0, "(m?),(n?)->()");
+    if (gufunc == NULL) {
+        Py_DECREF(module);
+        return NULL;
+    }
+
+    gufunc->process_core_dims_func = &all_equal_process_core_dims;
+
+    status = PyModule_AddObject(module, "all_equal",
+                                (PyObject *) gufunc);
+    if (status == -1) {
+        Py_DECREF(gufunc);
+        Py_DECREF(module);
+        return NULL;
+    }
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // Define the gufunc 'cross'
     // Shape signature is (m),(m)->(p) where m must be 2 or 3, and p must
-    // be 0 if m is 2 or 3 is m is 3.
+    // be 0 if m is 2 or 3 if m is 3.
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     gufunc = (PyUFuncObject *) PyUFunc_FromFuncAndDataAndSignature(
