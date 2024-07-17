@@ -15,7 +15,7 @@ using Second = std::chrono::duration<double, std::ratio<1> >;
 template<typename T>
 void test_float_point_array(size_t offset)
 {
-    const int n = 50000004;
+    const int n = 250000004;
     std::vector<T> x;
     x.resize(n);
     std::vector<T> y;
@@ -104,13 +104,14 @@ int main()
     cout << "float, offset=1:\n";
     test_float_point_array<float>(1);
 
-/*
+
     cout << "double, offset=0:\n";
     test_float_point_array<double>(0);
     cout << "double, offset=1:\n";
     test_float_point_array<double>(1);
     cout << endl;
 
+/*
     cout << "int16_t, offset=0:\n";
     test_integer_array<int16_t>(0);
     cout << "int32_t, offset=0:\n";
