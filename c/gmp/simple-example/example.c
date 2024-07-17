@@ -13,7 +13,7 @@ int main()
 
     mpf_set_d(x, 1.0);
     mpf_set_d(y, 3.0);
-    mpf_add(z, x, y);
+    mpf_div(z, x, y);
     printf("z = ");
     mpf_out_str(stdout, 10, 0, z);
     printf("\n");
