@@ -591,7 +591,26 @@ int demonstrate_evaluation(instruction *instructions,
 
     int64_t result = evaluate_instructions(instructions, var_values, &error);
     if (error < 0) {
-        printf("evaluate_instructions failed; error = %d\n", error);
+        printf("evaluate_instructions failed; error = %d: ", error);
+        if (error == -1) {
+            printf("out of memory");
+        }
+        if (error == -2) {
+            printf("program error; extra items on stack");
+        }
+        if (error == -3) {
+            printf("overflow");
+        }
+        if (error == -4) {
+            printf("negative power");
+        }
+        if (error == -5) {
+            printf("division by 0 (in division or remainder operation)");
+        }
+        if (error < -5) {
+            printf("unknown error");
+        }
+        printf("\n");
     }
     else {
         printf("evaluate_instructions returned %" PRId64 "\n", result);
