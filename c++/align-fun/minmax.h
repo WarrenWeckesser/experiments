@@ -46,7 +46,7 @@ minmax_pair<T> minmax_scalar_loop(const std::vector<T>& x)
 
 
 template<typename T>
-minmax_pair<T> minmax(std::size_t size, T* x)
+minmax_pair<T> minmax_unaligned(std::size_t size, T* x)
 {
     constexpr std::size_t simd_size = xsimd::simd_type<T>::size;
     std::size_t vec_size = size - size % simd_size;
@@ -60,15 +60,14 @@ minmax_pair<T> minmax(std::size_t size, T* x)
             minvec = xsimd::min(minvec, vec);
             maxvec = xsimd::max(maxvec, vec);
         }
+        if (vec_size != size) {
+            auto vec = xsimd::load_unaligned(&x[size - simd_size]);
+            minvec = xsimd::min(minvec, vec);
+            maxvec = xsimd::max(maxvec, vec);
+        }
         auto arr_min = xsimd::reduce_min(minvec);
         auto arr_max = xsimd::reduce_max(maxvec);
-
-        minmax_pair<T> tail_minmax = minmax_scalar_loop(size - i, &x[i]);
-
-        auto xmin = std::min(arr_min, tail_minmax.min);
-        auto xmax = std::max(arr_max, tail_minmax.max);
-
-        return minmax_pair<T>{xmin, xmax};
+        return minmax_pair<T>{arr_min, arr_max};
     }
     else {
         return minmax_scalar_loop(size, x);
@@ -76,7 +75,7 @@ minmax_pair<T> minmax(std::size_t size, T* x)
 }
 
 template<typename T>
-minmax_pair<T> minmax2(std::size_t size, T* x)
+minmax_pair<T> minmax_try_aligned(std::size_t size, T* x)
 {
     constexpr std::size_t simd_size = xsimd::simd_type<T>::size;
     std::size_t space = size * sizeof(T);
@@ -87,48 +86,48 @@ minmax_pair<T> minmax2(std::size_t size, T* x)
                          min_batches*sizeof(xsimd::simd_type<T>),
                          ptr, space_after_align);
     if (!p) {
-        return minmax_scalar_loop(size, x);
+        return minmax_unaligned(size, x);
     }
     // By how many bytes did the pointer change:
     size_t delta = space - space_after_align;
     if (delta % sizeof(T) != 0) {
         // Unusual alignment.
-        // XXX or use the SIMD unaligned loop
-        return minmax_scalar_loop(size, x);
+        return minmax_unaligned(size, x);
     }
     std::size_t nskip = delta / sizeof(T);
 
-    minmax_pair<T> pre_minmax;
-    if (nskip > 0) {
-        pre_minmax = minmax_scalar_loop(nskip, &x[0]);
-    }
-    std::size_t vec_size = (size - nskip) - (size - nskip) % simd_size;
+    xsimd::simd_type<T> minvec;
+    xsimd::simd_type<T> maxvec;
 
-    auto minvec = xsimd::load_aligned(&x[nskip]);
-    auto maxvec = minvec;
+    if (nskip > 0) {
+        // First element of the array is not aligned.
+        // This vector will overlap with the first aligned vector
+        // by simd_size - nskip lanes.  The overlap is not a problem
+        // for min and max.
+        minvec = xsimd::load_unaligned(&x[0]);
+    }
+    else {
+        minvec = xsimd::load_aligned(&x[0]);
+    }
+    maxvec = minvec;
+
+    std::size_t reduced_size = size - nskip;
+    std::size_t vec_size = reduced_size - reduced_size % simd_size;
+
     auto i = simd_size;
     for (; i < vec_size; i += simd_size) {
         auto vec = xsimd::load_aligned(&x[nskip + i]);
         minvec = xsimd::min(minvec, vec);
         maxvec = xsimd::max(maxvec, vec);
     }
+    size_t ntail = reduced_size - i;
+    if (ntail > 0) {
+        auto vec = xsimd::load_unaligned(&x[size - simd_size]);
+        minvec = xsimd::min(minvec, vec);
+        maxvec = xsimd::max(maxvec, vec);
+    }
     auto xmin = xsimd::reduce_min(minvec);
     auto xmax = xsimd::reduce_max(maxvec);
-
-    size_t ntail = (size - nskip) - i;
-    minmax_pair<T> tail_minmax;
-    if (ntail > 0) {
-        tail_minmax = minmax_scalar_loop(ntail, &x[i+nskip]);
-    }
-
-    if (ntail > 0) {
-        xmin = std::min(xmin, tail_minmax.min);
-        xmax = std::max(xmax, tail_minmax.max);
-    }
-    if (nskip > 0) {
-        xmin = std::min(xmin, pre_minmax.min);
-        xmax = std::max(xmax, pre_minmax.max);
-    }
 
     return minmax_pair<T>{xmin, xmax};
 }

@@ -15,7 +15,7 @@ using Second = std::chrono::duration<double, std::ratio<1> >;
 template<typename T>
 void test_float_point_array(size_t offset)
 {
-    const int n = 250000004;
+    const size_t n = 500000;
     std::vector<T> x;
     x.resize(n);
     std::vector<T> y;
@@ -33,17 +33,17 @@ void test_float_point_array(size_t offset)
 
     {
     auto tstart = Clock::now();
-    auto x_mm = minmax::minmax(std::size(x)-offset, &x[offset]);
+    auto x_mm = minmax::minmax_unaligned(std::size(x)-offset, &x[offset]);
     auto delta = 1000*chrono::duration_cast<Second>(Clock::now() - tstart).count();
-    cout << "minmax:             x_mm = " << x_mm;
+    cout << "minmax_unaligned:   x_mm = " << x_mm;
     cout << "   " << delta << " ms"  << endl;
     }
 
     {
     auto tstart = Clock::now();
-    auto y_mm = minmax::minmax2(std::size(y)-offset, &y[offset]);
+    auto y_mm = minmax::minmax_try_aligned(std::size(y)-offset, &y[offset]);
     auto delta = 1000*chrono::duration_cast<Second>(Clock::now() - tstart).count();
-    cout << "minmax2:            y_mm = " << y_mm;
+    cout << "minmax_try_aligned: y_mm = " << y_mm;
     cout << "   " << delta << " ms"  << endl;
     }
 
@@ -74,7 +74,7 @@ void test_integer_array(size_t offset)
 
     {
     auto tstart = Clock::now();
-    auto xi_mm = minmax::minmax(std::size(xi)-offset, &xi[offset]);
+    auto xi_mm = minmax::minmax_unaligned(std::size(xi)-offset, &xi[offset]);
     auto delta = 1000*chrono::duration_cast<Second>(Clock::now() - tstart).count();
     cout << "xi_mm = " << xi_mm;
     cout << "   " << delta << " ms"  << endl;
@@ -82,7 +82,7 @@ void test_integer_array(size_t offset)
 
     {
     auto tstart = Clock::now();
-    auto yi_mm = minmax::minmax2(std::size(yi)-offset, &yi[offset]);
+    auto yi_mm = minmax::minmax_try_aligned(std::size(yi)-offset, &yi[offset]);
     auto delta = 1000*chrono::duration_cast<Second>(Clock::now() - tstart).count();
     cout << "yi_mm = " << yi_mm;
     cout << "   " << delta << " ms"  << endl;
