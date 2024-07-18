@@ -35,7 +35,6 @@ minmax_pair<T> minmax_scalar_loop(const std::vector<T>& x)
     return minmax_scalar_loop(x.size(), &x[0]);
 }
 
-
 template<typename T>
 minmax_pair<T> minmax(const std::vector<T>& x)
 {
@@ -52,15 +51,15 @@ minmax_pair<T> minmax(const std::vector<T>& x)
             minvec = xsimd::min(minvec, vec);
             maxvec = xsimd::max(maxvec, vec);
         }
+        if (vec_size != size) {
+            auto vec = xsimd::load_unaligned(&x[size - simd_size]);
+            minvec = xsimd::min(minvec, vec);
+            maxvec = xsimd::max(maxvec, vec);
+        }
         auto arr_min = xsimd::reduce_min(minvec);
         auto arr_max = xsimd::reduce_max(maxvec);
 
-        minmax_pair<T> tail_minmax = minmax_scalar_loop(size - i, &x[i]);
-
-        auto xmin = std::min(arr_min, tail_minmax.min);
-        auto xmax = std::max(arr_max, tail_minmax.max);
-
-        return minmax_pair<T>{xmin, xmax};
+        return minmax_pair<T>{arr_min, arr_max};
     }
     else {
         return minmax_scalar_loop(x);
