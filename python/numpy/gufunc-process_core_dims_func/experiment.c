@@ -115,7 +115,7 @@ euclidean_pdist_double_loop(char **args,
 static PyUFuncGenericFunction euclidean_pdist_functions[] = {
     (PyUFuncGenericFunction) &euclidean_pdist_double_loop
 };
-static void *const eucldiean_pdist_data[] = {NULL};
+static void *const euclidean_pdist_data[] = {NULL};
 static const char euclidean_pdist_typecodes[] = {NPY_DOUBLE, NPY_DOUBLE};
 
 
@@ -418,7 +418,7 @@ PyMODINIT_FUNC PyInit_experiment(void)
 
     gufunc = (PyUFuncObject *) PyUFunc_FromFuncAndDataAndSignature(
                                 euclidean_pdist_functions,
-                                eucldiean_pdist_data,
+                                euclidean_pdist_data,
                                 euclidean_pdist_typecodes,
                                 1, 1, 1, PyUFunc_None, "euclidean_pdist",
                                 "pairwise euclidean distance of rows in x",
