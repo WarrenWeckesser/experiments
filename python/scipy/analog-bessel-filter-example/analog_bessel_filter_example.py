@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.signal import bessel, lsim2, lsim
+from scipy.signal import bessel, lsim
 import matplotlib.pyplot as plt
 
 
@@ -14,12 +14,9 @@ t = np.linspace(0, 1.25, 500, endpoint=False)
 u = np.cos(2*np.pi*4*t) + np.sin(2*np.pi*40*t) + 0.5*np.cos(2*np.pi*80*t)
 
 tout, yout, xout = lsim((b, a), U=u, T=t)
-tout2, yout2, xout2 = lsim2((b, a), U=u, T=t)
-
 
 plt.plot(t, u, 'r', alpha=0.3, linewidth=1, label='input')
 plt.plot(t, yout, 'b', alpha=0.4, linewidth=4, label='lsim output')
-plt.plot(t, yout2, 'k--', alpha=0.9, linewidth=1.5, label='lsim2 output')
 plt.legend(loc='best', shadow=True, framealpha=1)
 plt.grid(alpha=0.3)
 plt.show()
