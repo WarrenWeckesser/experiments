@@ -5,11 +5,11 @@ import numpy as np
 
 
 def cauchy_cdf(x):
-    return -np.arctan2(-1, -x)/np.pi
+    return np.arctan2(1, -x)/np.pi
 
 
 def cauchy_sf(x):
-    return -np.arctan2(-1, x)/np.pi
+    return np.arctan2(1, x)/np.pi
 
 
 # This works great for p < 0.5.  It loses precision as p -> 1.
