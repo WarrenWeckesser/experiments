@@ -176,3 +176,24 @@ double tukey_lambda_sf(double x, double lam)
 {
     return tukey_lambda_cdf(-x, lam);
 }
+
+
+//
+// Probability density function of the Tukey lambda distribution.
+//
+double tukey_lambda_pdf(double x, double lam)
+{
+    if (std::isnan(x) || !std::isfinite(lam)) {
+        return std::numeric_limits<double>::quiet_NaN();
+    }
+    if (lam > 0) {
+        double recip_lam = 1.0/lam;
+        if (x < -recip_lam || x > recip_lam) {
+            return 0.0;
+        }
+    }
+    double cdf = tukey_lambda_cdf(x, lam);
+    double sf = tukey_lambda_sf(x, lam);
+    double p = 1/(std::pow(cdf, lam - 1) + std::pow(sf, lam - 1));
+    return p;
+}
