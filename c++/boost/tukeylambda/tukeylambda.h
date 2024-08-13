@@ -192,8 +192,16 @@ double tukey_lambda_pdf(double x, double lam)
             return 0.0;
         }
     }
-    double cdf = tukey_lambda_cdf(x, lam);
-    double sf = tukey_lambda_sf(x, lam);
-    double p = 1/(std::pow(cdf, lam - 1) + std::pow(sf, lam - 1));
-    return p;
+    // We need the CDF and the SF.  Compute the smaller one, and subtract it
+    // from 1 to get the larger.
+    double cdf, sf;
+    if (x < 0) {
+        cdf = tukey_lambda_cdf(x, lam);
+        sf = 1 - cdf;
+    }
+    else {
+        sf = tukey_lambda_sf(x, lam);
+        cdf = 1 - sf;
+    }
+    return 1/(std::pow(cdf, lam - 1) + std::pow(sf, lam - 1));
 }
