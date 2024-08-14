@@ -3,7 +3,7 @@
 #include <limits>
 
 #include <boost/math/tools/roots.hpp>
-
+#include <boost/math/special_functions/logaddexp.hpp>
 
 //
 // In toms748_solve, don't promote double to long double,
@@ -95,6 +95,13 @@ get_cdf_solver_bracket(double x, double lam)
     return std::pair(pmin, pmax);
 }
 
+inline double
+inf_to_big(double x)
+{
+    return std::isinf(x) ? 0.75*std::copysign(std::numeric_limits<double>::max(), x)
+                         : x;
+}
+
 //
 // Cumulative distribution function of the Tukey lambda distribution.
 //
@@ -129,6 +136,18 @@ double tukey_lambda_cdf(double x, double lam)
     }
 
     std::pair<double, double> initial_bracket = get_cdf_solver_bracket(x, lam);
+    printf("initial_bracket: %25.16e %25.16e\n", initial_bracket.first, initial_bracket.second);
+    double x_second = tukey_lambda_invcdf(initial_bracket.second, lam);
+
+    if (initial_bracket.first == 0.0) {
+        if (x_second <= x) {
+            // Extreme case: because of floating point imprecision, the
+            // interval doesn't actually bracket the root.  This is observed
+            // to occur in the far left tail, so we can use the upper end of
+            // the bracket as the result.
+            return initial_bracket.second;
+        }
+    }
     if (initial_bracket.first == 1.0) {
         return 1.0;
     }
@@ -141,15 +160,13 @@ double tukey_lambda_cdf(double x, double lam)
     std::uintmax_t max_iter = 100;
     bracket = toms748_solve([x, lam](double p) {
                                 double x1 = tukey_lambda_invcdf(p, lam) - x;
-                                // Apparently toms748_solve does not handle inf, so
-                                // translate infs to very big numbers.
-                                if (std::isinf(x1)) {
-                                    x1 = std::copysign(std::numeric_limits<double>::max(), x1);
-                                }
-                                return x1;
+                                // toms748_solve doesn't handle inf.
+                                return inf_to_big(x1);
                             },
                             initial_bracket.first, initial_bracket.second,
                             tol, max_iter, Toms748Policy());
+    printf("bracket:         %25.16e %25.16e\n", bracket.first, bracket.second);
+
     if (bracket.first == bracket.second) {
         return bracket.first;
     }
@@ -194,14 +211,41 @@ double tukey_lambda_pdf(double x, double lam)
     }
     // We need the CDF and the SF.  Compute the smaller one, and subtract it
     // from 1 to get the larger.
-    double cdf, sf;
+    double p_smaller;
     if (x < 0) {
-        cdf = tukey_lambda_cdf(x, lam);
-        sf = 1 - cdf;
+        p_smaller = tukey_lambda_cdf(x, lam);
     }
     else {
-        sf = tukey_lambda_sf(x, lam);
-        cdf = 1 - sf;
+        p_smaller = tukey_lambda_sf(x, lam);
     }
-    return 1/(std::pow(cdf, lam - 1) + std::pow(sf, lam - 1));
+    //double tmp =  std::pow(p_smaller, lam - 1) + std::pow(1 - p_smaller, lam - 1);
+    double denom = std::pow(p_smaller, lam - 1) + std::exp((lam - 1)*std::log1p(-p_smaller));
+    return 1/denom;
+}
+
+//
+// Natural logarithm of the PDF of the Tukey lambda distribution.
+//
+double tukey_lambda_logpdf(double x, double lam)
+{
+    if (std::isnan(x) || !std::isfinite(lam)) {
+        return std::numeric_limits<double>::quiet_NaN();
+    }
+    if (lam > 0) {
+        double recip_lam = 1.0/lam;
+        if (x < -recip_lam || x > recip_lam) {
+            return -INFINITY;
+        }
+    }
+    double p_smaller;
+    if (x < 0) {
+        p_smaller = tukey_lambda_cdf(x, lam);
+    }
+    else {
+        p_smaller = tukey_lambda_sf(x, lam);
+    }
+    // The return expression is equivalent to
+    //   -log(bigger**(lam - 1) + smaller**(lam - 1))
+    return -boost::math::logaddexp((lam - 1)*std::log1p(-p_smaller),
+                                   (lam - 1)*std::log(p_smaller));
 }
