@@ -14,6 +14,31 @@ typedef boost::math::policies::policy<
     boost::math::policies::promote_double<false>
 > Toms748Policy;
 
+//
+// Inverse of the CDF of the logistic distribution:
+//   x = log(p/(1 - p))
+// This function assumes 0 <= p <= 1.
+//
+double logistic_invcdf(double p)
+{
+    if (p == 0) {
+        return -INFINITY;
+    }
+    if (p == 1) {
+        return INFINITY;
+    }
+    if (p < 0.05) {
+        return std::log(p) - std::log1p(-p);
+    }
+    // Let d = p - 0.5, so p = d + 0.5.
+    // Then
+    //      log(p/(1 - p)) = log((0.5 + d)/(0.5 - d))
+    //                     = log((1 + 2*d)/(1 - 2*d))
+    //                     = log(1 + 2*d) - log(1 - 2*d)
+    //                     = log1p(2*d) - log1p(-2*d)
+    double s = 2*(p - 0.5);
+    return std::log1p(s) - std::log1p(-s);
+}
 
 //
 // Inverse of the CDF of the Tukey lambda distribution.
@@ -34,7 +59,7 @@ double tukey_lambda_invcdf(double p, double lam)
     }
     else {
         if (lam == 0) {
-            x = std::log(p) - std::log1p(-p);
+            x = logistic_invcdf(p);
         }
         else {
             x = (std::pow(p, lam) - std::pow(1 - p, lam))/lam;
