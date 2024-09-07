@@ -1,1 +1,1 @@
-g++ -std=c++11 demo.cpp -o demo
+g++ -std=c++17 demo.cpp -o demo
