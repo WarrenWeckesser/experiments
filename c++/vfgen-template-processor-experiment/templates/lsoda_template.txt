@@ -1,0 +1,16 @@
+      subroutine {{NAME}}_rhs(n_, {{INDVAR}}, y_, f_)
+      implicit none
+      integer n_
+      double precision {{INDVAR}}, y_, f_
+      dimension y_({{NV}} + {{NP}}), f_({{NV}})
+{@      double precision {{CONSTANT_NAMES}}@}
+{@      double precision {{PARAMETER_NAMES}}@}
+{@      double precision {{EXPRESSION_NAMES}}@}
+{@      double precision {{STATE_NAMES}}@}
+{@      {{CONSTANT_NAMES}} = {{CONSTANT_VALUES}}@}
+{@      {{PARAMETER_NAMES}} = y_({{NV}}+{{#PARAMETER_NAMES}})@}
+{@      {{STATE_NAMES}} = y_({{#STATE_NAMES}})@}
+{@      {{EXPRESSION_NAMES}} = {{EXPRESSION_VALUES}}@}
+{@      f_({{#FORMULAS}}) = {{FORMULAS}}@}
+      return
+      end

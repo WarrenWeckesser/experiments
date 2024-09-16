@@ -1,0 +1,60 @@
+/*
+ * {{NAME}}_gvf.c
+ *
+ * C file to be used with GNU Scientific Library for the vector field named '{{NAME}}'.
+ *
+{@ * {{HEADER_COMMENTS}}@} */
+
+#include <math.h>
+#include <gsl/gsl_errno.h>
+#include <gsl/gsl_matrix.h>
+
+int {{NAME}}_vf(const double {{INDVAR}}, const double y_[], double f_[], const void *params)
+{
+    const double *p_ = (double *) params;
+{@    const double {{CONSTANT_NAMES}} = {{CONSTANT_VALUES}};@}
+{@    const double {{PARAMETER_NAMES}} = p_[{{#PARAMETER_NAMES}}];@}
+{@    const double {{STATE_NAMES}} = y_[{{#STATE_NAMES}}];@}
+{@    const double {{EXPRESSION_NAMES}} = {{EXPRESSION_VALUES}};@}
+{@    f_[{{#FORMULAS}}] = {{FORMULAS}};@}
+    return GSL_SUCCESS;
+}
+
+int {{NAME}}_jac(double const {{INDVAR}}, const double y_[], double *jac_, double *dfdt_, void *params)
+{
+    const doube *p_ = (double *) params;
+{@    const double {{CONSTANT_NAMES}} = {{CONSTANT_VALUES}};@}
+{@    const double {{PARAMETER_NAMES}} = p_[{{#PARAMETER_NAMES}}];@}
+{@    const double {{STATE_NAMES}} = y_[{{#STATE_NAMES}}];@}
+{@    const double {{EXPRESSION_NAMES}} = {{EXPRESSION_VALUES}};@}
+    gsl_matrix_view dfdy_mat = gsl_matrix_view_array(jac_, {{NV}}, {{NV}});
+    gsl_matrix *m_ = &dfdy_mat.matrix;
+{@    gsl_matrix_set(m_, {{#JAC}}, {{JAC}});@}
+{@    dfdt_[{{#JACT}}] = {{JACT}};@}
+    return GSL_SUCCESS;
+}
+
+int {{NAME}}_jacp(double const {{INDVAR}}, const double y_[], double *jacp_, void *params)
+{
+    const double *p_ = (double *) params;
+{@    const double {{CONSTANT_NAMES}} = {{CONSTANT_VALUES}};@}
+{@    const double {{PARAMETER_NAMES}} = p_[{{#PARAMETER_NAMES}}];@}
+{@    const double {{STATE_NAMES}} = y_[{{#STATE_NAMES}}];@}
+{@    const double {{EXPRESSION_NAMES}} = {{EXPRESSION_VALUES}};@}
+    gsl_matrix_view dfdp_mat = gsl_matrix_view_array(jacp_, {{NV}}, {{NP}});
+    gsl_matrix *m_ = &dfdp_mat.matrix;
+{@    gsl_matrix_set(m_, {{#JACP}}, {{JACP}});@}
+    return GSL_SUCCESS;
+}
+
+{@
+double {{NAME}}_{{FUNCTION_NAMES}}(double {{INDVAR}}, const double y_[], const void *params)
+{
+    const double *p_ = (double *) params;
+{@    const double {{CONSTANT_NAMES}} = {{CONSTANT_VALUES}};@}
+{@    const double {{PARAMETER_NAMES}} = p_[{{#PARAMETER_NAMES}}];@}
+{@    const double {{STATE_NAMES}} = y_[{{#STATE_NAMES}}];@}
+{@    const double {{EXPRESSION_NAMES}} = {{EXPRESSION_VALUES}};@}
+    return {{FUNCTION_FORMULAS}};
+}
+@}

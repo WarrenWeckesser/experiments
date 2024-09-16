@@ -1,0 +1,23 @@
+/*
+ * {{NAME}}_gvf.h
+ *
+ * C file to be used with GNU Scientific Library for the vector field named '{{NAME}}'.
+ *
+{@ * {{HEADER_COMMENTS}}@} */
+
+#ifndef {{NAME}}_GVF_H
+#define {{NAME}}_GVF_H
+
+int {{NAME}}_vf(const double, const double [], double [], const void *);
+int {{NAME}}_jac(const double, const double [], double *, double *, const void *);
+int {{NAME}}_jacp(const double, const double [], double *, const void *);
+
+{@double {{NAME}}_{{FUNCTION_NAMES}}(const double, const double [], const void *);@}
+
+enum {{NAME}}_functions {
+{@    {{NAME}}_function_{{FUNCTION_NAMES}},@}};
+typedef enum {{NAME}}_functions {{NAME}}_functions_t;
+
+int {{NAME}}_functions(const double, const double y_[], const void *params, double f_[]);
+
+#endif /* {{NAME}}_GVF_H */
