@@ -203,7 +203,7 @@ public:
         return MultiIndexIterator(_shape);
     }
 
-    void dump(std::string name)
+    void dump(const std::string name) const
     {
         std::cerr << "array dump: name='" << name << "'" << std::endl;
         std::cerr << "_shape: ";

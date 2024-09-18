@@ -29,7 +29,8 @@ get_names(const string text,
           const string name_start, const string name_end,
           symbol_table_t table,
           set<string> &names,
-          set<string> &enum_names)
+          set<string> &enum_names,
+          set<string> &ravel_names)
 {
     size_t start = 0;
     size_t current = 0;
@@ -46,6 +47,11 @@ get_names(const string text,
                 ++actual_name_start;
                 enum_names.insert(text.substr(actual_name_start,
                                               name_current - actual_name_start));
+            }
+            if (text[actual_name_start] == '$') {
+                ++actual_name_start;
+                ravel_names.insert(text.substr(actual_name_start,
+                                               name_current - actual_name_start));
             }
             else {
                 names.insert(text.substr(actual_name_start,
@@ -126,8 +132,9 @@ string expand(
     // Get top-level names into sets.
     set<string> names_set;
     set<string> enum_names_set;
+    set<string> ravel_names_set;
     get_names(text, loop_start, loop_end, name_start, name_end, table,
-              names_set, enum_names_set);
+              names_set, enum_names_set, ravel_names_set);
 
     // Convert sets to vectors.
     vector<string> names;
@@ -137,6 +144,10 @@ string expand(
     vector<string> enum_names;
     for (auto &name: enum_names_set) {
         enum_names.push_back(name);
+    }
+    vector<string> ravel_names;
+    for (auto &name: ravel_names_set) {
+        ravel_names.push_back(name);
     }
 
     // Create a vector of all the names.
@@ -166,6 +177,22 @@ string expand(
         bctable.emplace(all_names[k], all_broadcast_arrays[k]);
     }
 
+    for (auto &ravel_name: ravel_names) {
+        SimpleArray a = table.at(ravel_name);
+        string ravel_value;
+        for (size_t k = 0; k < a.flat_size(); ++k) {
+            if (ravel_value.size() > 0) {
+                ravel_value.append(", ");
+            }
+            ravel_value.append(a.flat(k));
+        }
+        SimpleArray a1 = make_scalar_array(ravel_value);
+        string prefixed_name = "$" + ravel_name;
+        names.push_back(prefixed_name);
+        SimpleArray abc = broadcast_to(a1, common_shape);
+        bctable.emplace(prefixed_name, abc);
+    }
+
     // Main loop to make the substitutions using regex_replace.
     MultiIndexIterator it{common_shape};
     for (auto &index: it) {
@@ -174,6 +201,10 @@ string expand(
             string name = names[k];
             SimpleArray a = bctable.at(name);
             string value = a[index];
+            if (name[0] == '$') {
+                // Escape the $ character at the beginning of ravel names.
+                name.insert(0, "\\");
+            }
             regex name_re("\\{\\{" + name + "\\}\\}");
             new_text = regex_replace(new_text, name_re, value);
         }
