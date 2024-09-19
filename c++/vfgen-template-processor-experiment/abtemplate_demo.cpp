@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
         return 1;
     }
     std::stringstream sstr;
-    infile >> sstr.rdbuf();
+    infile >> std::noskipws >> sstr.rdbuf();
     template_text = sstr.str();
 
     size_t index_start;

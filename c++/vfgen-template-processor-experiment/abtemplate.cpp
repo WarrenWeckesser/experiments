@@ -1,8 +1,10 @@
+#include <algorithm>
 #include <regex>
 #include <set>
 #include <string>
 #include <vector>
 
+#include "splitlines.h"
 #include "simple_array.h"
 #include "abtemplate.h"
 
@@ -118,6 +120,98 @@ split(const string text, const string loop_start, const string loop_end)
     return blocks;
 }
 
+string joinlines(vector<string> lines, size_t start, size_t num)
+{
+    string joined;
+    size_t n = lines.size();
+    if (start >= lines.size()) {
+        return joined;
+    }
+    joined.append(lines[start]);
+    for (size_t k = start + 1; k < min(start + num, n); ++k) {
+        joined.append("\n"s + lines[k]);
+    }
+    return joined;
+}
+
+string joinlines(vector<string> lines) {
+    return joinlines(lines, 0, lines.size());
+}
+
+
+static vector<text_block_t>
+splitx(const string text, const string loop_start, const string loop_end)
+{
+    // XXX/TODO: Validation--check for unmatched loop start/end delimiters.
+    vector<text_block_t> blocks;
+    vector<string> lines = splitlines(text, "\n"s);
+    size_t start = 0;
+    size_t current = 0;
+    size_t block_depth = 0;
+    size_t delim_size = loop_start.size() + loop_end.size();
+
+    // printf("splitx: lines:\n");
+    // for (auto &line: lines) {
+    //     printf("::%s::\n", line.c_str());
+    // }
+
+    while (current < lines.size()) {
+        if (match_pos(lines[current], loop_start, 0)) {
+            // Found the start of a loop block.
+            string line = lines[current];
+            if (line.size() >= delim_size &&
+                    line.substr(line.size()-loop_end.size(), loop_end.size()) == loop_end) {
+                // Process the single line loop '{@ <content> @}'
+                if (block_depth == 0) {
+                    if (start < current) {
+                        blocks.push_back(text_block_t{joinlines(lines, start, current - start),
+                                                      false});
+                    }
+                    blocks.push_back(text_block_t{line.substr(loop_start.size(),
+                                                              line.size() - delim_size),
+                                                  true});
+                    start = current + 1;
+
+                }
+                ++current;
+            }
+            else {
+                if (block_depth == 0) {
+                    if (start < current) {
+                        blocks.push_back(text_block_t{joinlines(lines, start, current - start),
+                                                      false});
+                        start = current + 1;
+                    }
+                }
+                ++block_depth;
+                ++current;
+            }
+        }
+        else if (match_pos(lines[current], loop_end, 0)) {
+            if (block_depth == 1) {
+                if (start < current) {
+                    blocks.push_back(text_block_t{joinlines(lines, start, current - start),
+                                                  true});
+                start = current + 1;
+                }
+            }
+            --block_depth;
+            ++current;
+        }
+        else {
+            ++current;
+        }
+    }
+    if (start < current) {
+        blocks.push_back(text_block_t{joinlines(lines, start, current - start),
+                                      false});
+    }
+    // printf("splitx: blocks:\n");
+    // for (auto &block: blocks) {
+    //     printf("::%d::%s::\n", block.isloop, block.text.c_str());
+    // }
+    return blocks;
+}
 
 string expand(
     const string text,
@@ -231,7 +325,7 @@ string expand(
     // blocks that are loops (i.e. that were delimited by loop_start/loop_end).
     vector<string> done;
     for (auto &filledin_text: expanded) {
-        vector<text_block_t> blocks = split(filledin_text, loop_start, loop_end);
+        vector<text_block_t> blocks = splitx(filledin_text, loop_start, loop_end);
         for (auto &block: blocks) {
             if (block.isloop) {
                 string expanded_block = expand(block.text,
@@ -245,9 +339,6 @@ string expand(
             }
         }
     }
-    string result;
-    for (auto &part: done) {
-        result.append(part);
-    }
+    string result = joinlines(done);
     return result;
 }

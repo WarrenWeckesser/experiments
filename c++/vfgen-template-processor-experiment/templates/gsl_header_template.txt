@@ -3,7 +3,8 @@
  *
  * C file to be used with GNU Scientific Library for the vector field named '{{NAME}}'.
  *
-{@ * {{HEADER_COMMENTS}}@} */
+{@ * {{HEADER_COMMENTS}}@}
+ */
 
 #ifndef {{NAME}}_GVF_H
 #define {{NAME}}_GVF_H
