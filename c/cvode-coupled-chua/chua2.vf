@@ -1,0 +1,79 @@
+<?xml version="1.0" ?>
+<VectorField
+    Name="chua2"
+    Description="Chaos synchronization in Chua's circuit, Journal of Circuits, System, and Computers, Vol. 3, No. 1 (1993) 93-108.">
+<Parameter
+    Name="alpha"
+    DefaultValue="10" />
+<Parameter
+    Name="beta"
+    DefaultValue="14.87" />
+<Parameter
+    Name="a"
+    DefaultValue="-1.27" />
+<Parameter
+    Name="b"
+    DefaultValue="-0.68" />
+<Parameter
+    Name="delta_x"
+    DefaultValue="6.0"
+    Description="x coupling coefficient" />
+<Parameter
+    Name="delta_y"
+    DefaultValue="0.0"
+    Description="y coupling coefficient" />
+<Parameter
+    Name="delta_z"
+    DefaultValue="0.0"
+    Description="z coupling coefficient" />
+<Parameter
+    Name="Q"
+    DefaultValue="0"
+    Description="Selects behavior of f(x)" />
+<Parameter
+    Name="Qp"
+    DefaultValue="0"
+    Description="Selects behavior of fp(x)" />
+<Expression
+    Name="f"
+    Formula="(1 - Q*Q)*a*x + Q*Q*b*x + Q*(a - b)" />
+<Expression
+    Name="fp"
+    Formula="(1 - Qp*Qp)*a*xp + Qp*Qp*b*xp + Qp*(a - b)" />
+<StateVariable
+    Name="x"
+    Formula="alpha*(y - x - f) + delta_x*(xp - x)"
+    DefaultInitialCondition="-0.5" />
+<StateVariable
+    Name="y"
+    Formula="x - y + z + delta_y*(yp - y)"
+    DefaultInitialCondition="0.1" />
+<StateVariable
+    Name="z"
+    Formula="-beta*y + delta_z*(zp - z)"
+    DefaultInitialCondition="0" />
+<StateVariable
+    Name="xp"
+    Formula="alpha*(yp - xp - fp) + delta_x*(x - xp)"
+    DefaultInitialCondition="-0.5" />
+<StateVariable
+    Name="yp"
+    Formula="xp - yp + zp + delta_y*(y - yp)"
+    DefaultInitialCondition="0.1" />
+<StateVariable
+    Name="zp"
+    Formula="-beta*yp + delta_z*(z - zp)"
+    DefaultInitialCondition="0" />
+<Function
+    Name="x_equals_neg1"
+    Formula="x + 1" />
+<Function
+    Name="x_equals_pos1"
+    Formula="x - 1" />
+<Function
+    Name="xp_equals_neg1"
+    Formula="xp + 1" />
+<Function
+    Name="xp_equals_pos1"
+    Formula="xp - 1" />
+</VectorField>
