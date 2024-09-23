@@ -16,7 +16,8 @@ int {{NAME}}_jacp(const double, const double [], double *, const void *);
 {@double {{NAME}}_{{FUNCTION_NAMES}}(const double, const double [], const void *);@}
 
 enum {{NAME}}_functions {
-{@    {{NAME}}_function_{{FUNCTION_NAMES}},@}};
+{@    {{NAME}}_function_{{FUNCTION_NAMES}},@}
+};
 typedef enum {{NAME}}_functions {{NAME}}_functions_t;
 
 int {{NAME}}_functions(const double, const double y_[], const void *params, double f_[]);

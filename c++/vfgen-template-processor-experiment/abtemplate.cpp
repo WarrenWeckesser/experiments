@@ -81,44 +81,6 @@ struct text_block {
 };
 typedef struct text_block text_block_t;
 
-static vector<text_block_t>
-split(const string text, const string loop_start, const string loop_end)
-{
-    // XXX/TODO: Validation--check for unmatched loop start/end delimiters.
-    vector<text_block_t> blocks;
-    size_t start = 0;
-    size_t current = 0;
-    size_t block_depth = 0;
-    while (current < text.size()) {
-        if (match_pos(text, loop_start, current)) {
-            // Found the start of a loop block.
-            if (block_depth == 0 && start < current) {
-                blocks.push_back(text_block_t{text.substr(start, current - start),
-                                              false});
-                start = current + loop_start.size();
-            }
-            ++block_depth;
-            current += loop_start.size();
-        }
-        else if (match_pos(text, loop_end, current)) {
-            if (block_depth == 1 && start < current) {
-                blocks.push_back(text_block_t{text.substr(start, current - start),
-                                              true});
-                start = current + loop_end.size();
-            }
-            --block_depth;
-            current += loop_end.size();
-        }
-        else {
-            ++current;
-        }
-    }
-    if (start < current) {
-        blocks.push_back(text_block_t{text.substr(start, current - start),
-                                      false});
-    }
-    return blocks;
-}
 
 string joinlines(vector<string> lines, size_t start, size_t num)
 {
@@ -134,15 +96,30 @@ string joinlines(vector<string> lines, size_t start, size_t num)
     return joined;
 }
 
-string joinlines(vector<string> lines) {
+string joinlines(const vector<string> lines) {
     return joinlines(lines, 0, lines.size());
 }
 
+string strip(const string s) {
+    string t = s;
+    size_t k = t.size();
+    while (k > 0 && t[k-1] == ' ') {
+        --k;
+    }
+    t.erase(k, t.size() - k);
+    k = 0;
+    while (k < t.size() && t[k] == ' ') {
+        ++k;
+    }
+    t.erase(0, k);
+    return t;
+}
+
+
 
 static vector<text_block_t>
-splitx(const string text, const string loop_start, const string loop_end)
+split(const string text, const string loop_start, const string loop_end)
 {
-    // XXX/TODO: Validation--check for unmatched loop start/end delimiters.
     vector<text_block_t> blocks;
     vector<string> lines = splitlines(text, "\n"s);
     size_t start = 0;
@@ -150,15 +127,10 @@ splitx(const string text, const string loop_start, const string loop_end)
     size_t block_depth = 0;
     size_t delim_size = loop_start.size() + loop_end.size();
 
-    // printf("splitx: lines:\n");
-    // for (auto &line: lines) {
-    //     printf("::%s::\n", line.c_str());
-    // }
-
     while (current < lines.size()) {
         if (match_pos(lines[current], loop_start, 0)) {
             // Found the start of a loop block.
-            string line = lines[current];
+            string line = strip(lines[current]);
             if (line.size() >= delim_size &&
                     line.substr(line.size()-loop_end.size(), loop_end.size()) == loop_end) {
                 // Process the single line loop '{@ <content> @}'
@@ -171,7 +143,6 @@ splitx(const string text, const string loop_start, const string loop_end)
                                                               line.size() - delim_size),
                                                   true});
                     start = current + 1;
-
                 }
                 ++current;
             }
@@ -202,14 +173,13 @@ splitx(const string text, const string loop_start, const string loop_end)
             ++current;
         }
     }
+    if (block_depth != 0) {
+        throw std::runtime_error("Missing a loop close marker ('@}').");
+    }
     if (start < current) {
         blocks.push_back(text_block_t{joinlines(lines, start, current - start),
                                       false});
     }
-    // printf("splitx: blocks:\n");
-    // for (auto &block: blocks) {
-    //     printf("::%d::%s::\n", block.isloop, block.text.c_str());
-    // }
     return blocks;
 }
 
@@ -325,7 +295,7 @@ string expand(
     // blocks that are loops (i.e. that were delimited by loop_start/loop_end).
     vector<string> done;
     for (auto &filledin_text: expanded) {
-        vector<text_block_t> blocks = splitx(filledin_text, loop_start, loop_end);
+        vector<text_block_t> blocks = split(filledin_text, loop_start, loop_end);
         for (auto &block: blocks) {
             if (block.isloop) {
                 string expanded_block = expand(block.text,
