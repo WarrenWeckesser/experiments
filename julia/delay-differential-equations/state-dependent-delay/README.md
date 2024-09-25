@@ -1,5 +1,5 @@
 A simple example of using Julia to solve a delay differential equation with
-state-dependent delay with Julia.
+state-dependent delay.
 
 The script state_dependent_delay.jl produces this plot:
 
