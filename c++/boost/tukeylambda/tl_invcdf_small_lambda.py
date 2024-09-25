@@ -23,7 +23,6 @@ def tl_invcdf(p, lam, n=None):
                                      36.57142857142857*ps2))))
     else:
         x = np.log(p) - np.log1p(-p)
-    x = np.log(p) - np.log1p(-p)
     if n is not None:
         for k in range(1, n + 1):
             b = lam/2**k

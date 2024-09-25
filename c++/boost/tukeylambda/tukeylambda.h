@@ -27,8 +27,8 @@ double logistic_invcdf(double p)
     if (p == 1) {
         return INFINITY;
     }
-    if (p < 0.05) {
-        return std::log(p) - std::log1p(-p);
+    if (p < 0.3 || p > 0.61) {
+        return std::log(p/(1 - p));
     }
     // Let d = p - 0.5, so p = d + 0.5.
     // Then
@@ -161,7 +161,7 @@ double tukey_lambda_cdf(double x, double lam)
     }
 
     std::pair<double, double> initial_bracket = get_cdf_solver_bracket(x, lam);
-    printf("initial_bracket: %25.16e %25.16e\n", initial_bracket.first, initial_bracket.second);
+    printf("  :: initial_bracket: %25.16e %25.16e\n", initial_bracket.first, initial_bracket.second);
     double x_second = tukey_lambda_invcdf(initial_bracket.second, lam);
 
     if (initial_bracket.first == 0.0) {
@@ -190,7 +190,7 @@ double tukey_lambda_cdf(double x, double lam)
                             },
                             initial_bracket.first, initial_bracket.second,
                             tol, max_iter, Toms748Policy());
-    printf("bracket:         %25.16e %25.16e\n", bracket.first, bracket.second);
+    printf("  :: bracket:         %25.16e %25.16e\n", bracket.first, bracket.second);
 
     if (bracket.first == bracket.second) {
         return bracket.first;
