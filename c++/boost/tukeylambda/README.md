@@ -10,3 +10,20 @@ Q(p;\lambda)=
     \log\left(\frac{p}{1 - p}\right),                               & \textrm{if } \lambda = 0
   \end{cases}
 $$
+
+This function must be inverted numerically to find the CDF $F(x; \lambda)$.
+
+The following bounds can be derived; these are useful for bracketing the search
+when computing the CDF numerically.
+
+* $\lambda < 0$, $x > 0$
+
+$$
+    F(x;\lambda) \ge 1 - (-\lambda x)^{\frac{1}{\lambda}}
+$$
+
+* $\lambda < 0$, $x < 0$
+
+$$
+    F(x;\lambda) \le (-\lambda x)^{\frac{1}{\lambda}}
+$$
