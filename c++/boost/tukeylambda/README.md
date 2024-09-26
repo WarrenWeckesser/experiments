@@ -38,7 +38,7 @@ The following plot shows the bracketing curves.
 
 ![CDF bracketing curves](https://github.com/WarrenWeckesser/experiments/blob/main/c++/boost/tukeylambda/cdf_curves.svg)
 
-*Derivation of the upper bound for $x < 0$.*
+*Derivation of the bracketing curves*
 
 If $x$ is far into the left tail (i.e. $x < 0$ and $|x|$ is "big"), then $p$ is "small",
 and in $Q(p;\lambda)$, the term $p^{\lambda}$ will be much larger than $(1 - p)^{\lambda}$ (because $\lambda < 0$).  To derive an approximate inverse of $Q$ in this case, we ignore
