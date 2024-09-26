@@ -16,13 +16,11 @@ tangent_bounds = [-2**(1-lam), 2**(1-lam)]
 xd = mp.linspace(*tangent_bounds, 50)
 pd = [0.5 + 2**(lam-2)*t for t in xd]
 
-# c = -1/lam
 c = -2**(-lam)/lam
 xcpos = mp.linspace(c, R, 500)
 ycpos = [-mp.powm1(-lam*t, 1/lam) for t in xcpos]
-ycpos = [-mp.powm1(-lam*t, 1/lam) for t in xcpos]
 xcneg = mp.linspace(-R, -c, 500)
-ycneg = [mp.power(-lam*t, 1/lam) for t in xcneg]
+ycneg = [mp.power(lam*t, 1/lam) for t in xcneg]
 
 fig, ax = plt.subplots()
 
@@ -50,7 +48,7 @@ plt.title(r"Tukey lambda CDF bounding curves, $\lambda < 0$")
 
 ax.annotate(r"$\frac{1}{2} + 2^{\lambda-2}x$",
             xy=(xd[40], pd[40]), xycoords='data',
-            xytext=(-30, 0), textcoords='offset points',
+            xytext=(-30, 15), textcoords='offset points',
             arrowprops=dict(arrowstyle='->',
                             facecolor='black'),
             horizontalalignment='right', verticalalignment='center')
@@ -77,14 +75,14 @@ ax.annotate(r"$(-2^{1 - \lambda}, 0)$",
 
 ax.annotate(r"$1 - (-\lambda x)^{1/\lambda}$",
             xy=(xcpos[100], ycpos[100]), xycoords='data',
-            xytext=(20, -20), textcoords='offset points',
+            xytext=(15, -15), textcoords='offset points',
             arrowprops=dict(arrowstyle='->',
                             facecolor='black'),
-            horizontalalignment='left', verticalalignment='center')
+            horizontalalignment='left', verticalalignment='top')
 
-ax.annotate(r"$(-\lambda x)^{1/\lambda}$",
+ax.annotate(r"$(\lambda x)^{1/\lambda}$",
             xy=(xcneg[400], ycneg[400]), xycoords='data',
-            xytext=(-20, 20), textcoords='offset points',
+            xytext=(-15, 15), textcoords='offset points',
             arrowprops=dict(arrowstyle='->',
                             facecolor='black'),
             horizontalalignment='right', verticalalignment='bottom')
