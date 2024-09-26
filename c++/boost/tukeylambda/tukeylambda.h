@@ -85,16 +85,16 @@ get_cdf_solver_bracket(double x, double lam)
     if (lam < 0) {
         if (x < 0) {
             if (x < std::pow(2.0, -lam)/lam) {
-                pmax = std::pow(lam*x, 1/lam);
+                pmax = std::pow(-lam*x, 1/lam);
             }
             else {
                 pmax = 0.5;
             }
-            if (x < -std::pow(2.0, -lam - 1.0)) {
+            if (x < -std::pow(2.0, 1 - lam)) {
                 pmin = 0.0;
             }
             else {
-                pmin = 0.5 + std::pow(2.0, lam)*x;
+                pmin = 0.5 + std::pow(2.0, lam - 2)*x;
             }
         }
         else {
@@ -105,11 +105,11 @@ get_cdf_solver_bracket(double x, double lam)
             else {
                 pmin = 0.5;
             }
-            if (x > std::pow(2.0, -lam - 1.0)) {
+            if (x > std::pow(2.0, 1 - lam)) {
                 pmax = 1.0;
             }
             else {
-                pmax = 0.5 + std::pow(2.0, lam)*x;
+                pmax = 0.5 + std::pow(2.0, lam - 2)*x;
             }
         }
     }
