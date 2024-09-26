@@ -1,5 +1,5 @@
 Tukey lambda distribution
-=========================
+-------------------------
 
 The quantile function (i.e. the inverse of the CDF) is
 
@@ -34,7 +34,8 @@ $$
     F(x;\lambda) \le (\lambda x)^{\frac{1}{\lambda}}
 $$
 
-The following plot shows the bracketing curves.
+The following plot shows the bracketing curves.  The brackets shown in the
+plot are implemented in the function `get_cdf_solver_bracket()` in `tukeylambda.h`.
 
 ![CDF bracketing curves](https://github.com/WarrenWeckesser/experiments/blob/main/c++/boost/tukeylambda/cdf_curves.svg)
 
