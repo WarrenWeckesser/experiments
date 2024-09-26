@@ -33,3 +33,7 @@ $$
 $$
     F(x;\lambda) \le (-\lambda x)^{\frac{1}{\lambda}}
 $$
+
+The following plot shows the bracketing curves.
+
+![CDF bracketing curves](https://github.com/WarrenWeckesser/experiments/blob/main/c++/boost/tukeylambda/cdf_curves.svg)
