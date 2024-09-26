@@ -14,7 +14,7 @@ $$
 The derivative of $Q$ is
 
 $$
-q(p;\lambda) = \frac{dQ}{dp} = p^{\lambda - -1} + (1 - p)^{\lambda - 1}
+q(p;\lambda) = \frac{dQ}{dp} = p^{\lambda - 1} + (1 - p)^{\lambda - 1}
 $$
 
 $Q(p;\lambda)$ must be inverted numerically to find the CDF $F(x; \lambda)$.
