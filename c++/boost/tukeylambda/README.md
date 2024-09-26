@@ -11,7 +11,12 @@ Q(p;\lambda)=
   \end{cases}
 $$
 
-This function must be inverted numerically to find the CDF $F(x; \lambda)$.
+The derivative of $Q$ is
+$$
+q(p;\lambda) = \frac{dQ}{dp} = p^{\lambda - -1} + (1 - p)^{\lambda - 1}
+$$
+
+$Q(p;\lambda)$ must be inverted numerically to find the CDF $F(x; \lambda)$.
 
 The following bounds can be derived; these are useful for bracketing the search
 when computing the CDF numerically.
