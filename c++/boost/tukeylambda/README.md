@@ -37,3 +37,37 @@ $$
 The following plot shows the bracketing curves.
 
 ![CDF bracketing curves](https://github.com/WarrenWeckesser/experiments/blob/main/c++/boost/tukeylambda/cdf_curves.svg)
+
+*Derivation of the upper bound for $x < 0$.*
+
+If $x$ is far into the left tail (i.e. $x < 0$ and $|x|$ is "big"), then $p$ is "small",
+and in $Q(p;\lambda)$, the term $p^{\lambda}$ will be much larger than $(1 - p)^{\lambda}$ (because $\lambda < 0$).  To derive an approximate inverse of $Q$ in this case, we ignore
+the term $(1 - p)^{\lambda}$ and invert
+
+$$
+  \hat{Q}(p, \lambda) = \frac{p^{\lambda}}{\lambda}
+$$
+
+Solving $x = \hat{Q}(p;\lambda)$ for $p$ gives
+
+$$
+    p = (\lambda x)^{\frac{1}{\lambda}}
+$$
+
+That is upper curve of the bracket for $x < \frac{2^{-\lambda}}{\lambda}$.
+
+Similarly, if $x$ is far into the right tail ($x > 0$ and $x$ is "big"), then $p$
+is close to $1$, and $1 - p$ is "small". In this case, the term $(1 - p)^{\lambda}$
+will be much larger than $p^{\lambda}$, and the approximation $\hat{Q}$ is
+
+$$
+  \hat{Q}(p, \lambda) = -\frac{(1 - p)^{\lambda}}{\lambda}
+$$
+
+Solving $x = \hat{Q}(p;\lambda)$ for $p$ gives
+
+$$
+    p = 1 - (-\lambda x)^{\frac{1}{\lambda}}
+$$
+
+That is the lower curve of the bracket for $x > \frac{-2^{-\lambda}}{\lambda}$.
