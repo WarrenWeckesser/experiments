@@ -12,6 +12,7 @@ Q(p;\lambda)=
 $$
 
 The derivative of $Q$ is
+
 $$
 q(p;\lambda) = \frac{dQ}{dp} = p^{\lambda - -1} + (1 - p)^{\lambda - 1}
 $$
