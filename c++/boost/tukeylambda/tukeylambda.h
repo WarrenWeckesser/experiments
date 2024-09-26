@@ -85,7 +85,7 @@ get_cdf_solver_bracket(double x, double lam)
     if (lam < 0) {
         if (x < 0) {
             if (x < std::pow(2.0, -lam)/lam) {
-                pmax = std::pow(-lam*x, 1/lam);
+                pmax = std::pow(lam*x, 1/lam);
             }
             else {
                 pmax = 0.5;
