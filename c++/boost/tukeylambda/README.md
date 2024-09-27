@@ -180,7 +180,9 @@ Out[13]: 1.999999999941139e-05
 ```
 
 With $n=20$, it computes the result to within one ULP of the exact (well, "exact"
-as computed with very high precision using `mpmath`) result.
+as computed with very high precision using `mpmath`) result.  For moderate to
+large values of $\lambda$, it is typically necessary for $n$ to be around 55 or
+so to get results that are close to machine precision.
 
 So it works, but more testing and development is needed to see if
 it could compete with just switching to double-double precision or using
