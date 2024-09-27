@@ -124,3 +124,12 @@ a^{\lambda} - b^{\lambda}
   & = \left(a^{\lambda/2} - b^{\lambda/2}\right)\left(a^{\lambda/2} + b^{\lambda/2}\right)
 \end{align*}
 $$
+
+When this is applied to $Q(p;\lambda)$, we have
+
+$$
+\frac{1}{\lambda}\left(p^{\lambda} - (1 - p)^{\lambda}\right)
+  & = \frac{\left(p^{\lambda/2} - (1 - p)^{\lambda/2}\right)}{\lambda/2}
+      \frac{\left(p^{\lambda/2} + (1 - p)^{\lambda/2}\right)}{2} \\
+  & = Q(p, \lambda/2) \frac{\left(p^{\lambda/2} + (1 - p)^{\lambda/2}\right)}{2}
+$$
