@@ -136,3 +136,23 @@ Q(p;\lambda)
   & = Q(p, \lambda/2) \frac{\left(p^{\lambda/2} + (1 - p)^{\lambda/2}\right)}{2}
 \end{align*}
 $$
+
+If we apply the algebraic change to $Q(p; \lambda/2)$ we obtain
+
+$$
+\begin{align*}
+Q(p;\lambda)
+  & = Q(p, \lambda/2) \frac{\left(p^{\lambda/2} + (1 - p)^{\lambda/2}\right)}{2} \\
+  & = Q(p, \lambda/4) \frac{\left(p^{\lambda/4} + (1 - p)^{\lambda/4}\right)}{2}
+                      \frac{\left(p^{\lambda/2} + (1 - p)^{\lambda/2}\right)}{2}
+\end{align*}
+$$
+
+Repeating the process $n$ times gives
+
+$$
+\begin{align*}
+Q(p;\lambda)
+  & = Q(p, \frac{\lambda}{2^n}) \Pi_i^n\frac{\left(p^{\lambda/2^n} + (1 - p)^{\lambda/2^n}\right)}{2}
+\end{align*}
+$$
