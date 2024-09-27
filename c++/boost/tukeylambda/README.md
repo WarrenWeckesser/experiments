@@ -25,13 +25,13 @@ when computing the CDF numerically.
 * $\lambda < 0$, $x > 0$
 
 $$
-    F(x;\lambda) \ge 1 - (-\lambda x)^{\frac{1}{\lambda}}
+    F(x;\lambda) > 1 - (-\lambda x)^{\frac{1}{\lambda}}
 $$
 
 * $\lambda < 0$, $x < 0$
 
 $$
-    F(x;\lambda) \le (\lambda x)^{\frac{1}{\lambda}}
+    F(x;\lambda) < (\lambda x)^{\frac{1}{\lambda}}
 $$
 
 The following plot shows the bracketing curves.  The brackets shown in the
