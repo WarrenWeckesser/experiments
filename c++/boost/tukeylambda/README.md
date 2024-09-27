@@ -77,7 +77,7 @@ That is the lower curve of the bracket for $x > \frac{-2^{-\lambda}}{\lambda}$.
 Loss of precision in $Q(p; \lambda)$ when $\lambda$ is small
 ------------------------------------------------------------
 
-The straigtforward implementation of $Q(p; \lambda)$ suffers
+The straightforward implementation of $Q(p; \lambda)$ suffers
 from loss of precision when $\lambda$ is very small, and when $p$ is
 close to $\frac{1}{2}$.
 
@@ -112,7 +112,8 @@ and examples.
 Here's an interesting approach the seems to work pretty well,
 but is likely too slow to be worthwhile.  It would probably be simpler
 and faster to just switch to double-double precision in the region
-where the lost of precision is nontrivial.
+where the loss of precision in the simple implementation is
+unacceptable.
 
 The subtraction in $Q(p;\lambda)$ has the form $a^{\lambda} - b^{\lambda}$.
 We do a little algebraic trick to rewrite this expression as follows:
