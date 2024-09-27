@@ -22,6 +22,10 @@ ycpos = [-mp.powm1(-lam*t, 1/lam) for t in xcpos]
 xcneg = mp.linspace(-R, -c, 500)
 ycneg = [mp.power(lam*t, 1/lam) for t in xcneg]
 
+T = 1/(2*((-lam)**(1/lam - 1) + (-lam)**(1/lam)))**lam
+unT = (-lam*T)**(1/lam)
+vpT = 1 - unT
+
 fig, ax = plt.subplots()
 
 plt.plot(x, cdf)
@@ -41,6 +45,11 @@ plt.plot(-c, 0.5, '.', color='k', alpha=0.6)
 
 plt.hlines(0.5, -c, 0, linestyles='-.', alpha=0.6, color='k')
 plt.hlines(0.5, 0, c, linestyles='-.', alpha=0.6, color='k')
+
+
+plt.plot(-T, unT, '.', color='red', alpha=0.4)
+plt.plot(T, vpT, '.', color='red', alpha=0.4)
+plt.plot([-T, T], [unT, vpT], ':', alpha=0.4, color='red')
 
 plt.grid(alpha=0.5)
 plt.xlabel("x")
@@ -74,14 +83,14 @@ ax.annotate(r"$(-2^{1 - \lambda}, 0)$",
             horizontalalignment='left', verticalalignment='center')
 
 ax.annotate(r"$1 - (-\lambda x)^{1/\lambda}$",
-            xy=(xcpos[100], ycpos[100]), xycoords='data',
-            xytext=(15, -15), textcoords='offset points',
+            xy=(xcpos[300], ycpos[300]), xycoords='data',
+            xytext=(0, -25), textcoords='offset points',
             arrowprops=dict(arrowstyle='->',
                             facecolor='black'),
             horizontalalignment='left', verticalalignment='top')
 
 ax.annotate(r"$(\lambda x)^{1/\lambda}$",
-            xy=(xcneg[400], ycneg[400]), xycoords='data',
+            xy=(xcneg[200], ycneg[200]), xycoords='data',
             xytext=(-15, 15), textcoords='offset points',
             arrowprops=dict(arrowstyle='->',
                             facecolor='black'),

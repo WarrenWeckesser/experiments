@@ -39,6 +39,11 @@ plot are implemented in the function `get_cdf_solver_bracket()` in `tukeylambda.
 
 ![CDF bracketing curves](https://github.com/WarrenWeckesser/experiments/blob/main/c++/boost/tukeylambda/cdf_curves.svg)
 
+(The red dotted line could also be used to refine the bracket, but it is
+not implemented in the C code.  I haven't tested whether the slightly more
+expensive set up and computation of the bracket would be offset by what
+would probably be just one less iteraton of the numerically solver.)
+
 *Derivation of the bracketing curves*
 
 If $x$ is far into the left tail (i.e. $x < 0$ and $|x|$ is "big"), then $p$ is "small",
