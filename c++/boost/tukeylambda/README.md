@@ -167,7 +167,7 @@ Q(p;\lambda) \approx
    \prod_{k=1}^n\frac{\left(p^{\lambda/2^k} + (1 - p)^{\lambda/2^k}\right)}{2}
 $$
 
-This idea is implements in the Python function `tl_invcdf(p, lam, n=None)`
+This idea is implemented in the Python function `tl_invcdf(p, lam, n=None)`
 in the file `tl_invcdf_small_lambda.py`.  Here it is applied to the previous example:
 
 ```
@@ -179,4 +179,5 @@ With $n=20$, it computes the result to within one ULP of the exact (well, "exact
 as computed with very high precision using `mpmath`) result.
 
 So it works, but more testing and development is needed to see if
-it could compete with just switching to double-double precision.
+it could compete with just switching to double-double precision or using
+some of the ideas discussed in https://github.com/scipy/scipy/issues/21370.
