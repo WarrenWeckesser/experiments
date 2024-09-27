@@ -153,6 +153,6 @@ Repeating the process $n$ times gives
 $$
 \begin{align*}
 Q(p;\lambda)
-  & = Q(p, \frac{\lambda}{2^n}) \Pi_i^n\frac{\left(p^{\lambda/2^n} + (1 - p)^{\lambda/2^n}\right)}{2}
+  & = Q(p, \frac{\lambda}{2^n}) \prod_i^n\frac{\left(p^{\lambda/2^n} + (1 - p)^{\lambda/2^n}\right)}{2}
 \end{align*}
 $$
