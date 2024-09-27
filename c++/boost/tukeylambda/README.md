@@ -161,5 +161,6 @@ This is an exact expression. When $\frac{\lambda}{2^n}$ is sufficiently small, $
 
 $$
 Q(p;\lambda) \approx 
-   = \log\left(\frac{p}{1-p}\right)  \prod_i^n\frac{\left(p^{\lambda/2^n} + (1 - p)^{\lambda/2^n}\right)}{2}
+   \log\left(\frac{p}{1-p}\right)
+   \prod_i^n\frac{\left(p^{\lambda/2^n} + (1 - p)^{\lambda/2^n}\right)}{2}
 $$
