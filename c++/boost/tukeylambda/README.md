@@ -118,43 +118,41 @@ The subtraction in $Q(p;\lambda)$ has the form $a^{\lambda} - b^{\lambda}$.
 We do a little algebraic trick to rewrite this expression as follows:
 
 $$
-\begin{align*}
+\begin{split}
 a^{\lambda} - b^{\lambda}
   & = \left(a^{\lambda/2}\right)^2 - \left(b^{\lambda/2}\right)^2 \\
   & = \left(a^{\lambda/2} - b^{\lambda/2}\right)\left(a^{\lambda/2} + b^{\lambda/2}\right)
-\end{align*}
+\end{split}
 $$
 
 When this is applied to $Q(p;\lambda)$, we have
 
 $$
-\begin{align*}
+\begin{split}
 Q(p;\lambda)
   & =  \frac{1}{\lambda}\left(p^{\lambda} - (1 - p)^{\lambda}\right) \\
   & = \frac{\left(p^{\lambda/2} - (1 - p)^{\lambda/2}\right)}{\lambda/2}
       \frac{\left(p^{\lambda/2} + (1 - p)^{\lambda/2}\right)}{2} \\
   & = Q(p; \lambda/2) \frac{\left(p^{\lambda/2} + (1 - p)^{\lambda/2}\right)}{2}
-\end{align*}
+\end{split}
 $$
 
 If we apply the algebraic change to $Q(p; \lambda/2)$ we obtain
 
 $$
-\begin{align*}
+\begin{split}
 Q(p;\lambda)
   & = Q(p, \lambda/2) \frac{\left(p^{\lambda/2} + (1 - p)^{\lambda/2}\right)}{2} \\
   & = Q(p, \lambda/4) \frac{\left(p^{\lambda/4} + (1 - p)^{\lambda/4}\right)}{2}
                       \frac{\left(p^{\lambda/2} + (1 - p)^{\lambda/2}\right)}{2}
-\end{align*}
+\end{split}
 $$
 
 Repeating the process $n$ times gives
 
 $$
-\begin{align*}
 Q(p;\lambda)
-  & = Q(p, \frac{\lambda}{2^n}) \prod_{k=1}^n\frac{\left(p^{\lambda/2^k} + (1 - p)^{\lambda/2^k}\right)}{2}
-\end{align*}
+  = Q\left(p, \frac{\lambda}{2^n}\right) \prod_{k=1}^n\frac{1}{2}\left(p^{\lambda/2^k} + (1 - p)^{\lambda/2^k}\right)
 $$
 
 So far, this is an exact expression. When $\frac{\lambda}{2^n}$ is sufficiently small,
@@ -164,7 +162,7 @@ giving
 $$
 Q(p;\lambda) \approx 
    \log\left(\frac{p}{1-p}\right)
-   \prod_{k=1}^n\frac{\left(p^{\lambda/2^k} + (1 - p)^{\lambda/2^k}\right)}{2}
+   \prod_{k=1}^n\frac{1}{2}\left(p^{\lambda/2^k} + (1 - p)^{\lambda/2^k}\right)
 $$
 
 This idea is implemented in the Python function `tl_invcdf(p, lam, n=None)`
