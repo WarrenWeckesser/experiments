@@ -153,14 +153,16 @@ Repeating the process $n$ times gives
 $$
 \begin{align*}
 Q(p;\lambda)
-  & = Q(p, \frac{\lambda}{2^n}) \prod_i^n\frac{\left(p^{\lambda/2^n} + (1 - p)^{\lambda/2^n}\right)}{2}
+  & = Q(p, \frac{\lambda}{2^n}) \prod_k^n\frac{\left(p^{\lambda/2^k} + (1 - p)^{\lambda/2^k}\right)}{2}
 \end{align*}
 $$
 
-This is an exact expression. When $\frac{\lambda}{2^n}$ is sufficiently small, $Q(p;\lambda/2^n)$ can be approximated with $\log\left(\frac{p}{1-p}\right)$, giving
+So far, this is an exact expression. When $\frac{\lambda}{2^n}$ is sufficiently small,
+$Q(p;\lambda/2^n)$ can be approximated with $\log\left(\frac{p}{1 - p}\right)$,
+giving
 
 $$
 Q(p;\lambda) \approx 
    \log\left(\frac{p}{1-p}\right)
-   \prod_i^n\frac{\left(p^{\lambda/2^n} + (1 - p)^{\lambda/2^n}\right)}{2}
+   \prod_k^n\frac{\left(p^{\lambda/2^k} + (1 - p)^{\lambda/2^k}\right)}{2}
 $$
