@@ -133,7 +133,7 @@ Q(p;\lambda)
   & =  \frac{1}{\lambda}\left(p^{\lambda} - (1 - p)^{\lambda}\right) \\
   & = \frac{\left(p^{\lambda/2} - (1 - p)^{\lambda/2}\right)}{\lambda/2}
       \frac{\left(p^{\lambda/2} + (1 - p)^{\lambda/2}\right)}{2} \\
-  & = Q(p, \lambda/2) \frac{\left(p^{\lambda/2} + (1 - p)^{\lambda/2}\right)}{2}
+  & = Q(p; \lambda/2) \frac{\left(p^{\lambda/2} + (1 - p)^{\lambda/2}\right)}{2}
 \end{align*}
 $$
 
@@ -153,7 +153,7 @@ Repeating the process $n$ times gives
 $$
 \begin{align*}
 Q(p;\lambda)
-  & = Q(p, \frac{\lambda}{2^n}) \prod_k^n\frac{\left(p^{\lambda/2^k} + (1 - p)^{\lambda/2^k}\right)}{2}
+  & = Q(p, \frac{\lambda}{2^n}) \prod_{k=1}^n\frac{\left(p^{\lambda/2^k} + (1 - p)^{\lambda/2^k}\right)}{2}
 \end{align*}
 $$
 
@@ -164,5 +164,19 @@ giving
 $$
 Q(p;\lambda) \approx 
    \log\left(\frac{p}{1-p}\right)
-   \prod_k^n\frac{\left(p^{\lambda/2^k} + (1 - p)^{\lambda/2^k}\right)}{2}
+   \prod_{k=1}^n\frac{\left(p^{\lambda/2^k} + (1 - p)^{\lambda/2^k}\right)}{2}
 $$
+
+This idea is implements in the Python function `tl_invcdf(p, lam, n=None)`
+in the file `tl_invcdf_small_lambda.py`.  Here it is applied to the previous example:
+
+```
+In [13]: tl_invcdf(p, lam, 20)[0].item()
+Out[13]: 1.999999999941139e-05
+```
+
+With $n=20$, it computes the result to within one ULP of the exact (well, "exact"
+as computed with very high precision using `mpmath`) result.
+
+So it works, but more testing and development is needed to see if
+it could compete with just switching to double-double precision.
