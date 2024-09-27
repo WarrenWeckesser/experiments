@@ -72,3 +72,55 @@ $$
 $$
 
 That is the lower curve of the bracket for $x > \frac{-2^{-\lambda}}{\lambda}$.
+
+
+Loss of precision in $Q(p; \lambda)$ when $\lambda$ is small
+------------------------------------------------------------
+
+The straigtforward implemenation of $Q(p; \lamdba)$ suffers
+from loss of precision when $\lambda$ is very small, and when $p$ is
+close to $\frac{1}{2}$.
+
+For example,
+
+```
+In [47]: from mpsci.distributions import tukeylambda
+
+In [48]: from mpmath import mp
+
+In [49]: mp.dps = 400
+
+In [50]: def quantile(p, lam):
+    ...:     # Simple implementation
+    ...:     return (p**lam - (1 - p)**lam)/lam
+    ...: 
+
+In [51]: p = 0.500005
+
+In [52]: lam = 1e-10
+
+In [53]: quantile(p, lam)
+Out[53]: 1.9984014443252818e-05
+
+In [54]: float(tukeylambda.invcdf(p, lam))
+Out[54]: 1.9999999999411395e-05
+```
+
+See https://github.com/scipy/scipy/issues/21370 for more discussion
+and examples.
+
+Here's an interesting approach the seems to work pretty well,
+but is likely too slow to be worthwhile.  It would probably be simpler
+and faster to just switch to double-double precision in the region
+where the lost of precision is nontrivial.
+
+The subtraction in $Q(p;\lambda)$ has the form $a^{\lambda} - b^{\lambda}$.
+We do a littel algebraic trick to rewrite this expression as follows:
+
+$$
+\begin{align*}
+a^{\lambda} - b^{\lambda}
+  & = \left(a^{\frac{\lambda}{2}}\right)^2 - \left(b^{\frac{\lambda}{2}}\right)^2 \\
+  & = \left(a^{\frac{\lambda}{2}} - a^{\frac{\lambda}{2}}\right)\left(a^{\frac{\lambda}{2}} - a^{\frac{\lambda}{2}}\right)
+\end{align*}
+$$
