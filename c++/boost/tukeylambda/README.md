@@ -128,8 +128,10 @@ $$
 When this is applied to $Q(p;\lambda)$, we have
 
 $$
+\begin{align*}
 \frac{1}{\lambda}\left(p^{\lambda} - (1 - p)^{\lambda}\right)
   & = \frac{\left(p^{\lambda/2} - (1 - p)^{\lambda/2}\right)}{\lambda/2}
       \frac{\left(p^{\lambda/2} + (1 - p)^{\lambda/2}\right)}{2} \\
   & = Q(p, \lambda/2) \frac{\left(p^{\lambda/2} + (1 - p)^{\lambda/2}\right)}{2}
+\end{align*}
 $$
