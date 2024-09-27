@@ -42,7 +42,7 @@ plot are implemented in the function `get_cdf_solver_bracket()` in `tukeylambda.
 (The red dotted line could also be used to refine the bracket, but it is
 not implemented in the C code.  I haven't tested whether the slightly more
 expensive set up and computation of the bracket would be offset by what
-would probably be just one less iteraton of the numerically solver.)
+would probably be just one less iteraton of the numerical solver.)
 
 *Derivation of the bracketing curves*
 
