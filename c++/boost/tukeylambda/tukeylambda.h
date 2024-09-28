@@ -1,4 +1,4 @@
-
+#include <cstdio>
 #include <cmath>
 #include <limits>
 
@@ -67,6 +67,36 @@ double tukey_lambda_invcdf(double p, double lam)
     }
     return x;
 }
+
+//
+// Inverse of the CDF of the Tukey lambda distribution--
+// experimental version.
+//
+double tukey_lambda_invcdf_experimental(double p, double lam)
+{
+    double x;
+    double q = 1 - p;
+
+    if (p == 0.5) {
+        return 0.0;
+    }
+    x = logistic_invcdf(p);
+    int k = 1;
+    while (k < 100) {
+        lam = lam/2.0;
+        double f = 0.5*(std::pow(p, lam) + std::pow(q, lam));
+        double nextx = x*f;
+        if (std::abs((x - nextx)/nextx) < 2.5e-16) {
+            return nextx;
+        }
+        x = nextx;
+        ++k;
+    }
+    // I've never seen this happen, but I haven't tested the
+    // full (p, lam) parameter space.
+    return x;
+}
+
 
 //
 // Inverse of the survival function of the Tukey lambda distribution.
