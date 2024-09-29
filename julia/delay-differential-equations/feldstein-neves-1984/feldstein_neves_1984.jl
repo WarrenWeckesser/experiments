@@ -25,7 +25,7 @@ end
 
 
 history(p, t) = [1.0]
-lag(u, p, t) = t - (u[1]) - sqrt(2)
+lag(u, p, t) = t - (u[1] - sqrt(2))
 
 tspan = (0.0, 2.0)
 u0 = [1.0]
