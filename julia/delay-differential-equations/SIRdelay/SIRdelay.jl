@@ -36,8 +36,8 @@ lags = [tau]
 # cohort will recover at t=tau, and move to the Recovered state.
 # In the interval [0, tau], the exact solution is implemented in
 # history(p, t).  At the end of this interval, I jumps down by
-# I0 and R jumps up by I0, reflected the recovery of the initial cohort.
-# We will solve the DDEs on the interval [tau, 50], with the know solution
+# I0 and R jumps up by I0, reflecting the recovery of the initial cohort.
+# We will solve the DDEs on the interval [tau, 50], with the known solution
 # on [0, tau] becoming the initial history for the DDE solver.
 
 tspan = (tau, 50.0)
