@@ -17,7 +17,19 @@ $$
 q(p;\lambda) = \frac{dQ}{dp} = p^{\lambda - 1} + (1 - p)^{\lambda - 1}
 $$
 
-$Q(p;\lambda)$ must be inverted numerically to find the CDF $F(x; \lambda)$.
+Numerical issues
+----------------
+* $Q(p;\lambda)$ must be inverted numerically to find the CDF $F(x; \lambda)$.
+  The current implementation in SciPy needs improvement.
+* The straightforward implementation of $Q(p;\lambda)$ in code loses precision
+  for some parameter ranges.  Precision is lost when the terms in the subtraction
+  are close.  This occurs when $p \approx 0.5$ and/or when $|\lambda|$ is small.
+  Loss of precision in $Q(p;\lambda)$ limits the precision that can be expected
+  in the numerical inversion of $Q(p;\lambda)$.
+
+
+Inverting $Q(p;\lambda)$
+------------------------
 
 The following bounds can be derived; these are useful for bracketing the search
 when computing the CDF numerically.
