@@ -184,17 +184,18 @@ Q(p;\lambda) \approx
 $$
 
 This idea is implemented in the Python function `tl_invcdf(p, lam, n=None)`
-in the file `tl_invcdf_small_lambda.py`.  Here it is applied to the previous example:
+in the file `tl_invcdf_small_lambda.py`, and in the C++ file `tukeylambda.h` as
+the function `tukey_lambda_invcdf_experimental(p, lam)`.
+Here it is applied to the previous example:
 
 ```
 In [13]: tl_invcdf(p, lam, 20)[0].item()
 Out[13]: 1.999999999941139e-05
 ```
 
-With $n=20$, it computes the result to within one ULP of the exact (well, "exact"
-as computed with very high precision using `mpmath`) result.  For moderate to
-large values of $\lambda$, it is typically necessary for $n$ to be around 55 or
-so to get results that are close to machine precision.
+With $n=20$, it computes the result to within one ULP of the exact result.
+For moderate to large values of $\lambda$, it is typically necessary for $n$
+to be around 55 or so to get results that are close to machine precision.
 
 So it works, but more testing and development is needed to see if
 it could compete with just switching to double-double precision or using
