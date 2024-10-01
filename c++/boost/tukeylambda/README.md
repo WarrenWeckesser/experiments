@@ -126,8 +126,8 @@ Out[54]: 1.9999999999411395e-05
 See https://github.com/scipy/scipy/issues/21370 for more discussion
 and examples.
 
-Here's an interesting approach the seems to work pretty well,
-but is likely too slow to be worthwhile.  It would probably be simpler
+Here's an interesting approach that seems to work pretty well,
+but might be too slow to be worthwhile.  It would probably be simpler
 and faster to just switch to double-double precision in the region
 where the loss of precision in the simple implementation is
 unacceptable.
