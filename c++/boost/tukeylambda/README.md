@@ -135,7 +135,7 @@ where the loss of precision in the simple implementation is
 unacceptable.
 
 The subtraction in $Q(p;\lambda)$ has the form $a^{\lambda} - b^{\lambda}$.
-We do a little algebraic trick to rewrite this expression as follows:
+We use the "difference of powers" formula to rewrite this expression as follows:
 
 $$
 \begin{split}
