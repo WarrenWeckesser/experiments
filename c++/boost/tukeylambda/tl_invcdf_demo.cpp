@@ -8,6 +8,7 @@
 #include "tukeylambda.h"
 
 using boost::multiprecision::cpp_bin_float_100;
+using boost::multiprecision::cpp_bin_float_50;
 
 class Timer
 {
@@ -30,28 +31,26 @@ public:
 	}
 };
 
+
 //
-// Internally, this function uses the type `cpp_bin_float_100` from boost/multiprecision
-// to compute the result.  `cpp_bin_float_100` provides 50 digits of precision.
+// Uses type T (e.g. cpp_bin_float_50, cpp_bin_float_100) internally
+// for floating point calculations.
 //
-// I haven't tested the limits, but this can still result in low precision outputs of
-// this function in extreme cases.  `cpp_bin_float_100` is still finite precision,
-// and subject to subtractive loss of precision.
-//
+template<typename T>
 double invcdf_mp(double p, double lam)
 {
-    cpp_bin_float_100 p_mp = p;
-    cpp_bin_float_100 lam_mp = lam;
-    cpp_bin_float_100 x_mp;
+    T p_mp = p;
+    T lam_mp = lam;
+    T x_mp;
     if (lam == 0) {
         x_mp = log(p_mp) - log1p(-p_mp);
     }
     else {
         x_mp = (pow(p_mp, lam_mp) - pow(1 - p_mp, lam_mp))/lam_mp;
     }
-    double x = static_cast<double>(x_mp);
-    return x;
+    return static_cast<double>(x_mp);
 }
+
 
 void timing(int n, double lam)
 {
@@ -86,18 +85,47 @@ void timing(int n, double lam)
 
 int main()
 {
-    double p = 1e-8;
-    double lam = -3e-50;
+    // double p = 0.501;
+    // double lam = -3e-40;
+
+    double p = 0.48;
+    double lam = -0.1;
     printf("p = %25.16e   lam = %25.16e\n", p, lam);
 
     double invcdf1 = tukey_lambda_invcdf(p, lam);
-    printf("invcdf (standard)       = %25.16e\n", invcdf1);
+    printf("invcdf (standard)          = %25.16e\n", invcdf1);
 
-    double invcdf2 = tukey_lambda_invcdf_experimental(p, lam);
-    printf("invcdf (experimental)   = %25.16e\n", invcdf2);
+    double invcdf2 = tukey_lambda_invcdf2(p, lam);
+    printf("invcdf (version 2)         = %25.16e\n", invcdf2);
 
-    double invcdfmp = invcdf_mp(p, lam);
-    printf("invcdf (multiprecision) = %25.16e\n", invcdfmp);
+    // double eps = p - 0.5;
+    // double invcdfla = std::pow(2.0, 2 - lam)*eps;
+    // printf("invcdf (linear p - 0.5)    = %25.16e\n", invcdfla);
+
+    int order = 3;
+    double invcdft3 = tukey_lambda_invcdf_taylor(p, lam, order);
+    printf("invcdf (taylor %3d)        = %25.16e\n", order, invcdft3);
+
+    order = 9;
+    double invcdft9 = tukey_lambda_invcdf_taylor(p, lam, order);
+    printf("invcdf (taylor %3d)        = %25.16e\n", order, invcdft9);
+
+    order = 12;
+    double invcdft12 = tukey_lambda_invcdf_taylor(p, lam, order);
+    printf("invcdf (taylor %3d)        = %25.16e\n", order, invcdft12);
+
+    order = 15;
+    double invcdft15 = tukey_lambda_invcdf_taylor(p, lam, order);
+    printf("invcdf (taylor %3d)        = %25.16e\n", order, invcdft15);
+
+    double invcdfx = tukey_lambda_invcdf_experimental(p, lam);
+    printf("invcdf (experimental)      = %25.16e\n", invcdfx);
+
+    double invcdfmp50 = invcdf_mp<cpp_bin_float_50>(p, lam);
+    printf("invcdf (cpp_bin_float_50)  = %25.16e\n", invcdfmp50);
+
+    double invcdfmp100 = invcdf_mp<cpp_bin_float_100>(p, lam);
+    printf("invcdf (cpp_bin_float_100) = %25.16e\n", invcdfmp100);
 
     printf("\n");
     timing(1000000, lam);

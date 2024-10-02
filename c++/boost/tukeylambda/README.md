@@ -200,3 +200,26 @@ to be around 55 or so to get results that are close to machine precision.
 So it works, but more testing and development is needed to see if
 it could compete with just switching to double-double precision or using
 some of the ideas discussed in https://github.com/scipy/scipy/issues/21370.
+
+*Taylor series in $\lambda$*
+
+Expand $Q(p;\lambda)$ in a Taylor series about $\lambda = 0$ to obtain
+
+$$
+\begin{split}
+Q(p;\lambda)
+    &= \sum_{k = 1}^{\infty} \frac{\lambda^{k-1}}{k!}\left(\log^{k}(p) - \log^{k}(1 - p)\right) \\
+    &= \left(\log(p) - \log(1 - p)\right)
+        \sum_{k=0}^{\infty}\left(
+                             \frac{\lambda^{k}}
+                                  {(k+1)!}
+                             \sum_{j=0}^{k}\log^{k-j}(p)\log^{j}(1 - p)
+                           \right)
+\end{split}
+$$
+
+The second equality uses the ``difference of powers'' formula.
+The inner sum is over all the $k$-th order binomial powers of $\log(p)$ and $\log(1 - p)$.
+
+This is implemented in the C++ file `tukeylambda.h` as
+the function `tukey_lambda_invcdf_taylor(p, lam)`.

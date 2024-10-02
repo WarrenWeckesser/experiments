@@ -68,6 +68,82 @@ double tukey_lambda_invcdf(double p, double lam)
     return x;
 }
 
+static inline double
+pow1p(double x, double r)
+{
+    return std::exp(r*std::log1p(x));
+}
+
+double tukey_lambda_invcdf2(double p, double lam)
+{
+    double x;
+
+    if (std::isnan(p) || !std::isfinite(lam) || p < 0 || p > 1) {
+        return std::numeric_limits<double>::quiet_NaN();
+    }
+
+    if (p == 0) {
+        x = lam <= 0 ? -INFINITY : -1/lam;
+    }
+    else if (p == 1) {
+        x = lam <= 0 ? INFINITY : 1/lam;
+    }
+    else {
+        if (lam == 0) {
+            x = logistic_invcdf(p);
+        }
+        else if (p > 0.3 && p < 0.7) {
+            double t = 2*p - 1.0;
+            x = std::pow(2.0, -lam)*(pow1p(t, lam) - pow1p(-t, lam))/lam;
+
+        }
+        else {
+            x = (std::pow(p, lam) - std::pow(1 - p, lam))/lam;
+        }
+    }
+    return x;
+}
+
+
+double tukey_lambda_invcdf_taylor(double p, double lam, int n)
+{
+    double x;
+
+    if (std::isnan(p) || !std::isfinite(lam) || p < 0 || p > 1) {
+        return std::numeric_limits<double>::quiet_NaN();
+    }
+
+    if (p == 0) {
+        x = lam <= 0 ? -INFINITY : -1/lam;
+    }
+    else if (p == 1) {
+        x = lam <= 0 ? INFINITY : 1/lam;
+    }
+    else {
+        x = logistic_invcdf(p);
+        if (lam != 0) {
+            // XXX FIXME: This is an inefficient implementation.
+            double logp = std::log(p);
+            double logq = std::log1p(-p);
+            double sum = 0.0;
+            double fac = 1.0;
+            double lamp = 1.0;
+            for (int k = 0; k <= n; ++k) {
+                double c = lamp/fac;
+                double inner_sum = 0.0;
+                for (int j = 0; j <= k; ++j) {
+                    inner_sum += std::pow(logp, k - j)*std::pow(logq, j);
+                }
+                sum += c*inner_sum;
+                lamp *= lam;
+                fac *= k + 2.0;
+            }
+            x *= sum;
+        }
+    }
+    return x;
+}
+
 //
 // Inverse of the CDF of the Tukey lambda distribution--
 // experimental version.
@@ -77,23 +153,37 @@ double tukey_lambda_invcdf_experimental(double p, double lam)
     double x;
     double q = 1 - p;
 
+    if (std::isnan(p) || !std::isfinite(lam) || p < 0 || p > 1) {
+        return std::numeric_limits<double>::quiet_NaN();
+    }
+    if (p == 0) {
+        return lam <= 0 ? -INFINITY : -1/lam;
+    }
+    if (p == 1) {
+        return lam <= 0 ? INFINITY : 1/lam;
+    }
     if (p == 0.5) {
         return 0.0;
     }
     x = logistic_invcdf(p);
+    if (lam == 0.0) {
+        return x;
+    }
     int k = 1;
     while (k < 100) {
         lam = lam/2.0;
         double f = 0.5*(std::pow(p, lam) + std::pow(q, lam));
-        double nextx = x*f;
-        if (std::abs((x - nextx)/nextx) < 2.5e-16) {
-            return nextx;
+        if (f == 1.0) {
+            // printf("=== k = %d  p = %23.16e  x = %23.16e\n", k, p, x);
+            return x;
         }
+        double nextx = x*f;
         x = nextx;
         ++k;
     }
     // I've never seen this happen, but I haven't tested the
     // full (p, lam) parameter space.
+    printf("*** k = %d  p = %23.16e  x = %23.16e\n", k, p, x);
     return x;
 }
 
