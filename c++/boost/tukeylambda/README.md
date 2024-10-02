@@ -224,5 +224,7 @@ The second equality uses the "difference of powers" formula.
 The inner sum is over all the $k$-th order binomial powers of $\log(p)$ and $\log(1 - p)$.
 
 This is implemented in the C++ file `tukeylambda.h` as
-the function `tukey_lambda_invcdf_taylor(p, lam, n)`, where $n$ is the number
-of terms to keep from the Taylor series.
+the function `tukey_lambda_invcdf_taylor(p, lam, n)`.
+
+For the example above, where $p$ is `0.500005` and $\lambda$ is `1e-10`, and with
+`n = 3`, the function computes the result to full machine precision.

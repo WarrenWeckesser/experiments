@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cmath>
 #include <limits>
+#include <array>
 
 #include <boost/math/tools/roots.hpp>
 #include <boost/math/special_functions/logaddexp.hpp>
@@ -104,11 +105,15 @@ double tukey_lambda_invcdf2(double p, double lam)
     return x;
 }
 
+#define TUKEY_LAMBDA_INVCDF_TAYLOR_MAX_N 31
 
 double tukey_lambda_invcdf_taylor(double p, double lam, int n)
 {
     double x;
 
+    if (n > TUKEY_LAMBDA_INVCDF_TAYLOR_MAX_N) {
+        return std::numeric_limits<double>::quiet_NaN();
+    }
     if (std::isnan(p) || !std::isfinite(lam) || p < 0 || p > 1) {
         return std::numeric_limits<double>::quiet_NaN();
     }
@@ -122,9 +127,17 @@ double tukey_lambda_invcdf_taylor(double p, double lam, int n)
     else {
         x = logistic_invcdf(p);
         if (lam != 0) {
-            // XXX FIXME: This is an inefficient implementation.
+            std::array<double, TUKEY_LAMBDA_INVCDF_TAYLOR_MAX_N+1> logp_powers, logq_powers;
             double logp = std::log(p);
             double logq = std::log1p(-p);
+            double logp_power = 1.0;
+            double logq_power = 1.0;
+            for (int k = 0; k <= n; ++k) {
+                logp_powers[k] = logp_power;
+                logq_powers[k] = logq_power;
+                logp_power *= logp;
+                logq_power *= logq;
+            }
             double sum = 0.0;
             double fac = 1.0;
             double lamp = 1.0;
@@ -132,7 +145,7 @@ double tukey_lambda_invcdf_taylor(double p, double lam, int n)
                 double c = lamp/fac;
                 double inner_sum = 0.0;
                 for (int j = 0; j <= k; ++j) {
-                    inner_sum += std::pow(logp, k - j)*std::pow(logq, j);
+                    inner_sum += logp_powers[k - j]*logq_powers[j];
                 }
                 sum += c*inner_sum;
                 lamp *= lam;

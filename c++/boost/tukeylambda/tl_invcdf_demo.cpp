@@ -88,44 +88,44 @@ int main()
     // double p = 0.501;
     // double lam = -3e-40;
 
-    double p = 0.48;
-    double lam = -0.1;
+    double p = 0.500005;
+    double lam = 1e-10;
     printf("p = %25.16e   lam = %25.16e\n", p, lam);
 
     double invcdf1 = tukey_lambda_invcdf(p, lam);
-    printf("invcdf (standard)          = %25.16e\n", invcdf1);
+    printf("invcdf (standard)          = %25.17e\n", invcdf1);
 
     double invcdf2 = tukey_lambda_invcdf2(p, lam);
-    printf("invcdf (version 2)         = %25.16e\n", invcdf2);
+    printf("invcdf (version 2)         = %25.17e\n", invcdf2);
 
     // double eps = p - 0.5;
     // double invcdfla = std::pow(2.0, 2 - lam)*eps;
-    // printf("invcdf (linear p - 0.5)    = %25.16e\n", invcdfla);
+    // printf("invcdf (linear p - 0.5)    = %25.17e\n", invcdfla);
 
     int order = 3;
     double invcdft3 = tukey_lambda_invcdf_taylor(p, lam, order);
-    printf("invcdf (taylor %3d)        = %25.16e\n", order, invcdft3);
+    printf("invcdf (taylor %3d)        = %25.17e\n", order, invcdft3);
 
     order = 9;
     double invcdft9 = tukey_lambda_invcdf_taylor(p, lam, order);
-    printf("invcdf (taylor %3d)        = %25.16e\n", order, invcdft9);
+    printf("invcdf (taylor %3d)        = %25.17e\n", order, invcdft9);
 
     order = 12;
     double invcdft12 = tukey_lambda_invcdf_taylor(p, lam, order);
-    printf("invcdf (taylor %3d)        = %25.16e\n", order, invcdft12);
+    printf("invcdf (taylor %3d)        = %25.17e\n", order, invcdft12);
 
     order = 15;
     double invcdft15 = tukey_lambda_invcdf_taylor(p, lam, order);
-    printf("invcdf (taylor %3d)        = %25.16e\n", order, invcdft15);
+    printf("invcdf (taylor %3d)        = %25.17e\n", order, invcdft15);
 
     double invcdfx = tukey_lambda_invcdf_experimental(p, lam);
-    printf("invcdf (experimental)      = %25.16e\n", invcdfx);
+    printf("invcdf (experimental)      = %25.17e\n", invcdfx);
 
     double invcdfmp50 = invcdf_mp<cpp_bin_float_50>(p, lam);
-    printf("invcdf (cpp_bin_float_50)  = %25.16e\n", invcdfmp50);
+    printf("invcdf (cpp_bin_float_50)  = %25.17e\n", invcdfmp50);
 
     double invcdfmp100 = invcdf_mp<cpp_bin_float_100>(p, lam);
-    printf("invcdf (cpp_bin_float_100) = %25.16e\n", invcdfmp100);
+    printf("invcdf (cpp_bin_float_100) = %25.17e\n", invcdfmp100);
 
     printf("\n");
     timing(1000000, lam);
