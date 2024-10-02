@@ -201,7 +201,7 @@ So it works, but more testing and development is needed to see if
 it could compete with just switching to double-double precision or using
 some of the ideas discussed in https://github.com/scipy/scipy/issues/21370.
 
-*Taylor series in $\lambda$*
+*Taylor series in* $\lambda$
 
 Expand $Q(p;\lambda)$ in a Taylor series about $\lambda = 0$ to obtain
 
