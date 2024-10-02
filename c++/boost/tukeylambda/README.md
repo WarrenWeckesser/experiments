@@ -220,7 +220,7 @@ Q(p;\lambda)
 \end{split}
 $$
 
-The second equality uses the ``difference of powers'' formula.
+The second equality uses the "difference of powers" formula.
 The inner sum is over all the $k$-th order binomial powers of $\log(p)$ and $\log(1 - p)$.
 
 This is implemented in the C++ file `tukeylambda.h` as
