@@ -10,7 +10,7 @@ using namespace std;
 int main()
 {
     double loc = 0.0;
-    double scale =  1.0;
+    double scale = 1.0;
     const double pnear1[] = {0.999, 0.999999, 0.999999999, 0.999999999999};
     const double pnear0[] = {0.001, 1e-6, 1e-9, 1e-12, 1e-15, 1e-18, 1e-21};
 
