@@ -7,10 +7,10 @@ using namespace std;
 
 int main()
 {
-    vector<double> x{1.0, 2.0, 0.25, -2.0,
+    vector<double> x{1.0, 2.0, 0.25, -2.0, -2e-8,
                      10.0, -3.0, 2.0, -10.0,
-                     3.0, 0.0, 0.0, 0.0,
-                     -1.0, 1.5, -0.75};
+                     3.0, 0.0, 0.0, 0.0, 1e-8,
+                     -1.0, 1.5, 1e-8, -0.75};
 
     double s1 = fsum::fsum_scalar_loop(x);
 
