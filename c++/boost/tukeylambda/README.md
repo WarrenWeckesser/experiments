@@ -224,7 +224,7 @@ $$
 \begin{split}
 Q(p;\lambda)
   & = \frac{1}{\lambda}\left(p^{\lambda} - (1 - p)^{\lambda}\right) \\
-  & = \frac{(1-p)^{\lambda}}{\lambda}\textrm{expm1}(\lambda \textrm{logit}(p))
+  & = \frac{(1-p)^{\lambda}}{\lambda}\textrm{expm1}(\lambda \textrm{logit}(p)) \\
   & = \frac{1}{\lambda}e^{\lambda \textrm{log1p}(-p)}\textrm{expm1}(\lambda \textrm{logit}(p))
 \end{split}
 $$
