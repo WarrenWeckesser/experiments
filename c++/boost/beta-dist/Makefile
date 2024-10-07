@@ -19,7 +19,7 @@ beta_pdf_cli: beta_pdf_cli.cpp
 	g++ -std=c++14 $(CPPFLAGS) beta_pdf_cli.cpp -o beta_pdf_cli
 
 beta_quantile: beta_quantile.cpp
-	g++ -std=c++14 $(CPPFLAGS) beta_quantile.cpp -o beta_quantile
+	g++ -std=c++17 $(CPPFLAGS) beta_quantile.cpp -o beta_quantile
 
 beta_quantile_literal: beta_quantile_literal.cpp
 	g++ -std=c++14 $(CPPFLAGS) beta_quantile_literal.cpp -o beta_quantile_literal

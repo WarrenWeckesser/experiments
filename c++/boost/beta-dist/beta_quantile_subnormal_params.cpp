@@ -6,7 +6,6 @@
 using namespace std;
 using boost::math::beta_distribution;
 
-
 void show_fp_exception_flags()
 {
     if (std::fetestexcept(FE_DIVBYZERO)) {
@@ -28,38 +27,19 @@ void show_fp_exception_flags()
     cout << endl;
 }
 
-
 int main(int argc, char *argv[])
 {
-    if (argc != 4) {
-        std::cout << "use: " << argv[0] << " a b p\n";
-        return -1;
-    }
+    double a = 12.5;
+    double b = 1e-320;
+    double p = 0.9;
 
-    double a = std::stod(argv[1]);
-    double b = std::stod(argv[2]);
-    double p = std::stod(argv[3]);
-    if (p <= 0 || p >= 1) {
-        std::cerr << "must have 0 < p < 1" << std::endl;
-        return -1;
-    }
-
-    cout << "a = " << a << endl;
-    cout << "b = " << b << endl;
     beta_distribution<> dist(a, b);
 
     std::feclearexcept(FE_ALL_EXCEPT);
     double x = quantile(dist, p);
     show_fp_exception_flags();
 
-    // std::feclearexcept(FE_ALL_EXCEPT);
-    // double y = quantile(complement(dist, p));
-    // show_fp_exception_flags();
-
-    //cout << fixed << setw(11) << setprecision(8) << x << " ";
-    cout << scientific << setw(23) << setprecision(16) << x << " ";
-    // cout << scientific << setw(23) << setprecision(16) << y << " ";
-    cout << endl;
+    cout << "quantile = " << scientific << setw(23) << setprecision(16) << x << endl;
 
     return 0;
 }
