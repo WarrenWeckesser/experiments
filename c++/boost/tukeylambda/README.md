@@ -216,6 +216,17 @@ Q(p;\lambda)
 \end{split}
 $$
 
+I'm experimenting with this formulation in the function `tukey_lambda_invcdf3` in `tukeylambda.h`.
+
+$(1 - p)^\lambda$ can be factored out instead of $p^\lambda$:
+
+$$
+\begin{split}
+Q(p;\lambda)
+  & = \frac{1}{\lambda}\left(p^{\lambda} - (1 - p)^{\lambda}\right) \\
+  & = \frac{(1-p)^{\lambda}}{\lambda}\textrm{expm1}(\lambda \textrm{logit}(p))
+\end{split}
+$$
 
 *Taylor series in* $\lambda$
 
