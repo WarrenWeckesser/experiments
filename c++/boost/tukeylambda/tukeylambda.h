@@ -105,6 +105,39 @@ double tukey_lambda_invcdf2(double p, double lam)
     return x;
 }
 
+double tukey_lambda_invcdf3(double p, double lam)
+{
+    double x;
+
+    if (std::isnan(p) || !std::isfinite(lam) || p < 0 || p > 1) {
+        return std::numeric_limits<double>::quiet_NaN();
+    }
+
+    if (p == 0) {
+        x = lam <= 0 ? -INFINITY : -1/lam;
+    }
+    else if (p == 1) {
+        x = lam <= 0 ? INFINITY : 1/lam;
+    }
+    else {
+        if (lam == 0) {
+            x = logistic_invcdf(p);
+        }
+        else {
+            double t = lam*logistic_invcdf(p);
+            if (t > 0) {
+                x = -std::pow(p, lam)*std::expm1(-t)/lam;
+            }
+            else {
+                return -tukey_lambda_invcdf3(1 - p, lam);
+                //x = pow1p(-p, lam)*std::expm1(t)/lam;
+            }
+        }
+    }
+    return x;
+}
+
+
 #define TUKEY_LAMBDA_INVCDF_TAYLOR_MAX_N 31
 
 double tukey_lambda_invcdf_taylor(double p, double lam, int n)
@@ -194,10 +227,10 @@ double tukey_lambda_invcdf_experimental(double p, double lam)
         x = nextx;
         ++k;
     }
-    // I've never seen this happen, but I haven't tested the
-    // full (p, lam) parameter space.
+    // This sometimes happens with extreme values of the inputs.
+    // This needs more investigation.
     printf("*** k = %d  p = %23.16e  x = %23.16e\n", k, p, x);
-    return x;
+    return std::numeric_limits<double>::quiet_NaN() ;
 }
 
 
