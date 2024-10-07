@@ -150,7 +150,7 @@ When this is applied to $Q(p;\lambda)$, we have
 $$
 \begin{split}
 Q(p;\lambda)
-  & =  \frac{1}{\lambda}\left(p^{\lambda} - (1 - p)^{\lambda}\right) \\
+  & = \frac{1}{\lambda}\left(p^{\lambda} - (1 - p)^{\lambda}\right) \\
   & = \frac{\left(p^{\lambda/2} - (1 - p)^{\lambda/2}\right)}{\lambda/2}
       \frac{\left(p^{\lambda/2} + (1 - p)^{\lambda/2}\right)}{2} \\
   & = Q(p; \lambda/2) \frac{\left(p^{\lambda/2} + (1 - p)^{\lambda/2}\right)}{2}
@@ -202,6 +202,20 @@ to be around 55 or so to get results that are close to machine precision.
 So it works, but more testing and development is needed to see if
 it could compete with just switching to double-double precision or using
 some of the ideas discussed in https://github.com/scipy/scipy/issues/21370.
+
+*Alternative formulations of* $Q(p;\lambda)$
+
+$$
+\begin{split}
+Q(p;\lambda)
+  & = \frac{1}{\lambda}\left(p^{\lambda} - (1 - p)^{\lambda}\right) \\
+  & = \frac{p^{\lambda}}{\lambda}\left(1 - \left(\frac{1-p}{p}\right)^{\lambda}\right) \\
+  & = \frac{p^{\lambda}}{\lambda}\left(1 - e^{\lambda \log\left(\frac{1-p}{p}\right)}\right) \\
+  & = \frac{p^{\lambda}}{\lambda}\left(1 - e^{-\lambda \textrm{logit}(p)}\right) \\
+  & = -\frac{p^{\lambda}}{\lambda}\textrm{expm1}(-\lambda \textrm{logit}(p))
+\end{split}
+$$
+
 
 *Taylor series in* $\lambda$
 
