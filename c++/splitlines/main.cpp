@@ -9,12 +9,7 @@ using namespace std;
 
 int main()
 {
-    string text = R"(*
-This is a test.
-{@
-Something here.
-@}
-)";
+    string text = "apple\norange\ngrape";
 
     vector<string> lines = splitlines(text, "\n"s);
 
