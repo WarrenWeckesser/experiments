@@ -1,5 +1,6 @@
 #include <math.h>
 #include <iostream>
+#include <limits>
 #include <boost/math/differentiation/finite_difference.hpp>
 
 
@@ -41,15 +42,24 @@ int main(int argc, char *argv[])
     std::cout << std::setw(20) << "x";
     std::cout << std::setw(20) << "f'(x) (exact)";
     std::cout << std::setw(20) << "f'(x) (estimate)";
+    std::cout << std::setw(20) << "rel. error";
     std::cout << std::setw(20) << "error estimate";
     std::cout << std::endl;
     for (const auto& x: v) {
+        double relerr;
         double exact = func_deriv(x);
         double error_est;
         double deriv_est = boost::math::differentiation::finite_difference_derivative(func, x, &error_est);
+        if (exact != 0) {
+            relerr = fabs(exact - deriv_est)/fabs(exact);
+        }
+        else {
+            relerr = std::numeric_limits<double>::quiet_NaN();
+        }
         std::cout << std::setw(20) << std::setprecision(12) << x;
         std::cout << std::setw(20) << std::setprecision(12) << exact;
         std::cout << std::setw(20) << std::setprecision(12) << deriv_est;
+        std::cout << std::setw(20) << std::setprecision(12) << relerr;
         std::cout << std::setw(20) << std::setprecision(12) << error_est << std::endl;
     }
 
