@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <vector>
 #include <boost/multiprecision/cpp_bin_float.hpp>
 
@@ -36,21 +37,28 @@ relerr(double value, double ref)
     return abs(value - ref)/abs(ref);
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     int order;
-    double p = 0.05;
+    double p;
+    if (argc > 1) {
+        p = strtold(argv[1], nullptr);
+    }
+    else {
+        fprintf(stderr, "Expected one argument: p\n");
+        exit(-1);
+    }
     std::vector<double> lambdas;
 
     double lambda = 1e-30;
-    for (int k = 0; k < 620; ++k) {
+    for (int k = 0; k < 775; ++k) {
         lambdas.push_back(lambda);
         lambdas.push_back(-lambda);
-        lambda *= 1.125;
+        lambda *= 1.1;
     }
     std::sort(lambdas.begin(), lambdas.end());
 
-    printf("lambda        invcdf1      invcdf2      invcdf3      invcdft3     invcdft9     invcdft12    invcdft15    invcdfx\n");
+    printf("lambda        invcdf1      invcdf2      invcdf3a     invcdf3b     invcdft3     invcdft9     invcdft12    invcdft15    invcdfx\n");
     for (auto lam: lambdas) {
         double ref = invcdf_mp<cpp_bin_float_100>(p, lam);
 
@@ -60,8 +68,11 @@ int main()
         double invcdf2 = tukey_lambda_invcdf2(p, lam);
         double invcdf2_re = relerr(invcdf2, ref);
 
-        double invcdf3 = tukey_lambda_invcdf3(p, lam);
-        double invcdf3_re = relerr(invcdf3, ref);
+        double invcdf3a = tukey_lambda_invcdf3a(p, lam);
+        double invcdf3a_re = relerr(invcdf3a, ref);
+
+        double invcdf3b = tukey_lambda_invcdf3b(p, lam);
+        double invcdf3b_re = relerr(invcdf3b, ref);
 
         order = 3;
         double invcdft3 = tukey_lambda_invcdf_taylor(p, lam, order);
@@ -82,7 +93,7 @@ int main()
         double invcdfx = tukey_lambda_invcdf_experimental(p, lam);
         double invcdfx_re = relerr(invcdfx, ref);
 
-        printf("%11.6e %11.6e %11.6e %11.6e %11.6e %11.6e %11.6e %11.6e %11.6e\n",
-               lam, invcdf1_re, invcdf2_re, invcdf3_re, invcdft3_re, invcdft9_re, invcdft12_re, invcdft15_re, invcdfx_re);
+        printf("%11.6e %11.6e %11.6e %11.6e %11.6e %11.6e %11.6e %11.6e %11.6e %11.6e\n",
+               lam, invcdf1_re, invcdf2_re, invcdf3a_re, invcdf3b_re, invcdft3_re, invcdft9_re, invcdft12_re, invcdft15_re, invcdfx_re);
     }
 }

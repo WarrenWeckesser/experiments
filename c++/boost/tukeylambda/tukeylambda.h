@@ -105,7 +105,7 @@ double tukey_lambda_invcdf2(double p, double lam)
     return x;
 }
 
-double tukey_lambda_invcdf3(double p, double lam)
+double tukey_lambda_invcdf3a(double p, double lam)
 {
     double x;
 
@@ -125,18 +125,38 @@ double tukey_lambda_invcdf3(double p, double lam)
         }
         else {
             double t = lam*logistic_invcdf(p);
-            if (t > 0) {
-                x = -std::pow(p, lam)*std::expm1(-t)/lam;
-            }
-            else {
-                return -tukey_lambda_invcdf3(1 - p, lam);
-                //x = pow1p(-p, lam)*std::expm1(t)/lam;
-            }
+            x = -std::pow(p, lam)*std::expm1(-t)/lam;
         }
     }
     return x;
 }
 
+
+double tukey_lambda_invcdf3b(double p, double lam)
+{
+    double x;
+
+    if (std::isnan(p) || !std::isfinite(lam) || p < 0 || p > 1) {
+        return std::numeric_limits<double>::quiet_NaN();
+    }
+
+    if (p == 0) {
+        x = lam <= 0 ? -INFINITY : -1/lam;
+    }
+    else if (p == 1) {
+        x = lam <= 0 ? INFINITY : 1/lam;
+    }
+    else {
+        if (lam == 0) {
+            x = logistic_invcdf(p);
+        }
+        else {
+            double t = lam*logistic_invcdf(p);
+             x = pow1p(-p, lam)*std::expm1(t)/lam;
+        }
+    }
+    return x;
+}
 
 #define TUKEY_LAMBDA_INVCDF_TAYLOR_MAX_N 31
 
