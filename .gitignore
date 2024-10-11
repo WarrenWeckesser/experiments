@@ -63,3 +63,5 @@ dkms.conf
 
 /c++/xsimd/peaktopeak/demo_minmax
 /c++/xsimd/peaktopeak/demo_peaktopeak
+
+target/
