@@ -4,25 +4,25 @@
 use rand::Rng;
 use std::cmp;
 use std::thread;
-use structopt::StructOpt;
+use clap::Parser;
 
-#[derive(Debug, StructOpt)]
-#[structopt(name = "leftcenterright", about = "Simulate left-center-right game.")]
+#[derive(Parser)]
+#[command(version, about, long_about = None)]
 struct Opt {
     /// Number of players.
-    #[structopt(short = "p", long = "players")]
+    #[arg(short, long)]
     players: usize,
 
     /// Starting number of chips per player.
-    #[structopt(short = "s", long = "start", default_value = "3")]
+    #[arg(short, long, default_value_t = 3)]
     start: usize,
 
     /// Number of games to simulate.
-    #[structopt(short = "g", long = "games", default_value = "1000")]
+    #[arg(short, long, default_value_t = 1000)]
     games: usize,
 
     /// Number of parallel jobs (i.e. threads) to use; 0 implies serial.
-    #[structopt(short = "j", long = "jobs", default_value = "0")]
+    #[arg(short, long, default_value_t = 0)]
     jobs: usize,
 }
 
@@ -109,7 +109,7 @@ fn parallel_stats(opt: &Opt) -> Vec<usize> {
 }
 
 fn main() {
-    let opt = Opt::from_args();
+    let opt = Opt::parse();
     println!("opt.players : {}", opt.players);
     println!("opt.start   : {}", opt.start);
     println!("opt.jobs    : {}", opt.jobs);
