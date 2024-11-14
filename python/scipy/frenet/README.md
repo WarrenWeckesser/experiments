@@ -17,7 +17,7 @@ These equations are
 where
 
 * $s$ is the arclength;
-* $T#$, $N$ and $B$ are the tangent, normal and binormal vectors,
+* $T$, $N$ and $B$ are the tangent, normal and binormal vectors,
 respecitively;
 * $\kappa(s)$ is the curvature and $\tau(s)$ is the torsion.
 
