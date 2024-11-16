@@ -1,6 +1,6 @@
 # http://stackoverflow.com/questions/34291639/multiple-scipy-integrate-ode-instances
 
-
+import sys
 import time
 import multiprocessing as mp
 import numpy as np
@@ -34,7 +34,6 @@ if __name__ == "__main__":
     tmp = tend - tstart
     print(" %8.3f seconds" % tmp)
 
-    """
     print("serial:         ", end='')
     sys.stdout.flush()
     tstart = time.time()
@@ -49,4 +48,3 @@ if __name__ == "__main__":
              for sol1, sol2 in zip(serial_solutions, mp_solutions)]
     if not all(check):
         print("There was at least one discrepancy in the solutions.")
-    """
