@@ -35,5 +35,6 @@ plt.plot(y, 'g', linewidth=1, label='response signal')
 plt.plot(np.arange(len(xhat)), xhat, 'r', alpha=0.5, linewidth=1,
          label='deconvolved signal')
 plt.grid()
-plt.legend()
-plt.show()
+plt.legend(framealpha=1, shadow=True)
+# plt.show()
+plt.savefig("wiener_deconvolution_example.svg")
