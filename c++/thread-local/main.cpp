@@ -14,7 +14,7 @@ void initialize_c(int k)
 }
 
 double calc() {
-    double sum;
+    double sum = 0.0;
     for (size_t i = 0; i < num_coefficients; ++i) {
         sum += c[i];
     }
@@ -37,7 +37,7 @@ int main()
         threads.push_back(std::thread(thread_func, i));
     }
 
-    for (int i = 0; i < num_threads; ++i) {
-        threads[i].join();
+    for (auto& t: threads) {
+        t.join();
     }
 }
