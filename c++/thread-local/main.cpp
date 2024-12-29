@@ -1,6 +1,7 @@
 
 #include <cstdio>
 #include <thread>
+#include <vector>
 
 constexpr size_t num_coefficients = 5000;
 thread_local double c[num_coefficients];
