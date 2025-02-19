@@ -47,7 +47,7 @@ all_same(const std::vector<T> &x)
         auto x0vec = xsimd::broadcast(x0);
         for (std::size_t i = 0; i < vec_size; i += simd_size) {
             auto vec = xsimd::load_unaligned(&x[i]);
-            if (xsimd::count(xsimd::neq(vec, x0vec))) {
+            if (xsimd::any(xsimd::neq(vec, x0vec))) {
                 return false;
             }
         }
