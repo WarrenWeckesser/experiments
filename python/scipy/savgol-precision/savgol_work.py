@@ -180,7 +180,10 @@ def super_stabilised_savgol_coeffs(
     #       errors, but via the internal variable ``pos_internal`` which is ensured to
     #       be an integer for the cases where ``x_center == 0`` (so this is a safe
     #       check)
-    if pos_internal != halflen:
+    # NOTE: for even window lengths it is not possible that ``x_center == 0``, so this
+    #       is checked beforehand (the check against ``halflen`` would fail in this
+    #       case)
+    if window_length % 2 == 0 or pos_internal != halflen:
         correction_factors = _savgol_pinv_correction_factors_with_x_center(
             deriv=deriv,
             polyorder=polyorder,
@@ -216,6 +219,7 @@ def stabilised_savgol_coeffs(
     delta=1.0,
     pos=None,
     use="conv",
+
 ):
     # An alternative method for finding the coefficients when deriv=0 is
     #    t = np.arange(window_length)
@@ -369,7 +373,7 @@ if __name__ == "__main__" and True:
 
     for order in [0, 1, 9, 10]:  # odd and even
         for deriv in [0, 1, 2, 3, 4, 5, 6]:
-            for window_len in [11, 31]:  # to keep computation time reasonable
+            for window_len in [11, 12, 31]:  # to keep computation time reasonable
                 for pos in range(0, window_len):  # all possible positions
                     print(f"Checking {window_len=}  {order=}  {deriv=}  {pos=}")
                     coeffs = mpsig.savgol_coeffs(
