@@ -1,11 +1,10 @@
 from math import comb, factorial
 from typing import Literal, Optional, Union
 
+import mpsig
 import numpy as np
 from matplotlib import pyplot as plt
 from mpmath import mp
-
-import mpsig
 
 
 def _savgol_pinv_correction_factors_with_x_center(
@@ -162,7 +161,7 @@ def super_stabilised_savgol_coeffs(
     # the stable version of the polynomial Vandermonde matrix is computed
     x_min, x_max = x.min(), x.max()
     x_center = 0.5 * (x_min + x_max)
-    x_scale = 0.5 * (x_max - x_min)
+    x_scale = 0.5 * (x_max - x_min) if window_length > 1 else 1.0
     x_normalized = (x - x_center) / x_scale
     J_normalized_polyvander = np.polynomial.polynomial.polyvander(
         x_normalized, polyorder
@@ -219,7 +218,6 @@ def stabilised_savgol_coeffs(
     delta=1.0,
     pos=None,
     use="conv",
-
 ):
     # An alternative method for finding the coefficients when deriv=0 is
     #    t = np.arange(window_length)
@@ -274,7 +272,7 @@ def stabilised_savgol_coeffs(
     y[deriv] = float_factorial(deriv) / (delta**deriv)
     # Find the least-squares solution of A*c = y
     # coeffs, _, _, _ = lstsq(A, y, rcond=None)  # Specify rcond with numpy
-    print(f'{np.linalg.cond(A)}; shape is {A.shape}')
+    print(f"{np.linalg.cond(A)}; shape is {A.shape}")
     coeffs, _, _, _ = lstsq(A, y)
     return coeffs
 
@@ -305,9 +303,9 @@ def check_savgol_coeffs(c, cref):
 if __name__ == "__main__":
     mp.dps = 150
 
-    window_len = 55
+    window_len = 255
     order = 10
-    pos = 27
+    pos = 255 // 2 - 50
     deriv = 5
     delta = 0.5
 
@@ -373,7 +371,10 @@ if __name__ == "__main__" and True:
 
     for order in [0, 1, 9, 10]:  # odd and even
         for deriv in [0, 1, 2, 3, 4, 5, 6]:
-            for window_len in [11, 12, 31]:  # to keep computation time reasonable
+            for window_len in [1, 11, 12, 31]:  # to keep computation time reasonable
+                if order >= window_len:
+                    continue
+
                 for pos in range(0, window_len):  # all possible positions
                     print(f"Checking {window_len=}  {order=}  {deriv=}  {pos=}")
                     coeffs = mpsig.savgol_coeffs(
