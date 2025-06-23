@@ -27,4 +27,4 @@ west  = [6.4, 6.6, 6.7, 7.1, 7.6, 7.8, 8.2, 8.4, 8.6, 8.7, 8.8, 8.9]
 stat, p, m, table = median_test(north, east, south, west, ties='ignore')
 print("Example 10.12: contingency table:")
 print(table)
-print("Example 10.12:  stat = {stat:.3g}  p = {p:.3g}")
+print(f"Example 10.12:  stat = {stat:.3g}  p = {p:.3g}")
