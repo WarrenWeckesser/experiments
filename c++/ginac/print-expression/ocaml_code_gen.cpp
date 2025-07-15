@@ -6,6 +6,7 @@
 #include <sstream>
 #include <ginac/ginac.h>
 #include <string>
+#include <vector>
 
 //using namespace std;
 using std::string;
@@ -61,34 +62,42 @@ static string print_ocaml(const GiNaC::ex & e)
         }
     }
     else if (is_a<GiNaC::mul>(e)) {
-        if (e.nops() == 2 && e.op(1) == -1) {
-            // Replace mul(expr, -1) with "~-. expr".
-            ocaml += "~-. ";
-            ocaml += print_ocaml(e.op(0));
-        }
-        else if (e.nops() == 2 && e.op(0) == -1) {
-            // Replace mul(-1, expr) with "~-. expr".
-            ocaml += "~-. ";
-            ocaml += print_ocaml(e.op(1));
+        string mul;
+
+        if (e.nops() == 1) {
+            // I'm not sure ginac will ever create a mul expression with just
+            // one element, but handle it here just in case...
+            mul = print_ocaml(e.op(0));
         }
         else {
-            // Ginac stores an expression such as "x/(y*z)" as
-            // "x * pow(y, -1) * pow(z, -1)" (or something similar).
-            // In this loop, operands of the form "pow(expr, -1)" are
-            // added to the ocaml string as division by expr.
-            ocaml += print_ocaml(e.op(0));
-            for (int i = 1; i < e.nops();  ++i) {
+            bool negate = false;
+            bool oneout = false;
+            for (int i = 0; i < e.nops();  ++i) {
                 auto opi = e.op(i);
-                if (is_a<GiNaC::power>(opi) && opi.op(1) == -1) {
-                    ocaml += " /. ";
-                    ocaml += print_ocaml(opi.op(0));
+                if (opi == -1) {
+                    negate = !negate;
+                }
+                else if (is_a<GiNaC::power>(opi) && opi.op(1) == -1 && oneout) {
+                    // Ginac stores an expression such as "x/(y*z)" as
+                    // "x * pow(y, -1) * pow(z, -1)" (or something similar).
+                    // Here operands of the form "pow(expr, -1)" are added to
+                    // the ocaml string as division by expr.
+                    mul += " /. ";
+                    mul += print_ocaml(opi.op(0));
                 }
                 else {
-                    ocaml += " *. ";
-                    ocaml += print_ocaml(opi);
+                    if (oneout) {
+                        mul += " *. ";
+                    }
+                    mul += print_ocaml(opi);
+                    oneout = true;
                 }
             }
+            if (negate) {
+                mul = "~-. " + mul;
+            }
         }
+        ocaml += mul;
     }
     else if (is_a<GiNaC::function>(e)) {
         ocaml += ex_to<GiNaC::function>(e).get_name();
@@ -114,14 +123,22 @@ static string print_ocaml(const GiNaC::ex & e)
 
 int main()
 {
-    using namespace GiNaC;
+    using namespace GiNaC;  // symbol, ex, pow, etc.
 
     symbol x("x"), y("y");
-    // ex expr = pow(3, x) - 2 * sin(-1 * y / Pi) * cos(x - y - 1);
-    // ex expr = (x+2)/(-y*(y - 1)*(y - 2)) * (x+1);
-    ex expr = atan2(x, -y);
-    string ocaml = print_ocaml(expr);
-    std::cout << "ginac: " << expr << std::endl;
-    std::cout << "ocaml: " << ocaml << std::endl;
+    std::vector<ex> exprs = {
+        -Pi * x * y,
+        pow(3, x) - 2 * sin(-1 * y / Pi) * cos(x - y - 1),
+        (x+2)/(-y*(y - 1)*pow(y - 2, 2)) * (-(x+1)),
+        atan2(x, -y),
+        pow(x, 2*y)/(-y)*(Pi),
+        -3*x - 2*y - Pi
+    };
+    for (ex expr : exprs) {
+        string ocaml = print_ocaml(expr);
+        std::cout << "ginac: " << expr << std::endl;
+        std::cout << "ocaml: " << ocaml << std::endl;
+        std::cout << std::endl;
+    }
     return 0;
 }
