@@ -136,7 +136,9 @@ int main()
     };
     for (ex expr : exprs) {
         string ocaml = print_ocaml(expr);
-        std::cout << "ginac: " << expr << std::endl;
+        std::cout << "ginac: " << expr << "  ";
+        double result = ex_to<numeric>(evalf(expr.subs(x == 1.0).subs(y == 3.0) )).to_double();
+        std::cout << "       [" << result << "]" << std::endl;
         std::cout << "ocaml: " << ocaml << std::endl;
         std::cout << std::endl;
     }
