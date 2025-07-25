@@ -1,5 +1,5 @@
 
-all: test_all_same all_same_timing demo_minmax demo_peaktopeak demo_fsum demo_argmin demo_argmin_blocks min_argmin_timing
+all: test_all_same all_same_timing demo_minmax demo_peaktopeak demo_fsum demo_argmin demo_argmin_blocks min_argmin_timing demo_ordered ordered_timing
 
 test_all_same: test_all_same.o
 	g++ test_all_same.o -o test_all_same
@@ -36,5 +36,16 @@ demo_peaktopeak.o: demo_peaktopeak.cpp peaktopeak.hpp
 demo_fsum: demo_fsum.cpp fsum.hpp
 	g++ -std=c++17 -pedantic -Wall -Wextra -march=native -O3 -I $(XSIMD_INCLUDE) demo_fsum.cpp -o demo_fsum
 
+
+
+demo_ordered: demo_ordered.o
+	g++ demo_ordered.o -o demo_ordered
+
+demo_ordered.o: demo_ordered.cpp ordered.hpp
+	g++ -std=c++17 -pedantic -Wall -Wextra -march=native -O3 -I $(XSIMD_INCLUDE) -c demo_ordered.cpp
+
+ordered_timing: ordered_timing.cpp ordered.hpp
+	g++ -std=c++17 -pedantic -Wall -Wextra -march=native -O3 -I $(XSIMD_INCLUDE) ordered_timing.cpp -o ordered_timing
+
 clean:
-	rm -rf *.o test_all_same all_same_timing demo_peaktopeak demo_minmax demo_fsum demo_argmin demo_argmin_blocks min_argmin_timing
+	rm -rf *.o test_all_same all_same_timing demo_peaktopeak demo_minmax demo_fsum demo_argmin demo_argmin_blocks min_argmin_timing demo_ordered ordered_timing
