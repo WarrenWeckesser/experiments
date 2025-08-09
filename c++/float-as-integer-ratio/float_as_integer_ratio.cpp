@@ -53,7 +53,6 @@ float_as_integer_ratio(T x)
         denominator = 1;
 
         cln::cl_I p = std::abs(exponent);
-        cln::cl_I m = 1 << p;
         if (exponent > 0) {
             numerator *= 1 << p;
         }
@@ -77,6 +76,9 @@ int main(int argc, char **argv)
     double y = -2.3e-6;
 
     show_ratio(x);
+    show_ratio(18334.3f);
+    show_ratio(3.4025e38f);
+    show_ratio(0.50000006f);
     show_ratio(y);
     show_ratio(0.0);
     show_ratio(0.0f);
