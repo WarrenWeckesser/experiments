@@ -42,6 +42,11 @@ cln::cl_I float_to_cl_I(T x)
 // `long double`.
 // The function is not thoroughly tested!
 //
+// Special cases:
+//   inf -> 1/0
+//  -inf -> -1/0
+//   nan -> 0/0
+//
 template<typename T>
 std::pair<cln::cl_I, cln::cl_I>
 float_as_integer_ratio(T x)
