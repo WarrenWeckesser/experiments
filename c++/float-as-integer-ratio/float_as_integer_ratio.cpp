@@ -12,9 +12,34 @@
 #include <utility>
 #include <cln/cln.h>
 
+
+//
+// Convert a nonnegative C++ floating point whose value is known to be an
+// integer into a cl_I.
+//
+// CLN might have a way to do this directly that I missed in the docs.
+// This function must work with `float`, `double` and `long double`.
+//
+template<typename T>
+cln::cl_I float_to_cl_I(T x)
+{
+    cln::cl_I result = 0;
+    cln::cl_I k = 0;
+    while (x > 0) {
+        T rem = std::fmod(x, static_cast<T>(2));
+        if (rem > 0) {
+            result += cln::cl_I(1) << k;
+        }
+        x = std::floor(x / 2);
+        k += 1;
+    }
+    return result;
+}
+
 //
 // This functon was copied from the Python source code, edited to use
-// CLN for large integers, and updated to work with float or double.
+// CLN for large integers, and updated to work with `float`, `double` or
+// `long double`.
 // The function is not thoroughly tested!
 //
 template<typename T>
@@ -43,22 +68,24 @@ float_as_integer_ratio(T x)
         denominator = 1;
     }
     else {
+        int sgn = x < 0 ? -1 : 1;  // x == 0 was already handled.
+        x *= sgn;
         int exponent;
-        T float_part = frexp(x, &exponent);
-        for (int i = 0; i < 300 && float_part != floor(float_part); ++i) {
+        T float_part = std::frexp(x, &exponent);
+        cln::cl_I expon = exponent;
+        for (int i = 0; i < 400 && float_part != std::floor(float_part); ++i) {
             float_part *= 2;
-            exponent--;
+            expon--;
         }
-        numerator = static_cast<long long>(float_part);
+        numerator = float_to_cl_I(float_part);
         denominator = 1;
-
-        cln::cl_I p = std::abs(exponent);
-        if (exponent > 0) {
-            numerator *= 1 << p;
+        if (expon > 0) {
+            numerator *= 1 << expon;
         }
         else {
-            denominator *= 1 << p;
+            denominator *= 1 << -expon;
         }
+        numerator *= sgn;
     }
     return std::pair(numerator, denominator);
 }
@@ -73,19 +100,11 @@ void show_ratio(T x)
 int main(int argc, char **argv)
 {
     float x = 1310.23;
-    double y = -2.3e-6;
+    double y = -2.3e-8;
+    long double z = 1.0L/3.0L;
 
     show_ratio(x);
-    show_ratio(18334.3f);
-    show_ratio(3.4025e38f);
-    show_ratio(0.50000006f);
     show_ratio(y);
-    show_ratio(0.0);
-    show_ratio(0.0f);
-    show_ratio(-1.0);
-    show_ratio(NAN);
-    show_ratio(static_cast<double>(NAN));
-    show_ratio(INFINITY);
-    show_ratio(-INFINITY);
+    show_ratio(z);
     return(0);
 }
