@@ -1,18 +1,26 @@
+//
+// Requires C++20.
+//
 
 #include <iostream>
 #include <boost/math/special_functions/gamma.hpp>
 #include <cmath>
+#include <limits>
+#include <numbers>
 
 using namespace boost::math::policies;
 using boost::math::tgamma;
 using namespace std;
 
 
-//typedef policy<underflow_error<throw_on_error>> my_policy;
 typedef policy<promote_double<false>> no_double_promotion;
 
 double var1(double c)
 {
+    if (std::fabs(c) < 16*std::numeric_limits<double>::epsilon()) {
+        using std::numbers::pi;
+        return pi*pi/6;
+    }
     double g1 = tgamma(1 - c, no_double_promotion());
     double g2 = tgamma(1 - 2*c, no_double_promotion());
     return (g2 - g1*g1)/(c*c); 
@@ -20,17 +28,21 @@ double var1(double c)
 
 double var2(double c)
 {
+    if (std::fabs(c) < 16*std::numeric_limits<double>::epsilon()) {
+        using std::numbers::pi;
+        return pi*pi/6;
+    }
     double g1 = tgamma(1 - c, no_double_promotion());
     double g2 = tgamma(1 - 2*c, no_double_promotion());
     double sqrtg2 = sqrt(g2);
-    return (sqrtg2 - g1)*(sqrtg2 + g1)/c/c;
+    return ((sqrtg2 - g1)/c)*((sqrtg2 + g1)/c);
 }
 
 int main()
 {
     double c;
  
-    for(c = 0.125; c > -0.125; c-= 0.001) {
+    for(c = 0.125; c > -0.125; c-= 0.0002) {
         double g1 = tgamma(1 - c, no_double_promotion());
         double g2 = tgamma(1 - 2*c, no_double_promotion());
         double y1 = var1(c);
