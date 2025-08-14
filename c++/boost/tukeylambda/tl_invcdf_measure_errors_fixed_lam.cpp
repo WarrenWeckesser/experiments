@@ -34,32 +34,46 @@ double invcdf_mp(double p, double lam)
 inline double
 relerr(double value, double ref)
 {
+    if (ref == 0.0) {
+        if (value == ref) {
+            return 0.0;
+        }
+        else {
+            return std::numeric_limits<double>::infinity();
+        }
+    }
     return abs(value - ref)/abs(ref);
 }
 
 int main(int argc, char *argv[])
 {
     int order;
-    double p;
+    double lam;
     if (argc > 1) {
-        p = strtold(argv[1], nullptr);
+        lam = strtold(argv[1], nullptr);
     }
     else {
-        fprintf(stderr, "Expected one argument: p\n");
+        fprintf(stderr, "Expected one argument: lambda\n");
         exit(-1);
     }
-    std::vector<double> lambdas;
+    std::vector<double> pvalues;
 
-    double lambda = 1e-30;
-    for (int k = 0; k < 775; ++k) {
-        lambdas.push_back(lambda);
-        lambdas.push_back(-lambda);
-        lambda *= 1.1;
+    for (int k = 1; k < 2000; ++k) {
+        pvalues.push_back(k/2000.0);
     }
-    std::sort(lambdas.begin(), lambdas.end());
+    for (int k = -4000; k <= 4000; ++k) {
+        pvalues.push_back(0.5 + (2*k + 1)/1000001.0);
+    }
+    for (int k = -235; k < 0; ++k) {
+        pvalues.push_back(std::exp(k));
+    }
+    for (int k = -36; k < 0; ++k) {
+        pvalues.push_back(-std::expm1(k));
+    }
+    std::sort(pvalues.begin(), pvalues.end());
 
-    printf("lambda        invcdf1      invcdf2      invcdf3a     invcdf3b     invcdft3     invcdft9     invcdft12    invcdft15    invcdfx     invcdf_taylorp4\n");
-    for (auto lam: lambdas) {
+    printf("p                       invcdf1      invcdf2      invcdf3a     invcdf3b     invcdft3     invcdft9     invcdft12    invcdft15    invcdfx invcdftp\n");
+    for (auto p: pvalues) {
         double ref = invcdf_mp<cpp_bin_float_100>(p, lam);
 
         double invcdf1 = tukey_lambda_invcdf(p, lam);
@@ -93,7 +107,11 @@ int main(int argc, char *argv[])
         double invcdfx = tukey_lambda_invcdf_experimental(p, lam);
         double invcdfx_re = relerr(invcdfx, ref);
 
-        printf("%11.6e %11.6e %11.6e %11.6e %11.6e %11.6e %11.6e %11.6e %11.6e %11.6e\n",
-               lam, invcdf1_re, invcdf2_re, invcdf3a_re, invcdf3b_re, invcdft3_re, invcdft9_re, invcdft12_re, invcdft15_re, invcdfx_re);
+        order = 13;
+        double invcdftp = tukey_lambda_invcdf_taylor_p(p, lam, order);
+        double invcdftp_re = relerr(invcdftp, ref);
+
+        printf("%22.15e %11.6e %11.6e %11.6e %11.6e %11.6e %11.6e %11.6e %11.6e %11.6e %11.6e\n",
+               p, invcdf1_re, invcdf2_re, invcdf3a_re, invcdf3b_re, invcdft3_re, invcdft9_re, invcdft12_re, invcdft15_re, invcdfx_re, invcdftp_re);
     }
 }

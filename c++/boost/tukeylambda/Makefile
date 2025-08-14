@@ -1,4 +1,4 @@
-EXECUTABLES = main tl_invcdf_demo tl_invcdf_measure_errors
+EXECUTABLES = main tl_invcdf_demo tl_invcdf_measure_errors tl_invcdf_measure_errors_fixed_lam
 
 all: $(EXECUTABLES)
 

@@ -61,7 +61,8 @@ int tukey_lambda_invcdf_edge_case(double p, double lam, double *result)
         return 1;
     }
     if (p == 0.5) {
-        return 0.0;
+        *result = 0.0;
+        return 1;
     }
     if (lam == 0) {
         *result = logistic_invcdf(p);
@@ -215,6 +216,25 @@ double tukey_lambda_invcdf_experimental(double p, double lam)
     return std::numeric_limits<double>::quiet_NaN() ;
 }
 
+#define MAX_TERMS 15
+
+double tukey_lambda_invcdf_taylor_p(double p, double lam, int n)
+{
+    double c[MAX_TERMS];
+    double r = 2*(p - 0.5);
+    double r2 = r*r;
+    c[0] = 1.0;
+    for (int i = 1; i < MAX_TERMS; ++i) {
+        int k = 2*i;
+        c[i] = c[i-1]*(lam - (k - 1))*(lam - k)/k/(k+1);
+    }
+    double y = 0.0;
+    for (int i = n-1; i >= 0; --i) {
+        y = r2*y + c[i];
+    }
+    y = r*y/std::pow(2.0, lam - 1);
+    return y;
+}
 
 //
 // Inverse of the survival function of the Tukey lambda distribution.
