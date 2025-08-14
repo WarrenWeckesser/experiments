@@ -90,7 +90,7 @@ float_as_integer_ratio(T x)
         else {
             denominator *= 1 << -expon;
         }
-        numerator *= sgn;
+        numerator *= cln::cl_I(sgn);
     }
     return std::pair(numerator, denominator);
 }
