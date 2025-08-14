@@ -4,7 +4,7 @@
 //  Large integers are handled with the cl_I class from the CLN library.
 //
 //  Compile with:
-//     g++ float_as_integer_ratio.cpp -o float_as_integer_ratio -lcln
+//     g++ -std=c++17 float_as_integer_ratio.cpp -o float_as_integer_ratio $(pkg-config --cflags cln) $(pkg-config --libs cln)
 //
 
 #include <cmath>
