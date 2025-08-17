@@ -97,8 +97,6 @@ bool is_increasing_v2(const std::vector<T>& x)
             x0 = x1;
         }
         return is_increasing_scalar_loop(size - vec_size + simd_size, &x[vec_size - simd_size]);
-
-        return true;
     }
     else {
         return is_increasing_scalar_loop(x);
