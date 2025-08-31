@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import numpy as np
 from scipy import stats
 from random_variates import zipfian
@@ -17,29 +18,72 @@ def zipfian_aggregation_plan(a, n, p_min):
     return np.array(pts) - 1
 
 
-if __name__ == "__main__":
-    bitgen = np.random.PCG64()
+@dataclass
+class Result:
+    nbins: int
+    min_expected_freq: float
+    pvalues: np.ndarray
 
-    a = 1.2
-    n = 100000
-    m = 10000000
 
-    p_min = 50/m
+def run_power_divergence_tests(bitgen, a, n, size, nreps, min_freq=50,
+                               show_progress=False):
+    """
+    bitgen: bit generator from numpy.random
+    a, n: Zipfian parameters
+    size: number of samples per power divergence test
+    nreps: number of repetitions of power divergence tests to run
+        The length of the array of p-values returned will be nreps.
+    min_freq: the minimum "frequency" to allow in the expected frequencies.
+        This is used for binning the expected frequencies of the distribution.
+    """
+    p_min = min_freq/size
+    if show_progress:
+        print('Generating aggregation bins... ', end='', flush=True)
     indices = zipfian_aggregation_plan(a, n, p_min)
+    if show_progress:
+        print(f'nbins = {len(indices)}')
     k = np.arange(1, n + 1)  # Support of stats.zipfian.
-    expected = m * stats.zipfian.pmf(k, a, n)
+    expected = size * stats.zipfian.pmf(k, a, n)
     expected_agg = np.add.reduceat(expected, indices)
 
-    print(f'{a = }  {n = }  {m = }')
-    print(f'number of aggregation bins: {len(indices)}')
-    print(f'minimum expected freq: {expected_agg.min():.2f}')
-    print()
-    print('p values')
-    print('---------------------')
-    nreps = 20
+    if show_progress:
+        print(f'Running {nreps} tests...')
+    pvalues = []
     for i in range(nreps):
+        if show_progress:
+            print(f'{i+1:3}  generating sample... ', end='', flush=True)
         x = zipfian(bitgen, a=a, n=n, size=m)
         b = np.bincount(x, minlength=n + 1)[1:]
         b_agg = np.add.reduceat(b, indices)
         test_result = stats.power_divergence(b_agg, expected_agg, lambda_=0)
-        print(test_result.pvalue)
+        if show_progress:
+            print(f'  p = {test_result.pvalue}')
+        pvalues.append(test_result.pvalue)
+    return Result(pvalues=np.array(pvalues),
+                  nbins=len(indices),
+                  min_expected_freq=expected_agg.min())
+
+
+if __name__ == "__main__":
+    bitgen = np.random.PCG64()
+
+    a = 1.25
+    n = 1000
+    m = 1000000
+    nreps = 10
+    min_freq = 50
+    show_progress = False
+
+    result = run_power_divergence_tests(bitgen, a, n, size=m, nreps=nreps,
+                                        min_freq=min_freq,
+                                        show_progress=show_progress)
+
+    print()
+    print(f'{a = }  {n = }  {m = }')
+    print(f'number of aggregation bins: {result.nbins}')
+    print(f'minimum expected freq: {result.min_expected_freq:.2f}')
+    print()
+    print('p values')
+    print('---------------------')
+    for p in result.pvalues:
+        print(p)
