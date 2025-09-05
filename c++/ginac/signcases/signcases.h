@@ -1,0 +1,6 @@
+#ifndef SIGNCASES_H
+
+DECLARE_FUNCTION_4P(signcases)
+DECLARE_FUNCTION_1P(step1)
+
+#endif
