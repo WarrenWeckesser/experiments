@@ -8,6 +8,6 @@ int main(int argc, char *argv[])
     p = (x += 1, NULL);
 
     printf("x: %d\n", x);
-    printf("p: %zd\n", p);
+    printf("p: %p\n", p);
     return 0;
 }
