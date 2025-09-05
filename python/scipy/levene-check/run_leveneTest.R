@@ -8,4 +8,7 @@ data <- data.frame(program = rep(c("A", "B", "C"), each = 100),
                             runif(100, 0, 5),
                             runif(100, 1, 7)))
 
-leveneTest(data$loss, data$program, center="trim", trim=0.2)
+result = leveneTest(data$loss, data$program, center="mean", trim=0.2)
+
+print(result$F)
+print(result$Pr)
