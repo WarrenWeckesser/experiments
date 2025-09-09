@@ -7,7 +7,13 @@ def fk_chi2(*samples, center='median'):
     """
     Conover et al's interpretation of Fligner and Killeen's analog of Klotz.
 
-    This function is similar to `scipy.stats.fligner`.
+    This function is similar to `scipy.stats.fligner`, except that
+    `center='trimmed'` is not implemented. Instead, `center` can be a
+    callable.  E.g.
+
+        from scipy.stats import trim_mean
+        result = fk_chi2(a, b, c,
+                         center=lambda x: trim_mean(x, proportiontocut=0.1))
 
     With the default `center="median"`, it computes the statistic annotated
     in Conover et al [1] as 'F-K:med X²', which is inspired by--but not quite
@@ -19,7 +25,7 @@ def fk_chi2(*samples, center='median'):
     that of the R function `fligner.test` from the R `stats` package.
 
     Conover et al's change is to apply the centering function to each sample
-    independently.  In the statistics described by Fligner and Killen, the
+    independently.  In the statistics described by Fligner and Killeen, the
     center value is computed as a single value based on the combined samples.
 
     References
