@@ -73,7 +73,7 @@ cdef inline double inv_boxcox(double x, double lmbda) noexcept nogil:
 
 
 #
-# Functions using in the implementation of the rejection methods for
+# Functions used in the implementation of the rejection method for
 # the Zipfian distribution.
 #
 
