@@ -1,3 +1,10 @@
+"""
+Test the Zipfian distribution random variates.
+
+This module defines functions for testing the results
+of random_variates.zipfian().
+"""
+
 from dataclasses import dataclass
 import numpy as np
 from scipy import stats
@@ -12,7 +19,9 @@ def zipfian_aggregation_plan(a, n, p_min):
             k = int(stats.zipfian.ppf(p1, a, n))
             pts.append(k+1)
         else:
-            tmp = pts.pop()
+            # Removing the last values results in the tail of the expected
+            # array being merged into the previous computed bin.
+            pts.pop()
             break
     # Return an array of indices ready to be used in np.add.reduceat().
     return np.array(pts) - 1
@@ -20,12 +29,14 @@ def zipfian_aggregation_plan(a, n, p_min):
 
 @dataclass
 class Result:
+    """Result class returned by run_power_divergence_tests()."""
+
     nbins: int
     min_expected_freq: float
     pvalues: np.ndarray
 
 
-def run_power_divergence_tests(bitgen, a, n, size, nreps, min_freq=50,
+def run_power_divergence_tests(bitgen, a, n, *, size, nreps, min_freq=50,
                                show_progress=False):
     """
     bitgen: bit generator from numpy.random
@@ -67,9 +78,9 @@ def run_power_divergence_tests(bitgen, a, n, size, nreps, min_freq=50,
 if __name__ == "__main__":
     bitgen = np.random.PCG64()
 
-    a = 1.25
-    n = 1000
-    m = 1000000
+    a = 8.0
+    n = 5
+    m = 100000000
     nreps = 10
     min_freq = 50
     show_progress = False
