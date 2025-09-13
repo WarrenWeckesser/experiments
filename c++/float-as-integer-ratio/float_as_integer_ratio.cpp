@@ -4,14 +4,15 @@
 //  Large integers are handled with the cl_I class from the CLN library.
 //
 //  Compile with:
-//     g++ -std=c++17 float_as_integer_ratio.cpp -o float_as_integer_ratio $(pkg-config --cflags cln) $(pkg-config --libs cln)
+//     g++ -std=c++17 float_as_integer_ratio.cpp -o float_as_integer_ratio
+//         $(pkg-config --cflags cln) $(pkg-config --libs cln)
 //
+
+#include <cln/cln.h>
 
 #include <cmath>
 #include <iostream>
 #include <utility>
-#include <cln/cln.h>
-
 
 //
 // Convert a nonnegative C++ floating point whose value is known to be an
@@ -20,8 +21,9 @@
 // CLN might have a way to do this directly that I missed in the docs.
 // This function must work with `float`, `double` and `long double`.
 //
-template<typename T>
-cln::cl_I float_to_cl_I(T x)
+template <typename T>
+cln::cl_I
+float_to_cl_I(T x)
 {
     cln::cl_I result = 0;
     cln::cl_I k = 0;
@@ -47,7 +49,7 @@ cln::cl_I float_to_cl_I(T x)
 //  -inf -> -1/0
 //   nan -> 0/0
 //
-template<typename T>
+template <typename T>
 std::pair<cln::cl_I, cln::cl_I>
 float_as_integer_ratio(T x)
 {
@@ -95,18 +97,20 @@ float_as_integer_ratio(T x)
     return std::pair(numerator, denominator);
 }
 
-template<typename T>
-void show_ratio(T x)
+template <typename T>
+void
+show_ratio(T x)
 {
     auto ratio = float_as_integer_ratio(x);
     std::cout << "ratio is " << ratio.first << " / " << ratio.second << std::endl;
 }
 
-int main(int argc, char **argv)
+int
+main(int argc, char **argv)
 {
     float x = 1310.23;
     double y = -2.3e-8;
-    long double z = 1.0L/3.0L;
+    long double z = 1.0L / 3.0L;
 
     show_ratio(x);
     show_ratio(y);
