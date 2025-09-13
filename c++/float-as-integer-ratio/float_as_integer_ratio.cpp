@@ -111,5 +111,5 @@ int main(int argc, char **argv)
     show_ratio(x);
     show_ratio(y);
     show_ratio(z);
-    return(0);
+    return 0;
 }
