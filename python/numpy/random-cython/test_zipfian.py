@@ -81,10 +81,10 @@ if __name__ == "__main__":
     a = 1.125
     n = 500
     m = 400000
-    nreps = 10
+    nreps = 10000
     min_freq = 100
     show_progress = False
-    show_pvalues = True
+    show_pvalues = False
 
     result = run_power_divergence_tests(bitgen, a, n, size=m, nreps=nreps,
                                         min_freq=min_freq,
@@ -100,3 +100,5 @@ if __name__ == "__main__":
         print('---------------------')
         for p in result.pvalues:
             print(p)
+    else:
+        print(f"{nreps} computed p-values are in `result.pvalues`.")
