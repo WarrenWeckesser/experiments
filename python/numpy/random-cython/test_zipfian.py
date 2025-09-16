@@ -78,12 +78,13 @@ def run_power_divergence_tests(bitgen, a, n, *, size, nreps, min_freq=50,
 if __name__ == "__main__":
     bitgen = np.random.PCG64()
 
-    a = 8.0
-    n = 5
-    m = 100000000
+    a = 1.125
+    n = 500
+    m = 400000
     nreps = 10
-    min_freq = 50
+    min_freq = 100
     show_progress = False
+    show_pvalues = True
 
     result = run_power_divergence_tests(bitgen, a, n, size=m, nreps=nreps,
                                         min_freq=min_freq,
@@ -93,8 +94,9 @@ if __name__ == "__main__":
     print(f'{a = }  {n = }  {m = }')
     print(f'number of aggregation bins: {result.nbins}')
     print(f'minimum expected freq: {result.min_expected_freq:.2f}')
-    print()
-    print('p values')
-    print('---------------------')
-    for p in result.pvalues:
-        print(p)
+    if show_pvalues:
+        print()
+        print('p values')
+        print('---------------------')
+        for p in result.pvalues:
+            print(p)
