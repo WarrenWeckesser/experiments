@@ -1,6 +1,10 @@
 #cython: language_level=3
 """
 Random variate generators.
+
+This module defines the function zipfian(bitgen_t gen, a, n, size=None)
+that generates variates from the Zipfian distribution (scipy.stats.zipfian)
+using a rejection method.
 """
 
 # C standard library...
@@ -18,6 +22,10 @@ from cpython cimport PyFloat_AsDouble
 import numpy as np
 cimport numpy as cnp
 from numpy.random cimport bitgen_t
+
+# SciPy Cython API from scipy.special...
+from scipy.special.cython_special cimport boxcox, inv_boxcox
+
 
 cnp.import_array()
 
@@ -43,33 +51,6 @@ cdef validate_output_shape(iter_shape, cnp.ndarray output):
             f"Output size {output_shape} is not compatible with broadcast "
             f"dimensions of inputs {iter_shape}."
         )
-
-#
-# Box-Cox functions copied from SciPy.
-#
-
-cdef inline double boxcox(double x, double lmbda) noexcept nogil:
-    # if lmbda << 1 and log(x) < 1.0, the lmbda*log(x) product can lose
-    # precision, furthermore, expm1(x) == x for x < eps.
-    # For doubles, the range of log is -744.44 to +709.78, with eps being
-    # the smallest value produced.  This range means that we will have
-    # abs(lmbda)*log(x) < eps whenever abs(lmbda) <= eps/-log(min double)
-    # which is ~2.98e-19.  
-    if fabs(lmbda) < 1e-19:
-        return log(x)
-    elif lmbda * log(x) < 709.78:
-        return expm1(lmbda * log(x)) / lmbda
-    else:
-        return copysign(1., lmbda) * exp(lmbda * log(x) - log(fabs(lmbda))) - 1 / lmbda
-
-
-cdef inline double inv_boxcox(double x, double lmbda) noexcept nogil:
-    if lmbda == 0:
-        return exp(x)
-    elif lmbda * x < 1.79e308:
-        return exp(log1p(lmbda * x) / lmbda)
-    else:
-        return exp((log(copysign(1., lmbda) * (x + 1 / lmbda)) + log(fabs(lmbda))) / lmbda)
 
 
 #
