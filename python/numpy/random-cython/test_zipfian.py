@@ -78,13 +78,13 @@ def run_power_divergence_tests(bitgen, a, n, *, size, nreps, min_freq=50,
 if __name__ == "__main__":
     bitgen = np.random.PCG64()
 
-    a = 1.125
+    a = 1.25
     n = 500
-    m = 400000
-    nreps = 10000
+    m = 500000
+    nreps = 10
     min_freq = 100
     show_progress = False
-    show_pvalues = False
+    show_pvalues = True
 
     result = run_power_divergence_tests(bitgen, a, n, size=m, nreps=nreps,
                                         min_freq=min_freq,

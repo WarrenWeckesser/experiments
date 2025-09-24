@@ -95,7 +95,7 @@ cdef double g_rv(bitgen_t *bit_generator, double a, int64_t n) noexcept nogil:
     return Ginv(g, a, n)
 
 
-cdef double target(double x, double a, int64_t n) noexcept nogil:
+cdef double h(double x, double a, int64_t n) noexcept nogil:
     # This is the target "histogram function" i.e. the nonnormalized PMF,
     # expanded to be a function of the continuous variable x.
     # We could return 0 for x < 0.5 or x > n + 0.5, but the function should
@@ -110,9 +110,9 @@ cdef int64_t zipfian_rejection(bitgen_t *bit_generator, double a, int64_t n)  no
     cdef int max_rejections = 100
     while num_rejections <= max_rejections:
         x = g_rv(bit_generator, a, n)
-        # The dominating function g and the target function coincide on the interval
+        # The dominating function g and the target function h coincide on the interval
         # 0.5 < x < 1.5, so a candidate variate in that interval is never rejected.
-        if x <= 1.5 or bit_generator.next_double(bit_generator.state) * g(x, a, n) <= target(x, a, n):
+        if x <= 1.5 or bit_generator.next_double(bit_generator.state) * g(x, a, n) <= h(x, a, n):
             return <int64_t>(round(x))
         num_rejections += 1
     # Too many rejections...
