@@ -1,4 +1,4 @@
-project('random-build-examples', 'c', 'cpp', 'cython')
+project('random-cython', 'c', 'cpp', 'cython')
 
 py_mod = import('python')
 py3 = py_mod.find_installation(pure: false)
