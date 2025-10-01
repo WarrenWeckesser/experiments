@@ -1,0 +1,7 @@
+To compile, might need these:
+* -lcln
+* -I <path/to/include/dir/for/cln>
+* -L <path/to/lib/dir/for/cln>
+* On macos, might need -mmacosx-version-min=13.3
+
+If <charconv> is not available, maybe use the boost version.

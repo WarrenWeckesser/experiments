@@ -11,8 +11,28 @@
 #include <cln/cln.h>
 
 #include <cmath>
+#include <iomanip>
 #include <iostream>
 #include <utility>
+
+#include <cstring>
+#include <cstdio>
+#include <charconv>
+#include <system_error>
+
+template<typename T>
+static inline void
+print_value(const T x)
+{
+    char buf[100];
+    const std::to_chars_result res = std::to_chars(buf, buf + sizeof(buf), x);
+    if (res.ec == std::errc{}) {
+        printf("%.*s", static_cast<int>(res.ptr - buf), buf);
+    }
+    else {
+        printf("<to_chars() failed!>");
+    }
+}
 
 //
 // Convert a nonnegative C++ floating point whose value is known to be an
@@ -109,11 +129,22 @@ int
 main(int argc, char **argv)
 {
     float x = 1310.23;
-    double y = -2.3e-8;
+    double y = 0.1;
     long double z = 1.0L / 3.0L;
 
+    print_value(x);
+    std::cout << std::endl;
     show_ratio(x);
+
+    std::cout << std::endl;
+    print_value(y);
+    std::cout << std::endl;
     show_ratio(y);
+
+    std::cout << std::endl;
+    print_value(z);
+    std::cout << std::endl;
     show_ratio(z);
+
     return 0;
 }
