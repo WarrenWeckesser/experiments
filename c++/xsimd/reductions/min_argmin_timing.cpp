@@ -51,7 +51,7 @@ void check(const char *name, size_t n, int nrepeats)
     for (int k = 0; k < nrepeats; ++k) {
         s += speedup_array<T>(n);
     }
-    cout << name << " (" << sizeof(T) << "): " << s/nrepeats << "\n";
+    cout << name << " (size = " << sizeof(T) << "): " << s/nrepeats << "\n";
 }
 
 int main()
