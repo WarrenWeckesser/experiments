@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <cstdint>
 #include "xsimd/xsimd.hpp"
@@ -47,46 +46,45 @@ struct ShiftLeft
 };
 
 
-template <class T>
-struct as_index
-{
-    using type = xs::as_unsigned_integer_t<T>;
-};
-
-
 int main(int argc, char* argv[])
 {
-    using BatchType = xs::batch<float, xs::avx>;
-    using IndexType = typename as_index<BatchType>::type;
+    using BatchType = xs::batch<float>;
+    using LaneType = BatchType::value_type;
 
-    BatchType a = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0};
+    constexpr std::size_t nlanes = BatchType::size;
+
+    // Create batch `a` containing {0.0, 1.0, 2.0, ...}
+    std::array<LaneType, nlanes> avals;
+    for (std::size_t i = 0; i < nlanes; ++i) {
+        avals[i] = i;
+    }
+    BatchType a = xs::load_unaligned(avals.data());
 
     std::cout << "a:  " << a << std::endl;
 
-    constexpr auto shuffle_low_high = xs::make_batch_constant<IndexType,
+    constexpr auto shuffle_low_high = xs::make_batch_constant<xs::as_unsigned_integer_t<LaneType>,
                                                               ShuffleLowHigh>();
 
     auto b = xs::swizzle(a, shuffle_low_high);
     std::cout << "b:  " << b << " ShuffleLowHigh" << std::endl;
 
-    constexpr auto swap_pairs = xs::make_batch_constant<IndexType,
+    constexpr auto swap_pairs = xs::make_batch_constant<xs::as_unsigned_integer_t<LaneType>,
                                                         SwapPairs>();
     auto c = xs::swizzle(a, swap_pairs);
     std::cout << "c:  " << c << " SwapPairs" << std::endl;
 
-    constexpr auto shift1 = xs::make_batch_constant<IndexType,
+    constexpr auto shift1 = xs::make_batch_constant<xs::as_unsigned_integer_t<LaneType>,
                                                     ShiftLeft<1>>();
-    constexpr auto shift2 = xs::make_batch_constant<IndexType,
+    constexpr auto shift2 = xs::make_batch_constant<xs::as_unsigned_integer_t<LaneType>,
                                                     ShiftLeft<2>>();
-
 
     auto s1 = xs::swizzle(a, shift1);
     auto s2 = xs::swizzle(a, shift2);
     std::cout << "s1: " << s1 << " ShiftLeft<1>" << std::endl;
     std::cout << "s2: " << s2 << " ShiftLeft<2>" << std::endl;
 
-    if (a.size > 4) {
-        constexpr auto shift4 = xs::make_batch_constant<IndexType,
+    if (nlanes > 4) {
+        constexpr auto shift4 = xs::make_batch_constant<xs::as_unsigned_integer_t<LaneType>,
                                                         ShiftLeft<4>>();
         auto s4 = xs::swizzle(a, shift4);
         std::cout << "s4: " << s4 << " ShiftLeft<4>" << std::endl;
