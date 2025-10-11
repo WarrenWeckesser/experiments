@@ -27,9 +27,9 @@
 #include "hwy/foreach_target.h"  // IWYU pragma: keep
 
 // Must come after foreach_target.h to avoid redefinition errors.
-#include "hwy/aligned_allocator.h"
+//#include "hwy/aligned_allocator.h"
 #include "hwy/highway.h"
-#include "hwy/nanobenchmark.h"
+//#include "hwy/nanobenchmark.h"
 
 HWY_BEFORE_NAMESPACE();
 namespace stuff {
@@ -39,18 +39,18 @@ namespace hn = hwy::HWY_NAMESPACE;
 
 template<typename T>
 void square() {
-  const T in[16] = {1, 2, 3, 4, 5, 6};
-  T out[16];
-  const hn::ScalableTag<T> d;
-  for (size_t i = 0; i < 16; i += hn::Lanes(d)) {
-    const auto vec = hn::LoadU(d, in + i);
-    auto result = hn::Mul(vec, vec);
-    result = hn::Add(result, result);
-    hn::StoreU(result, d, out + i);
-  }
-  printf("in[2] = %.0Lf, out[2] = %.1Lf\n",
-         static_cast<long double>(in[2]),
-         static_cast<long double>(out[2]));
+    const T in[16] = {1, 2, 3, 4, 5, 6};
+    T out[16];
+    const hn::ScalableTag<T> d;
+    for (size_t i = 0; i < 16; i += hn::Lanes(d)) {
+        const auto vec = hn::LoadU(d, in + i);
+        auto result = hn::Mul(vec, vec);
+        result = hn::Add(result, result);
+        hn::StoreU(result, d, out + i);
+    }
+    printf("in[2] = %.0Lf, out[2] = %.1Lf\n",
+            static_cast<long double>(in[2]),
+            static_cast<long double>(out[2]));
 }
 
 }  // namespace HWY_NAMESPACE
@@ -59,10 +59,12 @@ HWY_AFTER_NAMESPACE();
 
 #if HWY_ONCE
 
-int main(int /*argc*/, char** /*argv*/) {
-  stuff::HWY_NAMESPACE::square<float>();
-  stuff::HWY_NAMESPACE::square<double>();
-  return 0;
+int main(int /*argc*/, char** /*argv*/)
+{
+    stuff::HWY_NAMESPACE::square<float>();
+    stuff::HWY_NAMESPACE::square<double>();
+    stuff::HWY_NAMESPACE::square<short>();
+    return 0;
 }
 
 #endif  // HWY_ONCE
