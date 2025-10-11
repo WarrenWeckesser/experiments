@@ -39,6 +39,7 @@ cnp.import_array()
 
 # XXX/TODO: Can this be made more efficient?
 #           Does iter_shape have to be a Python tuple?
+# Update: currently not used...
 cdef validate_output_shape(iter_shape, cnp.ndarray output):
     cdef cnp.npy_intp *dims
     cdef cnp.npy_intp ndim, i
@@ -51,7 +52,6 @@ cdef validate_output_shape(iter_shape, cnp.ndarray output):
             f"Output size {output_shape} is not compatible with broadcast "
             f"dimensions of inputs {iter_shape}."
         )
-
 
 #
 # Functions used in the implementation of the rejection method for
@@ -192,6 +192,8 @@ def zipfian(bit_generator, *, a, n, size=None):
     cdef double a1
     cdef int64_t n1
     cdef int64_t *out
+    cdef variates_ndim
+    cdef broadcast_ndim
 
     capsule = bit_generator.capsule
     if not PyCapsule_IsValid(capsule, capsule_name):
@@ -223,12 +225,25 @@ def zipfian(bit_generator, *, a, n, size=None):
             it = cnp.PyArray_MultiIterNew2(a_arr, n_arr)
             variates = <cnp.ndarray> np.empty(it.shape, np.int64)
 
-        nvars = cnp.PyArray_SIZE(variates)
-
         it = cnp.PyArray_MultiIterNew3(variates, a_arr, n_arr)
-        validate_output_shape(it.shape, variates)
+        # validate_output_shape(it.shape, variates)
+        variates_ndim = cnp.PyArray_NDIM(variates)
+        broadcast_ndim = cnp.PyArray_MultiIter_NDIM(it)
+        if variates_ndim != broadcast_ndim:
+            raise ValueError(
+                f"The number of dimensions in the output size {np.shape(variates)} "
+                "is not equal to the number of dimensions of the broadcast shape "
+                f"{it.shape}"
+            )
+        for i in range(variates_ndim):
+            if cnp.PyArray_MultiIter_DIMS(it)[i] != cnp.PyArray_DIMS(variates)[i]:
+                raise ValueError(
+                    f"Output size {np.shape(variates)} is not compatible with broadcast "
+                    f"dimensions of inputs {it.shape}."
+                )
+
         with bit_generator.lock, nogil:
-            for i in range(nvars):
+            for i in range(cnp.PyArray_SIZE(variates)):
                 a1 = (<double*> cnp.PyArray_MultiIter_DATA(it, 1))[0]
                 n1 = (<int64_t*> cnp.PyArray_MultiIter_DATA(it, 2))[0]
                 out = <int64_t*> cnp.PyArray_MultiIter_DATA(it, 0)
