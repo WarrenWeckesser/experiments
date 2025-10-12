@@ -57,6 +57,7 @@ int main()
 
     check<float>          ("float          ", n, nrepeats);
     check<double>         ("double         ", n, nrepeats);
+    check<unsigned char>  ("unsigned char  ", n, nrepeats);
     check<short>          ("short          ", n, nrepeats);
     check<unsigned short> ("unsigned short ", n, nrepeats);
     check<int>            ("int            ", n, nrepeats);
