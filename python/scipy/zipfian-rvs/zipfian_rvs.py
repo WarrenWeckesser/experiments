@@ -2,6 +2,10 @@ import numpy as np
 from scipy.stats import zipfian
 
 
+# The approach used in zipfian_rvs() could be used in any discrete
+# distribution with finite support.  But as noted in the docstring,
+# it will be slow when the size of the support is large.
+
 def zipfian_rvs(a, n, size=None, rng=None):
     """
     Generate random variates from the "Zipfian" distribution.
