@@ -49,10 +49,10 @@ $$
        \end{cases}
 $$
 
-On the inteval $\textrm{3/2} \le x < n + \textrm{1/2}$, the function is given by the PMF formula,
-shifted by $\textrm{1/2}$.
+On the inteval $\textrm{3/2} \le x < n + \textrm{1/2}$, the function is given by the
+nonnormalized PMF formula, shifted by $\textrm{1/2}$.
 
-This plot shows the target nonnormalized PDF and the dominating PDF.
+This plot shows the target nonnormalized PDF and the dominating nonnormalized PDF.
 
 ![](https://github.com/WarrenWeckesser/experiments/blob/main/python/numpy/random-cython/docs/zipfian_nnpdf_and_dom.png)
 
