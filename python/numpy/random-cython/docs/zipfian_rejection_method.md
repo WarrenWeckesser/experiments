@@ -9,7 +9,7 @@ SciPy as `scipy.stats.zipfian`).
 The PMF for the Zipfian distribution is
 
 $$
-    f(k, a, n) = \frac{k^{-a}}{H_{n, a}}, \; k \in \left\{1, 2, \ldots, n\right\}
+    f(k, a, n) = \frac{k^{-a}}{H_{n, a}}, \; k \in \left{1, 2, \ldots, n\right}
 $$
 
 where
