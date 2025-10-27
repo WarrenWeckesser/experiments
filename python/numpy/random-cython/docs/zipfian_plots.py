@@ -114,7 +114,7 @@ plt.plot(2, G(2, a, n), 'k.')
 maxG = G(n + 1, a, n)
 plt.plot(n + 1, maxG, 'k.')
 plt.axhline(maxG, linestyle=':', alpha=0.5,
-            label='max G(x, a, n) = G(n + 0.5, a, n)')
+            label='max G(x, a, n) = G(n + 1, a, n)')
 
 plt.legend(shadow=True, framealpha=1)
 plt.grid(visible=True)
