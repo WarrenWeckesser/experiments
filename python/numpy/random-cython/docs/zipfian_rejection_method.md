@@ -47,8 +47,8 @@ $$
        \end{cases}
 $$
 
-On the inteval $3/2 \le x < n + 1/2$, the function is given by the PMF formula,
-shifted by $1/2$.
+On the inteval $\textrm{3/2} \le x < n + \textrm{1/2}$, the function is given by the PMF formula,
+shifted by $\textrm{1/2}$.
 
 This plot shows the target nonnormalized PDF and the dominating PDF.
 
