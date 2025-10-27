@@ -5,6 +5,20 @@ This is not a tutorial on the rejection method.  There are probably many of thos
 available already online.  These notes provide the details for the implementation
 of the method in SciPy for the Zipfian distribution `scipy.stats.zipfian`.
 
+The PMF for the Zipfian distribution is
+
+$$
+    f(k, a, n) = \frac{k^{-a}}{H_{n, a}}
+$$
+
+where
+
+$$
+    H_{n, a} = \sum_{k = 1}^{n} k^{-a}
+$$
+
+is the normalization constant required to make $f$ a PMF.
+
 For the plots, I'll use the parameters `a = 0.95` and `n = 7`.
 
 Here is a plot of the PMF:
@@ -33,8 +47,8 @@ $$
        \end{cases}
 $$
 
-On the inteval $\frac{3}{2} \le x < n + \frac{1}{2}$, the function is given by the PMF formula,
-shifted by $\frac{1}{2}$.
+On the inteval $3/2 \le x < n + 1/2$, the function is given by the PMF formula,
+shifted by $1/2$.
 
 This plot shows the target nonnormalized PDF and the dominating PDF.
 
