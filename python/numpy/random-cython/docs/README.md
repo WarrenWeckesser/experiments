@@ -114,7 +114,7 @@ $$
 As per the rejection method, another uniform variate $U$ is generated, this time
 from $[0, 1]$, and $X$ is accepted if $U g(X, a, n) \le h(X, a, n)$.
 
-Note that on the interval $1 \le x \lt 2$, $g(x, a, n) \equiv h(x, a, n)$.
+Note that on the interval $1 \le x < 2$, $g(x, a, n) \equiv h(x, a, n)$.
 So if the candidate $X$ is in this interval, it will always be accepted, and
 there is no need to generate $U$.
 
@@ -132,16 +132,14 @@ def dominating_random_variate(a, n):
     y = uniform(0, G(n + 1, a, n))
     return Ginv(y, a, n)
 
-
 def zipfian_random_variate(a, n):
     # Rejection method...
     while True:
+        # Generate a candidate.
         x = dominating_random_variate(a, n)
-
-        if 1 <= x <= 2:
-            # Always accept x in this range.
+        if x < 2:
+            # Always accept x in this range. (By construction, we know x >= 1.)
             return floor(x)
-        
         U = uniform(0, 1)
         if U*g(x, a, n) <= h(x, a, n):
             return floor(X)
