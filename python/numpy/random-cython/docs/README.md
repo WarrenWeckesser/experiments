@@ -60,7 +60,7 @@ $$
        \end{cases}
 $$
 
-On the inteval $2 \le x < n + 1$, the function is given by the
+On the interval $2 \le x < n + 1$, the function is given by the
 nonnormalized PMF formula, shifted by 1.
 
 This plot shows the target nonnormalized PDF and the dominating nonnormalized PDF.
