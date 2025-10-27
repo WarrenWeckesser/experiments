@@ -67,8 +67,20 @@ $1 \le x \le n + 1$, we have
 $$
     G(x, a, n)
      = \begin{cases}
-         x - 1                                  & 1 \le x < 2 &       \\
+         x - 1                                      & 1 \le x < 2 &       \\
          \frac{\left(x - 1\right)^{1-a} - a}{1 - a} & 2 \le x < n + 1
+       \end{cases}
+$$
+
+which can be written in terms of the
+[Box-Cox power transformation](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.boxcox.html)
+$B(x, \lambda)$ as
+
+$$
+    G(x, a, n)
+     = \begin{cases}
+         x - 1                & 1 \le x < 2 &     \\
+         B(x - 1, 1 - a) + 1  & 2 \le x < n + 1
        \end{cases}
 $$
 
@@ -80,7 +92,16 @@ To generate random variates with the inversion method from $G(x, a, n)$, we don'
 have to normalize it and get a true CDF. Instead, we generate uniform variates $U$
 from the interval $[0, G(n+1, a, n)]$ (since $G(n+1, a, n)$ is the value of
 $G(x, a, n)$ at the right end of the support).  Then a random variate from the
-dominating distribution is $X = G^{-1}(U, a, n)$.
+dominating distribution is $X = G^{-1}(U, a, n)$.  On the interval $0 \le y \le G(n+1, a, n)$,
+$G^{-1}$ is
+
+$$
+    G^{-1}(y, a, n) =
+        \begin{cases}
+            y + 1                     & 0 \le x < 1 &     \\
+            1 + B^{-1}(y - 1, 1 - a)  & 1 \le y < G(n+1, a, n)
+       \end{cases}
+$$
 
 As per the rejection method, another uniform variate $V$ is generated, this time
 from $[0, 1]$, and $X$ is accepted if $V g(X, a, n) \le h(X, a, n)$.
