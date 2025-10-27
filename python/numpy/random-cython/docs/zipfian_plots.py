@@ -94,8 +94,8 @@ dom = g(xx, a, n)
 
 plt.figure(figsize=figsize)
 
-plt.plot(xx, nnpdf, label='Nonnormalized PDF')
-plt.plot(xx, dom, '--', label='Dominating function')
+plt.plot(xx, nnpdf, label='Nonnormalized PDF $h(x, a, n)$')
+plt.plot(xx, dom, '--', label='Dominating function $g(x, a, n)$')
 
 plt.legend(shadow=True, framealpha=1)
 plt.grid(visible=True)

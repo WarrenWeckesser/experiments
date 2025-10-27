@@ -63,12 +63,12 @@ This plot shows $G(x, 0.95, 7)$:
 
 
 To generate random variates with the inversion method from $G(x, a, n)$, we don't have to normalized it
-and get a true CDF. Instead, we generate uniform variates $U$ from the interval $[0, G(n+\frac{1}{2}, a, n)]$ (since
-$G(n+\frac{1}{2}, a, n)$ is the value of $G(x, a, n)$ at the right end of the support).  Then a random variate
+and get a true CDF. Instead, we generate uniform variates $U$ from the interval $[0, G(n+\textrm{1/2}, a, n)]$ (since
+$G(n+\textrm{1/2}, a, n)$ is the value of $G(x, a, n)$ at the right end of the support).  Then a random variate
 from the dominating distribution is $X = G^{-1}(U, a, n)$.
 
 As per the rejection method, another uniform variate $V$ is generated, this time from $[0, 1]$, and $X$
-is accepted if $V*g(X, a, n) \le h(X, a, n)$.
+is accepted if $V g(X, a, n) \le h(X, a, n)$.
 
-Note, however, that on the interval $1/2 \le x \lt 3/2$, $g(x, a, n) \equiv h(x, a, n)$.  So if the
-candidate $X$ is in this interval, it will always be accept, and there is no need to generate $V$.
+Note, however, that on the interval $\textrm{1/2} \le x \lt \textrm{3/2}$, $g(x, a, n) \equiv h(x, a, n)$.  So if the
+candidate $X$ is in this interval, it will always be accepted, and there is no need to generate $V$.
