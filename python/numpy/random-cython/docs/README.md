@@ -121,3 +121,28 @@ there is no need to generate $U$.
 When $X$ is accepted, $\lfloor X \rfloor$ is a variate from the discrete
 Zipfian distribution. That is, $X$ is truncated to the largest integer not
 greater than $X$ to give a variate from the Zipfian distributions.
+
+Putting it all together, we have the following Python-ish pseudocode for
+the Zipfian rejection method; `uniform(a, b)` generates a sample from the
+uniform distribution $U(a, b)$:
+
+```
+def dominating_random_variate(a, n):
+    # Use the inversion method...
+    y = uniform(0, G(n + 1, a, n))
+    return Ginv(y, a, n)
+
+
+def zipfian_random_variate(a, n):
+    # Rejection method...
+    while True:
+        x = dominating_random_variate(a, n)
+
+        if 1 <= x <= 2:
+            # Always accept x in this range.
+            return floor(x)
+        
+        U = uniform(0, 1)
+        if U*g(x, a, n) <= h(x, a, n):
+            return floor(X)
+```
