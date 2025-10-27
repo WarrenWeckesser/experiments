@@ -8,7 +8,7 @@ using a rejection method.
 """
 
 # C standard library...
-from libc.math cimport log, log1p, expm1, exp, fabs, copysign, round
+from libc.math cimport log, log1p, expm1, exp, fabs, copysign, trunc
 from libc.stdint cimport int64_t
 
 # Cython...
@@ -60,27 +60,27 @@ cdef validate_output_shape(iter_shape, cnp.ndarray output):
 
 cdef double g(double x, double a, int64_t n) noexcept nogil:
     # g is the "hat" function
-    if x < 0.5:
+    if x < 1:
         return 0
-    if x < 1.5:
+    if x < 2:
         return 1
-    return (x - 0.5)**-a
+    return (x - 1)**-a
 
 
 cdef double G(double x, double a, int64_t n) noexcept nogil:
     # Currently, the only call of this function used in the
-    # rejection method is G(n + 0.5, a, n).
-    if x < 0.5:
+    # rejection method is G(n + 1, a, n).
+    if x < 1:
         return 0.0
-    if x < 1.5:
-        return x - 0.5
-    return boxcox(x - 0.5, 1 - a) + 1
+    if x < 2:
+        return x - 1
+    return boxcox(x - 1, 1 - a) + 1
 
 
 cdef double Ginv(double y, double a, int64_t n) noexcept nogil:
     if 0 <= y <= 1:
-        return y + 0.5
-    return 0.5 + inv_boxcox(y - 1, 1 - a)
+        return y + 1
+    return 1 + inv_boxcox(y - 1, 1 - a)
 
 
 cdef double g_rv(bitgen_t *bit_generator, double a, int64_t n) noexcept nogil:
@@ -89,19 +89,19 @@ cdef double g_rv(bitgen_t *bit_generator, double a, int64_t n) noexcept nogil:
     # G is proportional to the CDF of the dominating distribution, but G is
     # not normalized, so to implement the inversion method, the random
     # uniform input is drawn from the interval [0, max(G)], where
-    # max(G) = G(n + 0.5, a, n).
+    # max(G) = G(n + 1, a, n).
     cdef double g
-    g = G(n + 0.5, a, n) * bit_generator.next_double(bit_generator.state)
+    g = G(n + 1, a, n) * bit_generator.next_double(bit_generator.state)
     return Ginv(g, a, n)
 
 
 cdef double h(double x, double a, int64_t n) noexcept nogil:
     # This is the target "histogram function" i.e. the nonnormalized PMF,
     # expanded to be a function of the continuous variable x.
-    # We could return 0 for x < 0.5 or x > n + 0.5, but the function should
+    # We could return 0 for x < 1 or x > n + 1, but the function should
     # never be called with values outside that range, so let's not waste
     # time checking.
-    return round(x)**-a
+    return trunc(x)**-a
 
 
 cdef int64_t zipfian_rejection(bitgen_t *bit_generator, double a, int64_t n)  noexcept nogil:
@@ -111,9 +111,9 @@ cdef int64_t zipfian_rejection(bitgen_t *bit_generator, double a, int64_t n)  no
     while num_rejections <= max_rejections:
         x = g_rv(bit_generator, a, n)
         # The dominating function g and the target function h coincide on the interval
-        # 0.5 < x < 1.5, so a candidate variate in that interval is never rejected.
-        if x <= 1.5 or bit_generator.next_double(bit_generator.state) * g(x, a, n) <= h(x, a, n):
-            return <int64_t>(round(x))
+        # 1 <= x <= 2, so a candidate variate in that interval is never rejected.
+        if x <= 2 or bit_generator.next_double(bit_generator.state) * g(x, a, n) <= h(x, a, n):
+            return <int64_t>(trunc(x))
         num_rejections += 1
     # Too many rejections...
     return <int64_t>(-1)
@@ -225,22 +225,28 @@ def zipfian(bit_generator, *, a, n, size=None):
             it = cnp.PyArray_MultiIterNew2(a_arr, n_arr)
             variates = <cnp.ndarray> np.empty(it.shape, np.int64)
 
-        it = cnp.PyArray_MultiIterNew3(variates, a_arr, n_arr)
         # validate_output_shape(it.shape, variates)
-        variates_ndim = cnp.PyArray_NDIM(variates)
-        broadcast_ndim = cnp.PyArray_MultiIter_NDIM(it)
-        if variates_ndim != broadcast_ndim:
-            raise ValueError(
-                f"The number of dimensions in the output size {np.shape(variates)} "
-                "is not equal to the number of dimensions of the broadcast shape "
-                f"{it.shape}"
-            )
-        for i in range(variates_ndim):
-            if cnp.PyArray_MultiIter_DIMS(it)[i] != cnp.PyArray_DIMS(variates)[i]:
+
+        # The following will raise an exception of variates, a_arr and n_arr are not
+        # broadcast compatibile.
+        it = cnp.PyArray_MultiIterNew3(variates, a_arr, n_arr)
+
+        # One more validation check for the case where size is not None...
+        if size is not None:
+            variates_ndim = cnp.PyArray_NDIM(variates)
+            broadcast_ndim = cnp.PyArray_MultiIter_NDIM(it)
+            if variates_ndim != broadcast_ndim:
                 raise ValueError(
-                    f"Output size {np.shape(variates)} is not compatible with broadcast "
-                    f"dimensions of inputs {it.shape}."
+                    f"The number of dimensions in the output size {np.shape(variates)} "
+                    "is not equal to the number of dimensions of the broadcast shape "
+                    f"{it.shape}"
                 )
+            for i in range(variates_ndim):
+                if cnp.PyArray_MultiIter_DIMS(it)[i] != cnp.PyArray_DIMS(variates)[i]:
+                    raise ValueError(
+                        f"Output size {np.shape(variates)} is not compatible with broadcast "
+                        f"dimensions of inputs {it.shape}."
+                    )
 
         with bit_generator.lock, nogil:
             for i in range(cnp.PyArray_SIZE(variates)):
