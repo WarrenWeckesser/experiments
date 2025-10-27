@@ -25,11 +25,11 @@ satisfies $g(x, a, n) \ge h(x, a, n)$ on the support.  This is the distribution 
 use to generate candidate random variates.  For the Zipfian distribution, we can use
 
 $$
-    g(x, a, n) = x^{-a}
+    g(x, a, n)
      = \begin{cases}
-         1      & \frac{1}{2} \le x < \frac{3}{2} & \\
-         x^{-a} & \frac{3}{2} \le x < n + \frac{1}{2} \\
-         0      & \textrm{otherwise}
+         1                                 & \frac{1}{2} \le x < \frac{3}{2} & \\
+         \left(x - \frac{1}{2}\right)^{-a} & \frac{3}{2} \le x < n + \frac{1}{2} \\
+         0                                 & \textrm{otherwise}
        \end{cases}
 $$
 
