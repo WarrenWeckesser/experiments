@@ -89,26 +89,26 @@ This plot shows $G(x, 0.95, 7)$:
 ![](https://github.com/WarrenWeckesser/experiments/blob/main/python/numpy/random-cython/docs/zipfian_dom_nncdf.png)
 
 To generate random variates with the inversion method from $G(x, a, n)$, we don't
-have to normalize it and get a true CDF. Instead, we generate uniform variates $U$
+have to normalize it and get a true CDF. Instead, we generate uniform variates $Y$
 from the interval $[0, G(n+1, a, n)]$ (since $G(n+1, a, n)$ is the value of
 $G(x, a, n)$ at the right end of the support).  Then a random variate from the
-dominating distribution is $X = G^{-1}(U, a, n)$.  On the interval $0 \le y \le G(n+1, a, n)$,
+dominating distribution is $X = G^{-1}(Y, a, n)$.  On the interval $0 \le y \le G(n+1, a, n)$,
 $G^{-1}$ is
 
 $$
     G^{-1}(y, a, n) =
         \begin{cases}
             y + 1                     & 0 \le x < 1 &     \\
-            1 + B^{-1}(y - 1, 1 - a)  & 1 \le y < G(n+1, a, n)
+            B^{-1}(y - 1, 1 - a) + 1  & 1 \le y < G(n+1, a, n)
        \end{cases}
 $$
 
-As per the rejection method, another uniform variate $V$ is generated, this time
-from $[0, 1]$, and $X$ is accepted if $V g(X, a, n) \le h(X, a, n)$.
+As per the rejection method, another uniform variate $U$ is generated, this time
+from $[0, 1]$, and $X$ is accepted if $U g(X, a, n) \le h(X, a, n)$.
 
 Note that on the interval $1 \le x \lt 2$, $g(x, a, n) \equiv h(x, a, n)$.
 So if the candidate $X$ is in this interval, it will always be accepted, and
-there is no need to generate $V$.
+there is no need to generate $U$.
 
 When $X$ is accepted, $\lfloor X \rfloor$ is a variate from the discrete
 Zipfian distribution. That is, $X$ is truncated to the largest integer not
