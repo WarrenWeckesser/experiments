@@ -26,9 +26,10 @@ Here is a plot of the PMF:
 
 ![](https://github.com/WarrenWeckesser/experiments/blob/main/python/numpy/random-cython/docs/zipfian_pmf.png)
 
-Extend this distribution to a continuous distribution with a piecewise constant PDF.
-If we can generate variates from this continuous distribution, we can truncate those
-variates to their integer part to get variates from the discrete Zipfian distribution.
+Extend this distribution to a continuous distribution with a piecewise constant PDF
+on support $1 \le x \lt n + 1$.  If we can generate variates from this continuous
+distribution, we can truncate those variates to their integer part to get variates
+from the discrete Zipfian distribution.
 
 ![](https://github.com/WarrenWeckesser/experiments/blob/main/python/numpy/random-cython/docs/zipfian_pdf.png)
 
