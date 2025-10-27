@@ -54,7 +54,7 @@ figsize = (7, 4)
 
 plt.figure(figsize=figsize)
 
-plt.plot(k, pmf, 'o', ms=3.5)
+plt.stem(k, pmf, basefmt=" ")
 
 plt.grid(visible=True)
 plt.xlabel('x')
