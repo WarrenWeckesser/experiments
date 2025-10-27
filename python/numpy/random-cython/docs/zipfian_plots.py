@@ -72,7 +72,7 @@ plt.plot(xx, pdf)
 
 plt.grid(visible=True)
 plt.xlabel('x')
-plt.title(f'Zipfian "PDF" (a={a}, n={n})')
+plt.title(f'Zipfian PDF (a={a}, n={n})')
 plt.savefig('zipfian_pdf.png')
 
 # Figure 3. Nonnormalized PDF
@@ -108,7 +108,7 @@ plt.savefig('zipfian_nnpdf_and_dom.png')
 plt.figure(figsize=figsize)
 
 plt.plot(xx, G(xx, a, n), 'k',
-         label='G(x, a, n)\nintegral of the hat function g(x, a, n)')
+         label='G(x, a, n)\nintegral of the dominating nonnormalized PDF g(x, a, n)')
 plt.plot(0.5, 0, 'k.')
 plt.plot(1.5, G(1.5, a, n), 'k.')
 maxG = G(n + 0.5, a, n)
