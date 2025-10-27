@@ -65,10 +65,10 @@ nonnormalized CDF $G(x, a, n)$ by integrating the nonnormalized PDF.  On the int
 $1 \le x \le n + 1$, we have
 
 $$
-    g(x, a, n)
+    G(x, a, n)
      = \begin{cases}
          x - 1                                  & 1 \le x < 2 &       \\
-         \frac{\left(x - 1\right)^{1-a}}{1 - a} & 2 \le x < n + 1
+         \frac{\left(x - 1\right)^{1-a} - a}{1 - a} & 2 \le x < n + 1
        \end{cases}
 $$
 
