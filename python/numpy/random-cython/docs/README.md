@@ -37,6 +37,14 @@ Scale up by removing the normalization constant, so the value in the interval
 $k \le x < k + 1$ is just $k^{-a}$ (which is easy to compute!).  This is what
 I'll call the *target function* $h(x, a, n)$.
 
+$$
+    h(x, a, n) =
+        \begin{cases}
+          \lfloor x \rfloor^{-a}  & 1 \le x < n + 1 &       \\
+          0                       & \textrm{otherwise}
+        \end{cases}
+$$
+
 ![](https://github.com/WarrenWeckesser/experiments/blob/main/python/numpy/random-cython/docs/zipfian_nnpdf.png)
 
 The *dominating distribution* is a distribution with a nonnormalized PDF $g(x, a, n)$ that
