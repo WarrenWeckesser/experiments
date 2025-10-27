@@ -60,9 +60,17 @@ This plot shows the target nonnormalized PDF and the dominating nonnormalized PD
 ![](https://github.com/WarrenWeckesser/experiments/blob/main/python/numpy/random-cython/docs/zipfian_nnpdf_and_dom.png)
 
 To generate variates from the dominating distribution, we'll use the inversion method:
-generate uniform variates and pass them through the inverse of the CDF.  To avoid
-having to compute a normalization constant, we can get the nonnormalized CDF
-$G(x, a, n)$ by integrating the nonnormalized PDF.
+generate uniform variates and pass them through the inverse of the CDF.  We get the
+nonnormalized CDF $G(x, a, n)$ by integrating the nonnormalized PDF.  On the interval
+$1 \le x \le n + 1$, we have
+
+$$
+    g(x, a, n)
+     = \begin{cases}
+         x - 1                                  & 1 \le x < 2 &       \\
+         \frac{\left(x - 1\right)^{1-a}}{1 - a} & 2 \le x < n + 1
+       \end{cases}
+$$
 
 This plot shows $G(x, 0.95, 7)$:
 

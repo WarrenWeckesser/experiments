@@ -32,7 +32,7 @@ def g(x, a, n):
 
 def G(x, a, n):
     # Currently, the only call of this function used in the
-    # rejection method is G(n + 0.5, a, n).
+    # rejection method is G(n + 1, a, n).
     x = np.atleast_1d(x)
     out = np.zeros(len(x))
     out[x >= n + 1] = boxcox(n, 1 - a) + 1
