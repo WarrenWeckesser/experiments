@@ -2,7 +2,7 @@ Using the multinomial test for the Zipfian distribution
 -------------------------------------------------------
 
 Consider the concrete example a=1.25, n=3.  Using such a small n will allow
-use to enumerate all the possible outcomes of the multinomial distribution
+us to enumerate all the possible outcomes of the multinomial distribution
 developed below.
 
 ```
@@ -154,7 +154,7 @@ In [81]: pvalue = p[mask].sum()
 In [82]: pvalue
 Out[82]: np.float64(0.5483587189939042)
 ```
-So the p-value for this particular sample of 15 values from the
+So the p-value for this particular sample of 10 values from the
 Zipfian distribution is approx. 0.548.
 
 We can run the test again to generate another p-value:
@@ -277,6 +277,6 @@ p-value:
 ```
 
 Notice that at the top of the list (where the p-values are largest),
-the spacing between the p-values is large.  A uniform distrbution for
+the spacing between the p-values is large.  A uniform distribution for
 the p-value would not be a good approximation to the actual discrete
 distribution of p-values.
