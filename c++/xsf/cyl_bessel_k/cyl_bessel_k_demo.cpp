@@ -8,18 +8,17 @@
 int main(int argc, char *argv[])
 {
     using namespace std;
-    using namespace std::complex_literals;
 
     double nu = 0.0;
     double re = 0.0;
     double im = 0.0;
 
     if (argc > 1) {
-        nu = std::stod(argv[1]);
+        nu = stod(argv[1]);
         if (argc > 2) {
-            re = std::stod(argv[2]);
+            re = stod(argv[2]);
             if (argc > 3) {
-                im = std::stod(argv[3]);
+                im = stod(argv[3]);
             }
         }
     }
