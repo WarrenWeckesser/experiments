@@ -129,7 +129,8 @@ int
 main(int argc, char **argv)
 {
     float x = 1310.23;
-    double y = 0.1;
+    double y1 = 0.1;
+    double y2 = 1.2345e60;
     long double z = 1.0L / 3.0L;
 
     print_value(x);
@@ -137,9 +138,14 @@ main(int argc, char **argv)
     show_ratio(x);
 
     std::cout << std::endl;
-    print_value(y);
+    print_value(y1);
     std::cout << std::endl;
-    show_ratio(y);
+    show_ratio(y1);
+
+    std::cout << std::endl;
+    print_value(y2);
+    std::cout << std::endl;
+    show_ratio(y2);
 
     std::cout << std::endl;
     print_value(z);
