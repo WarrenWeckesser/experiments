@@ -1,5 +1,5 @@
-Notes on the rejection method implementation for the Zipfian distribution
--------------------------------------------------------------------------
+Notes on the implementation of the rejection method for the Zipfian distribution
+--------------------------------------------------------------------------------
 
 This is not a tutorial on the rejection method.  There are probably many of
 those available already online.  These notes provide the details for the
@@ -12,7 +12,7 @@ $$
     f(k, a, n) = \frac{k^{-a}}{H_{n, a}}, \quad k \in \mathbb{Z}, 1 \le k \le n
 $$
 
-where
+where the *generalized harmonic number*
 
 $$
     H_{n, a} = \sum_{k = 1}^{n} k^{-a}
