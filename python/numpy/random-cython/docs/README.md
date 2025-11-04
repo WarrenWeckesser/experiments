@@ -9,7 +9,7 @@ SciPy as `scipy.stats.zipfian`).
 The PMF for the Zipfian distribution is
 
 $$
-    f(k, a, n) = \frac{k^{-a}}{H_{n, a}}, \quad k \in \mathbb{Z}, 1 \le k \le n
+    f(k, a, n) = \frac{k^{-a}}{H_{n, a}}, \quad k \\{1, 2, ..., n\\}
 $$
 
 where the *generalized harmonic number*
