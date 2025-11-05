@@ -24,24 +24,17 @@ Out[45]: array([1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 3, 1, 2, 1, 1])
 ```
 
 Consider taking 10 samples and counting the occurrences of each value
-from the support.  With numpy, we can use `np.bincount`:
+from the support.  With numpy, we can use `np.bincount`.  Because 0 is
+not in the support of the distribution, the first element of the
+result of `bincount(x)` will be zero, so we skip it:
 
 ```
 In [68]: x = zipfian.rvs(a, n, size=10)
 
-In [69]: b = np.bincount(x)
+In [69]: y = np.bincount(x)[1:]
 
-In [70]: b
-Out[70]: array([0, 8, 1, 1])
-```
-0 is not in the support of the Zipfian distribution, so `b[0]` will always be 0.
-Let's skip it, and put the rest in `y`:
-
-```
-In [71]: y = b[1:]
-
-In [72]: y
-Out[72]: array([8, 1, 1])
+In [70]: y
+Out[70]: array([8, 1, 1])
 ```
 
 `y` is a sample from the multinomial distribution, implemented in SciPy
