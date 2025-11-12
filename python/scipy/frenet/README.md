@@ -18,7 +18,7 @@ where
 
 * $s$ is the arclength;
 * $T$, $N$ and $B$ are the tangent, normal and binormal vectors,
-respecitively;
+respectively;
 * $\kappa(s)$ is the curvature and $\tau(s)$ is the torsion.
 
 The script creates the following plot:
