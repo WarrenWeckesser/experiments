@@ -94,7 +94,7 @@ ax = fig.add_subplot(projection='3d')
 ax.plot(sol[:, 0], sol[:, 1], sol[:, 2])
 
 # Simulate equal aspect ratio:
-ptp = sol[:, :3].ptp(axis=0)
+ptp = np.ptp(sol[:, :3], axis=0)
 ax.set_box_aspect(ptp)
 
 # plt.show()
