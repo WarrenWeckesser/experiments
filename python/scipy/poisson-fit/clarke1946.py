@@ -39,7 +39,7 @@ Regarding the Χ² test, Clarke (1946) says:
     the probability of obtaining this or a higher value of Χ² is .88.
 
 Why are there 4 degrees of freedom?  The parameter mu is estimated
-from the data, and that determines the only the probability distribution.
+from the data, and that determines only the probability distribution.
 The expected values use N, also derived from the data.
 
 In general, when determining the degrees of freedom for a chi-square
