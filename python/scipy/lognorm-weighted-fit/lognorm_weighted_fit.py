@@ -30,7 +30,7 @@ print("MLE using repeated array: shape=%7.5f   scale=%7.5f" % (shape, scale))
 
 lnx = np.log(x)
 muhat = np.average(lnx, weights=w)
-# varhat is the weighted variance of ln(x).  There isn't function in numpy
+# varhat is the weighted variance of ln(x).  There isn't a function in numpy
 # for the weighted variance, so we compute it using np.average.
 varhat = np.average((lnx - muhat)**2, weights=w)
 
