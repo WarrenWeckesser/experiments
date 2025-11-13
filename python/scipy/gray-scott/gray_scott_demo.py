@@ -47,7 +47,7 @@ def grayscott1d(y, t, f, k, Du, Dv, dx):
 
 def ic(L, n):
     # Hacked on this until I got an interesting solution. There is nothing special
-    # about the forumulas used here.
+    # about the formulas used here.
     x = np.linspace(0, L, n)
     u0 = 1.0 - 0.5*np.cos(2*np.pi*x/L) + 0.5*np.cos(0.5*2*np.pi*x/L) + 0.5*np.cos(3*2*np.pi*x/L)
     u0 = (u0 - u0.min())/np.ptp(u0)
