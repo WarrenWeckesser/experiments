@@ -67,8 +67,9 @@ nx = 2001
 nt = 1250
 
 y0 = ic(L, nx)
-#t = np.linspace(0, T, nt)
-t = T*np.linspace(0, 1, nt)**1.5
+c = 0.001
+t0 = np.linspace(0, T + 1/c, nt)
+t = t0 + np.expm1(-c*t0)/c
 
 # Equation parameters.
 f = 0.024
@@ -100,7 +101,7 @@ def update_line(num, x, data, t, uline, vline, time_text):
 
 print("Generating the animated PNG file.")
 
-fig = plt.figure(figsize=(7.0, 1.8))
+fig = plt.figure(figsize=(7.25, 2.0))
 
 # Initial plot.  The animation will update elements of this plot for each frame.
 ax = fig.gca()
