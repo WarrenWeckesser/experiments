@@ -274,8 +274,7 @@ static PyObject* hypot_v1(PyObject* self, PyObject* args)
                       NPY_ITER_BUFFERED |
                       // Manually handle innermost iteration for speed:
                       NPY_ITER_EXTERNAL_LOOP |
-                      NPY_ITER_GROWINNER |
-                      0);
+                      NPY_ITER_GROWINNER);
 
     op_flags[0] = (NPY_ITER_READONLY |
                    // Required that the arrays are well behaved
@@ -287,7 +286,7 @@ static PyObject* hypot_v1(PyObject* self, PyObject* args)
     op_flags[2] = NPY_ITER_WRITEONLY | NPY_ITER_ALLOCATE;
 
     //
-    // For this demonstraion, we handle only np.float64 arrays.
+    // For this demonstration, we handle only np.float64 arrays.
     // The array op_dtypes is used only as an argument to NpyIter_MultNew.
     // 
     op_dtypes[0] = PyArray_DescrFromType(NPY_DOUBLE);
@@ -405,7 +404,7 @@ static PyObject* hypot_v2(PyObject* self, PyObject* args)
     op_flags[2] = NPY_ITER_WRITEONLY | NPY_ITER_ALLOCATE;
 
     //
-    // For this demonstraion, we handle only np.float64 arrays.
+    // For this demonstration, we handle only np.float64 arrays.
     // The array op_dtypes is used only as an argument to NpyIter_MultNew.
     // 
     op_dtypes[0] = PyArray_DescrFromType(NPY_DOUBLE);
