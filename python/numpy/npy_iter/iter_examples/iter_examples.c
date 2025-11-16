@@ -24,12 +24,12 @@
 "    individual element of the input array.\n"\
 "\n"\
 "hypot_v1(x, y)\n"\
-"    A wrapper of the standard libary hypot function.  This code\n"\
+"    A wrapper of the standard library hypot function.  This code\n"\
 "    demonstrates how the iterator is used to implement broadcasting\n"\
 "    of two parameters.\n"\
 "\n"\
 "hypot_v2(x, y)\n"\
-"    A wrapper of the standard libary hypot function.  This does the\n"\
+"    A wrapper of the standard library hypot function.  This does the\n"\
 "    same calculation as hypot_v1, but the iterator does not set the flags\n"\
 "    NPY_ITER_EXTERNAL_LOOP, NPY_ITER_BUFFERED and NPY_ITER_GROWINNER.\n"\
 "\n"
