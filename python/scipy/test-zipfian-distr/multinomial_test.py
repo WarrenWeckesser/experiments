@@ -42,17 +42,18 @@ def multinomial_support_generator(n, m):
 
 def all_possible_pvalues(n, a, m):
     """
-    Tractable for very small n and m only!
+    Tractable for small n and m only!
     For example, the following shows the number of points in the support
     for various values of n and m.
 
-        n     m    len(support)
-        5     10        2002
-        5     25      118755
-        5     40     1086008
-        8     15      170544
-        9     15      490314
-       10     15     1307504
+        n     m   len(support)
+        5    10           2002
+        5    25         118755
+        5    40        1086008
+        8    15         170544
+        9    15         490314
+       10    15        1307504
+       10    30      211915132
     """
     zpmf = zipfian.pmf(np.arange(1, n + 1), a, n)
     mn = multinomial(m, zpmf)
@@ -98,6 +99,9 @@ def run_zipfian_tests(a, n, m, ntests, verbose=False):
 
     Returns the log of the p-value for each multinomial test.
     """
+    if verbose:
+        print(f"Multinomial tests for zipfian.rvs({a=}, {n=}, size={m})")
+
     zpmf = zipfian.pmf(np.arange(1, n + 1), a, n)
     mn = multinomial(m, zpmf)
 
@@ -108,22 +112,22 @@ def run_zipfian_tests(a, n, m, ntests, verbose=False):
     if verbose:
         print(f"Support array has length {len(mn_logpmf)}")
 
-    pvalues = []
+    logpvalues = []
     if verbose:
-        print(f"Running {ntests} tests")
+        print(f"Running {ntests} multinomial tests")
     for i in range(ntests):
         if verbose:
             print(f"{i = :5}  ", end='')
         sample = zipfian.rvs(a, n, size=m)
         b = np.bincount(sample, minlength=n + 1)[1:]
         if verbose:
-            print(f"{b = !s}  ", end='')
+            print(f"{b = !s:32}  ", end='')
         # Multinomial test
         logp0 = mn.logpmf(b)
         mask = mn_logpmf <= logp0
         logp = logsumexp(mn_logpmf[mask])
         if verbose:
-            print(f"log(p) = {logp!s}")
-        pvalues.append(logp)
+            print(f"p = {np.exp(logp):.8f}")
+        logpvalues.append(logp)
 
-    return np.array(pvalues)
+    return np.array(logpvalues)
