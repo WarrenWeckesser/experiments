@@ -157,8 +157,10 @@ constant that one would usually see in a rejection method has been, in effect,
 absorbed into the unnormalized PDFs.  It can be derived to be
 
 $$
-    M(a, n) = \frac{\frac{n^{1-a} - a}{1-a}}{H_{N, a}}
+    M(a, n) = \frac{B(n, 1 - a) + 1}{H_{N, a}}
 $$
+
+That is, it is the ratio of the normalizing constants.
 
 Numerical experiments show that $M(a, n) < 1.25$.  For each $n$, the maximum
 of $M(a, n)$ occurs near $a = 3$.
