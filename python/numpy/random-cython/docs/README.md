@@ -157,7 +157,7 @@ constant that one would usually see in a rejection method has been, in effect,
 absorbed into the unnormalized PDFs.  It can be derived to be
 
 $$
-    M(a, n) = \frac{B(n, 1 - a) + 1}{H_{N, a}}
+    M(a, n) = \frac{B(n, 1 - a) + 1}{H_{n, a}}
 $$
 
 That is, it is the ratio of the normalizing constants.
