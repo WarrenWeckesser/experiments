@@ -1,10 +1,12 @@
 Notes on the implementation of the rejection method for the Zipfian distribution
 --------------------------------------------------------------------------------
 
-This is not a tutorial on the rejection method.  There are probably many of
-those available already online.  These notes provide the details for the
-implementation of the method for the Zipfian distribution (implemented in
-SciPy as `scipy.stats.zipfian`).
+This is not a tutorial on the rejection method.  The method is described in the
+wikipedia article [Rejection sampling](https://en.wikipedia.org/wiki/Rejection_sampling),
+and a web search should point to at least a few tutorials.
+
+These notes provide the details for the implementation of the method for the
+Zipfian distribution (implemented in SciPy as `scipy.stats.zipfian`).
 
 The PMF for the Zipfian distribution is
 
@@ -147,14 +149,14 @@ def zipfian_random_variate(a, n):
 
 -----
 
-With a rejection method, there is a constant (called, for example, $M$ in the
-wikipedia page) that is used in determining whether or not to accept a candidate
+With a rejection method, there is a constant (called $M$, for example, in the
+wikipedia article) that is used in determining whether or not to accept a candidate
 variate, and that determines the average number of iterations required by the method.
 It appears to be missing in the above discussion.
 
 The constant is "missing" because the nonnormalized PDFs are used, and the
 constant that one would usually see in a rejection method has been, in effect,
-absorbed into the unnormalized PDFs.  It can be derived to be
+absorbed into the nonnormalized PDFs.  It can be derived to be
 
 $$
     M(a, n) = \frac{B(n, 1 - a) + 1}{H_{n, a}}
