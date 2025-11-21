@@ -144,3 +144,23 @@ def zipfian_random_variate(a, n):
         if U*g(x, a, n) <= h(x, a, n):
             return floor(X)
 ```
+
+-----
+
+With a rejection method, there is a constant (called, for example, $M$ in the
+wikipedia page) that is used in determining whether or not to accept a candidate
+variate, and that determines the average number of iterations required by the method.
+It appears to be missing in the above discussion.
+
+The constant is "missing" because the nonnormalized PDFs are used, and the
+constant that one would usually see in a rejection method has been, in effect,
+absorbed into the unnormalized PDFs.  It can be derived to be
+
+$$
+    M(a, n) = \frac{\frac{n^{1-a} - a}{1-a}}{H_{N, a}}
+$$
+
+Numerical experiments show that $M(a, n) < 1.25$.  For each $n$, the maximum
+of $M(a, n)$ occurs near $a = 3$.
+
+*TO DO:* Show the calculation, plot $M(a, n)$ agains $a$ for a wide range of $n$.
