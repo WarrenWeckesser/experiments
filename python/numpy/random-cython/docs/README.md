@@ -165,4 +165,4 @@ That is, it is the ratio of the normalizing constants.
 Numerical experiments show that $M(a, n) < 1.25$.  For each $n$, the maximum
 of $M(a, n)$ occurs near $a = 3$.
 
-*TO DO:* Show the calculation, plot $M(a, n)$ agains $a$ for a wide range of $n$.
+*TO DO:* Show the calculation, plot $M(a, n)$ against $a$ for a wide range of $n$.
