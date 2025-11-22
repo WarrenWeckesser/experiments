@@ -2,8 +2,8 @@ Various tools and scripts for testing the "Zipfian" distribution
 ----------------------------------------------------------------
 
 * The script `plot_histogram_and_pmf.py` generates plots like this,
-  allowing visual verification that a large sample agrees with the
-  expected distribution:
+  allowing visual verification that the distribution of values in a large
+  sample agrees with the expected distribution:
 
 ![](https://github.com/WarrenWeckesser/experiments/blob/main/python/scipy/test-zipfian-distr/histogram_and_pmf.png)
 
