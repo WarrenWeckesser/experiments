@@ -50,7 +50,8 @@ $$
 ![](https://github.com/WarrenWeckesser/experiments/blob/main/python/numpy/random-cython/docs/zipfian_nnpdf.png)
 
 The *dominating distribution* is a distribution with a nonnormalized PDF $g(x, a, n)$ that
-satisfies $g(x, a, n) \ge h(x, a, n)$ on the support.  This is the distribution that we'll
+satisfies $g(x, a, n) \ge h(x, a, n)$ on the support. (In the wikipedia article linked above,
+this is called the *proposal distribution*.)  This is the distribution that we'll
 use to generate candidate random variates.  For the Zipfian distribution, we can use
 
 $$
