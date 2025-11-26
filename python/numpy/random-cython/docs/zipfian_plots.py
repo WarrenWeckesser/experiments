@@ -86,7 +86,7 @@ dom = M(a, n) * g(xx, a, n)
 plt.figure(figsize=figsize)
 
 plt.plot(xx, pdf, label='PDF $f(x, a, n)$')
-plt.plot(xx, dom, '--', label='Dominating function $M(a, n) g(x, a, n)$')
+plt.plot(xx, dom, '--', label='$M(a, n) g(x, a, n)$')
 
 plt.legend(shadow=True, framealpha=1)
 plt.grid(visible=True)
