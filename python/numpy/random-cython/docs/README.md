@@ -65,7 +65,7 @@ $$
     M(a, n) = \frac{B(n, 1 - a) + 1}{H_{n, a}}
 $$
 
-This plot shows the target PDF $f(x, a, n) and the scaled dominating PDF
+This plot shows the target PDF $f(x, a, n)$ and the scaled dominating PDF
 $M(a, n) g(x, a, n)$. The plot shows that $g(x, a, n)$ is a dominating PDF for $f(x, a, n)$,
 and that on the interval $1 \le x \le 2$, $M(a, n)g(x, a, n) \equiv f(x, a, n)$.
 
@@ -96,35 +96,39 @@ $$
        \end{cases}
 $$
 
+(That is the "little bit of calculus" mentioned above. Now it is easy to verify that
+$G(n + 1, a, n) = 1$.)
+
 This plot shows $G(x, 0.95, 7)$:
 
 ![](https://github.com/WarrenWeckesser/experiments/blob/main/python/numpy/random-cython/docs/zipfian_dom_nncdf.png)
 
-To generate random variates with the inversion method from $G(x, a, n)$, we don't
-have to normalize it and get a true CDF. Instead, we generate uniform variates $Y$
-from the interval $[0, G(n+1, a, n)]$ (since $G(n+1, a, n)$ is the value of
-$G(x, a, n)$ at the right end of the support).  Then a random variate from the
-dominating distribution is $X = G^{-1}(Y, a, n)$.  On the interval $0 \le y \le G(n+1, a, n)$,
-$G^{-1}$ is
-
-$$
-    G^{-1}(y, a, n) =
-        \begin{cases}
-            y + 1                     & 0 \le x < 1 &     \\
-            B^{-1}(y - 1, 1 - a) + 1  & 1 \le y < G(n+1, a, n)
-       \end{cases}
-$$
 
 As per the rejection method, another uniform variate $U$ is generated, this time
-from $[0, 1]$, and $X$ is accepted if $U M(a, n) g(X, a, n) \le h(X, a, n)$.
+from $[0, 1]$, and $X$ is accepted if
+
+$$
+    U M(a, n) g(X, a, n) \le h(X, a, n)
+$$
 
 Substituting the definition of $M(a, n)$ into that inequality and rearranging a bit,
-this condition is equivalent to $U (B(n, 1 - a) + 1) g(X, a, n) \le H_{n, a} f(x, a, n)$.
-which can be written $U \hat{g}(X, a, n) \le \hat{f}(x, a, n)$, where $\hat{f}$ and $\hat{g}$
-are the nonnormalized PDFs (i.e. without their normalizing constants).  This means
-we can perform the rejection/acceptance test without computing $H_{n, a}$.
+this condition is equivalent to
 
-Note that on the interval $1 \le x < 2$, $\hat{g}(x, a, n) \equiv \hat{f}(x, a, n)$.
+$$
+    U (B(n, 1 - a) + 1) g(X, a, n) \le H_{n, a} f(x, a, n)
+$$
+
+or
+
+$$
+    U \tilde{g}(X, a, n) \le \tilde{f}(x, a, n)
+$$
+
+where $\tilde{f}$ and $\tilde{g}$ are the nonnormalized PDFs (i.e. without their
+normalizing constants).  This means we can perform the rejection/acceptance test
+without computing $H_{n, a}$.
+
+Note that on the interval $1 \le x < 2$, $\tilde{g}(x, a, n) \equiv \tilde{f}(x, a, n)$.
 So if the candidate $X$ is in this interval, it will always be accepted, and
 there is no need to generate $U$.
 
