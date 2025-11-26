@@ -17,6 +17,6 @@ for k, n1 in enumerate(n):
     plt.plot(a, m_const(a, n1), label=f'n = {n1}', linestyle=ls[k % len(ls)])
 plt.xlabel('a')
 plt.legend(framealpha=1, shadow=True)
-plt.title('Rejection method dominating PDF scaling constant $M(a, n)$')
+plt.title('$M(a, n)$')
 plt.grid()
 plt.show()
