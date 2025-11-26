@@ -2,15 +2,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import zipfian
 from scipy.special import boxcox
+from scipy.special._ufuncs import _gen_harmonic
 
 
-def zipfian_pdf(x, a, n):
-    # Treat the discrete distribution as a piecewise constant
-    # continuous distribution with support [0.5, n + 0.5]
+def f(x, a, n):
+    # Piecewise constant Zipfian PDF.
     mask = (x >= 1) & (x < n + 1)
     out = np.zeros_like(x)
-    out[mask] = zipfian.pmf(np.trunc(x[mask]), a, n)
-    return out
+    out[mask] = np.trunc(x[mask])**-a
+    return out / _gen_harmonic(n, a)
 
 
 def h(x, a, n):
@@ -21,13 +21,14 @@ def h(x, a, n):
     out[mask] = np.trunc(x[mask])**-a
     return out
 
+
 def g(x, a, n):
-    # g is the "hat" function
+    # PDF of the dominating distribution.
     out = np.zeros(len(x))
     out[(1 <= x) & (x <= 2)] = 1.0
     mask = (2 < x) & (x < n + 1)
     out[mask] = (x[mask] - 1)**-a
-    return out
+    return out/(boxcox(n, 1 - a) + 1)
 
 
 def G(x, a, n):
@@ -40,8 +41,11 @@ def G(x, a, n):
     out[mask1] = x[mask1] - 1
     mask = (2 < x) & (x < n + 1)
     out[mask] = boxcox(x[mask] - 1, 1 - a) + 1
-    return out
+    return out/(boxcox(n, 1 - a) + 1)
 
+
+def M(a, n):
+    return (boxcox(n, 1 - a) + 1) / _gen_harmonic(n, a)
 
 a = 0.95
 n = 7
@@ -57,14 +61,14 @@ plt.figure(figsize=figsize)
 plt.stem(k, pmf, basefmt=" ")
 
 plt.grid(visible=True)
-plt.xlabel('x')
-plt.title(f'Zipfian PMF (a={a}, n={n})')
+plt.xlabel('k')
+plt.title(f'Zipfian PMF p(k, a={a}, n={n})')
 plt.savefig('zipfian_pmf.png')
 
 # Figure 2.  The PDF
 
 xx = np.linspace(np.nextafter(1.0, 0), n + 1, 8000)
-pdf = zipfian_pdf(xx, a, n)
+pdf = f(xx, a, n)
 
 plt.figure(figsize=figsize)
 
@@ -72,54 +76,37 @@ plt.plot(xx, pdf)
 
 plt.grid(visible=True)
 plt.xlabel('x')
-plt.title(f'Zipfian PDF (a={a}, n={n})')
+plt.title(f'Zipfian PDF f(x, a={a}, n={n})')
 plt.savefig('zipfian_pdf.png')
 
-# Figure 3. Nonnormalized PDF
+# Figure 3. PDF and the scaled dominating PDF.
 
-nnpdf = h(xx, a, n)
-
-plt.figure(figsize=figsize)
-
-plt.plot(xx, nnpdf)
-
-plt.grid(visible=True)
-plt.xlabel('x')
-plt.title(f'Zipfian Nonnormalized PDF (a={a}, n={n})')
-plt.savefig('zipfian_nnpdf.png')
-
-# Figure 4. Nonnormalized PDF and the dominating function.
-
-dom = g(xx, a, n)
+dom = M(a, n) * g(xx, a, n)
 
 plt.figure(figsize=figsize)
 
-plt.plot(xx, nnpdf, label='Nonnormalized PDF $h(x, a, n)$')
-plt.plot(xx, dom, '--', label='Dominating function $g(x, a, n)$')
+plt.plot(xx, pdf, label='PDF $f(x, a, n)$')
+plt.plot(xx, dom, '--', label='Dominating function $M(a, n) g(x, a, n)$')
 
 plt.legend(shadow=True, framealpha=1)
 plt.grid(visible=True)
 plt.xlabel('x')
-plt.title(f'Zipfian Nonnormalized PDF and Dominating Function (a={a}, n={n})')
-plt.savefig('zipfian_nnpdf_and_dom.png')
+plt.title(f'Zipfian PDF and Scaled Dominating PDF (a={a}, n={n})')
+plt.savefig('zipfian_pdf_and_dom.png')
 
-# Figure 5. G(x, a, n)
+# Figure 4. G(x, a, n)
 
 plt.figure(figsize=figsize)
 
 plt.plot(xx, G(xx, a, n), 'k',
-         label='G(x, a, n)\nintegral of the dominating nonnormalized PDF g(x, a, n)')
+         label='G(x, a, n)')
 plt.plot(1, 0, 'k.')
 plt.plot(2, G(2, a, n), 'k.')
-maxG = G(n + 1, a, n)
-plt.plot(n + 1, maxG, 'k.')
-plt.axhline(maxG, linestyle=':', alpha=0.5,
-            label='max G(x, a, n) = G(n + 1, a, n)')
+plt.title('G(x, a, n), the CDF of the dominating distribution')
 
-plt.legend(shadow=True, framealpha=1)
+
 plt.grid(visible=True)
 plt.xlabel('x')
-plt.title(f'Zipfian Rejection Method  (a={a}, n={n})\n'
-          'G(x, a, n), the nonnormalized CDF of the dominating distribution')
+plt.title(f'G(x, a={a}, n={n})')
 
-plt.savefig('zipfian_dom_nncdf.png')
+plt.savefig('zipfian_dom_cdf.png')

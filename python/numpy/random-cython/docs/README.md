@@ -69,7 +69,7 @@ This plot shows the target PDF $f(x, a, n)$ and the scaled dominating PDF
 $M(a, n) g(x, a, n)$. The plot shows that $g(x, a, n)$ is a dominating PDF for $f(x, a, n)$,
 and that on the interval $1 \le x \le 2$, $M(a, n)g(x, a, n) \equiv f(x, a, n)$.
 
-![](https://github.com/WarrenWeckesser/experiments/blob/main/python/numpy/random-cython/docs/zipfian_nnpdf_and_dom.png)
+![](https://github.com/WarrenWeckesser/experiments/blob/main/python/numpy/random-cython/docs/zipfian_pdf_and_dom.png)
 
 To generate variates from the dominating distribution, we'll use the inversion method:
 generate uniform variates and pass them through the inverse of the CDF.  We get the
@@ -101,7 +101,7 @@ $G(n + 1, a, n) = 1$.)
 
 This plot shows $G(x, 0.95, 7)$:
 
-![](https://github.com/WarrenWeckesser/experiments/blob/main/python/numpy/random-cython/docs/zipfian_dom_nncdf.png)
+![](https://github.com/WarrenWeckesser/experiments/blob/main/python/numpy/random-cython/docs/zipfian_dom_cdf.png)
 
 
 As per the rejection method, another uniform variate $U$ is generated, this time
