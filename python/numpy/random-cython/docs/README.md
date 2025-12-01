@@ -67,7 +67,7 @@ $$
 
 This plot shows the target PDF $f(x, a, n)$ and the scaled dominating PDF
 $M(a, n) g(x, a, n)$. The plot shows that $g(x, a, n)$ is a dominating PDF for $f(x, a, n)$,
-and that on the interval $1 \le x \le 2$, $M(a, n)g(x, a, n) \equiv f(x, a, n)$.
+and that on the interval $1 \le x < 2$, $M(a, n)g(x, a, n) \equiv f(x, a, n)$.
 
 ![](https://github.com/WarrenWeckesser/experiments/blob/main/python/numpy/random-cython/docs/zipfian_pdf_and_dom.png)
 
