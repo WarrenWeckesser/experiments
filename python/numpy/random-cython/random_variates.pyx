@@ -1,4 +1,12 @@
 #cython: language_level=3
+
+#
+# This file is not being maintained at the moment.
+# For the most up-to-date version of the this implementation of the rejection
+# method for the finite Zipf distribution, see the SciPy pull request:
+#   https://github.com/scipy/scipy/pull/24011
+#
+
 """
 Random variate generators.
 
@@ -111,8 +119,8 @@ cdef int64_t zipfian_rejection(bitgen_t *bit_generator, double a, int64_t n)  no
     while num_rejections <= max_rejections:
         x = g_rv(bit_generator, a, n)
         # The dominating function g and the target function h coincide on the interval
-        # 1 <= x <= 2, so a candidate variate in that interval is never rejected.
-        if x <= 2 or bit_generator.next_double(bit_generator.state) * g(x, a, n) <= h(x, a, n):
+        # 1 <= x < 2, so a candidate variate in that interval is never rejected.
+        if x < 2 or bit_generator.next_double(bit_generator.state) * g(x, a, n) <= h(x, a, n):
             return <int64_t>(trunc(x))
         num_rejections += 1
     # Too many rejections...
