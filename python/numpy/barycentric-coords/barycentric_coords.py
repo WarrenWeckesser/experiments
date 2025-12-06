@@ -21,7 +21,7 @@ def barycentric_coords(p, simplex):
 
     Returns
     -------
-    Array with shape (n,) or (m, n) holding the barycentric coordinates
+    Array with shape (n + 1,) or (m, n + 1) holding the barycentric coordinates
     of each input point.
 
     Examples
