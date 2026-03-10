@@ -67,7 +67,7 @@ def fk_chi2(*samples, center='median'):
 
     # Compute the χ² statistc (Conover et al [1], equation (2.1)).
     abar = np.mean(a)
-    rngs = np.concat(([0], np.cumsum(sizes[:-1])))
+    rngs = np.cumulative_sum(sizes[:-1], include_initial=True)
     mean_group_scores = np.add.reduceat(a, rngs)/sizes
     v2 = (1/(N - 1))*np.sum((a - abar)**2)
     chi2 = (sizes @ (mean_group_scores - abar)**2)/v2
