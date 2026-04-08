@@ -8,7 +8,7 @@ on: workflow_dispatch
 
 jobs:
   some_job_name:
-    runs-on: windows-2019
+    runs-on: windows-latest
 
     steps:
     - name: Checkout
