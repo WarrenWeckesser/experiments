@@ -13,10 +13,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v6
-        
-    - name: Install llvm
-      run: |
-        choco install llvm -y --version=16.0.6
 
     - name: Compile and run
       run: |
