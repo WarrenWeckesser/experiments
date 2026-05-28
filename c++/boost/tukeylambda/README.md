@@ -72,7 +72,7 @@ $$
     p = (\lambda x)^{\frac{1}{\lambda}}
 $$
 
-That is upper curve of the bracket for $x < \frac{2^{-\lambda}}{\lambda}$.
+That is the upper curve of the bracket for $x < \frac{2^{-\lambda}}{\lambda}$.
 
 Similarly, if $x$ is far into the right tail ($x > 0$ and $x$ is "big"), then $p$
 is close to $1$, and $1 - p$ is "small". In this case, the term $(1 - p)^{\lambda}$
