@@ -20,4 +20,4 @@ plots in Abramowitz and Stegun (A&S).
 
 `odd_periodic_mathieu_functions_plot.py` (q = 1):
 
-![](https://github.com/WarrenWeckesser/experiments/blob/main/python/scipy/mathieu-plots/iabramowitz-stegun-plots/mages/odd_periodic_mathieu_functions_plot.svg)
+![](https://github.com/WarrenWeckesser/experiments/blob/main/python/scipy/mathieu-plots/abramowitz-stegun-plots/images/odd_periodic_mathieu_functions_plot.svg)
