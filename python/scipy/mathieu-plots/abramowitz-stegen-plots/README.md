@@ -10,14 +10,14 @@ plots in Abramowitz and Stegun (A&S).
 
 `mathieu_plot_characteristic_values.py`:
 
-![](https://github.com/WarrenWeckesser/experiments/blob/main/python/scipy/mathieu-plots/images/mathieu_plot_characteristic_values.svg)
+![](https://github.com/WarrenWeckesser/experiments/blob/main/python/scipy/mathieu-plots/abramowitz-stegun-plots/images/mathieu_plot_characteristic_values.svg)
 
 
 `even_periodic_mathieu_functions_plot.py` (q = 1):
 
-![](https://github.com/WarrenWeckesser/experiments/blob/main/python/scipy/mathieu-plots/images/even_periodic_mathieu_functions_plot.svg)
+![](https://github.com/WarrenWeckesser/experiments/blob/main/python/scipy/mathieu-plots/abramowitz-stegun-plots/images/even_periodic_mathieu_functions_plot.svg)
 
 
 `odd_periodic_mathieu_functions_plot.py` (q = 1):
 
-![](https://github.com/WarrenWeckesser/experiments/blob/main/python/scipy/mathieu-plots/images/odd_periodic_mathieu_functions_plot.svg)
+![](https://github.com/WarrenWeckesser/experiments/blob/main/python/scipy/mathieu-plots/iabramowitz-stegun-plots/mages/odd_periodic_mathieu_functions_plot.svg)
