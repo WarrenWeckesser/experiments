@@ -37,9 +37,22 @@ def nbinom_mle(samples):
     The pair (r, p) is the MLE under the assumption that r is not
     restricted to integers values.  The pair (r_int, p_int) is the
     MLE when r is constrained to be an integer.
+
+    Example
+    -------
+    >>> samples = [3, 5, 2, 10, 21, 13, 5, 4, 7, 7]
+    >>> r, p, r_int, p_int = nbinom_mle(samples)
+    >>> float(r)
+    3.3601271397235517
+    >>> float(p)
+    0.6961945285732459
+    >>> float(r * p / (1 - p))
+    7.700000000000003
+    >>> r_int, float(p_int)
+    (3, 0.7196261682242991)
     """
     r = fsolve(func, 1, samples, xtol=1e-10)[0]
-    s = samples.sum()
+    s = np.sum(samples)
     p = s / (len(samples)*r + s)
     rint = int(r)
     if rint != r:
@@ -49,12 +62,13 @@ def nbinom_mle(samples):
     return r, p, rint, m/(rint + m)
 
 
-samples = np.array([3, 5, 2, 10, 21, 13, 5, 4, 7, 7])
-# samples = np.array([1, 2, 2, 3, 5, 2, 10, 11, 13, 5, 4, 7, 7])
+if __name__ == "__main__":
+    samples = np.array([3, 5, 2, 10, 21, 13, 5, 4, 7, 7])
+    # samples = np.array([1, 2, 2, 3, 5, 2, 10, 11, 13, 5, 4, 7, 7])
 
-r, p, rint, p1 = nbinom_mle(samples)
-print(f"{r = }  {p = }")
-print(f"{rint = }  {p1 = }")
+    r, p, rint, p1 = nbinom_mle(samples)
+    print(f"r = {float(r)}  p = {float(p)}")
+    print(f"{rint = }  p1 = {float(p1)}")
 
 
 # Compare to R:
