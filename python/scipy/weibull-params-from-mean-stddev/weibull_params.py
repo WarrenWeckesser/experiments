@@ -1,7 +1,7 @@
 
 import numpy as np
 from scipy.special import gamma, gammaln
-from scipy.optimize import fsolve
+from scipy.optimize import fsolve, root
 from scipy.stats import weibull_min
 
 
@@ -18,15 +18,24 @@ def weibull_c_scale_from_mean_std(mean, std):
     This is for the two-parameter Weibull distribution--the location parameter
     is assumed to be 0.
 
-    The solver used in this function will fail for certain parameter ranges.
+    The solvers used in this function may fail for certain parameter ranges.
     A RuntimeError is raised when that occurs.
+
+    Implementation details:
+    The function makes two attempts to solve for the parameters.  The
+    first attempt uses `scipy.optimize.fsolve`.  If that fails, it tries
+    `scipy.optimize.root` with `method='lm'`.
     """
     c0 = 1.27*np.sqrt(mean/std)
     c, info, ier, msg = fsolve(lambda t: _h(t) - (mean/std), c0, xtol=1e-10,
                                full_output=True)
     if ier != 1:
-        raise RuntimeError(f'with mean={mean} and std={std}, '
-                           f'fsolve failed: {msg}')
+        result = root(lambda t: _h(t) - (mean/std), c0, method='lm')
+        if not result.success:
+            errmsg = ("fsolve() and root() failed to solve for the parameters.\n"
+                      f"fsolve: {msg = }\nroot: {result.message = }")
+            raise RuntimeError(errmsg)
+        c = result.x
     c = c[0]
     scale = mean / gamma(1 + 1/c)
     return c, scale
@@ -40,8 +49,8 @@ def weibull_c_and_scale_test(mean=(1,)):
     """
     for mn in mean:
         print("       mn         mn_actual        sd        sd_actual"
-              "          c            scale")
-        format = 4 * '{:13.9f} ' + 2 * '{:15.11f}'
+              "           c             scale")
+        format = 4 * '{:13.9f} ' + 2 * '{:18.12g}'
 
         for sd in [0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100]:
             c, scale = weibull_c_scale_from_mean_std(mn, sd)
