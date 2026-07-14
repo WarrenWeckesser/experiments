@@ -57,7 +57,7 @@ template1 = """
 Examples
 --------
 >>> import numpy as np
->>> from scipy.special import {funcname}
+>>> from scipy.special import {funcname}, {evalname}
 >>> from scipy.integrate import quad
 
 Take a look at the sample points and weights for ``n = {n}``.
@@ -76,7 +76,7 @@ These values might not be *exactly* 0 because of floating point imprecision:
 {evalresult!r}
 
 If we include the parameter ``mu=True``, the sum of the weights is also
-returned.{sum1comment}
+returned.{sumcomment}
 
 >>> x, weights, mu = {funcname}(n{args}, mu=True)
 >>> mu, weights.sum()
@@ -289,16 +289,16 @@ for func in funcs:
     else:
         template = ''.join([template1, templatewx, template2])
 
-    sum1comment = ''
+    sumcomment = ''
     if func.wsum != '':
-        sum1comment = f" The sum of the weights for {propername} quadrature\nis always {func.wsum}."
+        sumcomment = f" The sum of the weights for {propername} quadrature\nis always {func.wsum}."
 
     text = template.format(funcname=func.funcname, propername=propername,
                            n=n, x3=x, wts3=wts, mu3=mu, sum3=sum3,
                            wmath=func.wmath, integrandcode=integrandcode, a=func.a, b=func.b,
                            assign_params2=assign_params2, evalname=evalname, evalresult=evalresult,
                            args=args, quadargs=quadargs, q=q, weighted_sum=weighted_sum,
-                           sum1comment=sum1comment)
+                           sumcomment=sumcomment)
     print("-"*52)
     print(f"*** {func.funcname} ***")
     print("-"*52)
