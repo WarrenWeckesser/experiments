@@ -14,8 +14,17 @@ int main(int argc, char *argv[])
     double angle = theta*180/pi_v<double>;  // degrees
     xsf::cem(m, q, angle, f, df);
 
-    std::cout << std::setprecision(15) << "f  = " << f << std::endl;
-    std::cout << std::setprecision(15) << "df = " << df << std::endl;
+    std::cout << std::setprecision(15);
+    std::cout << "f = " << f << std::endl;
+    std::cout << "df          = " << df << std::endl;
+
+    double h = 1e-8;
+    double fplus, fminus, tmp;
+    xsf::cem(m, q, angle + h, fplus, tmp);
+    xsf::cem(m, q, angle - h, fminus, tmp);
+    double approx_diff = (fplus - fminus)/(2*h);
+    std::cout << "finite diff = " << approx_diff << std::endl;
+    std::cout << "df*π/180    = " << df * pi_v<double> / 180.0 << std::endl;
 
     return 0;
 }
