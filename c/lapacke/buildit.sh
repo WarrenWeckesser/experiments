@@ -1,3 +1,6 @@
+# Might need to add -I option to the gcc commands and -L to the gfortran
+# commands for this to work.
+
 gcc -Wall -Werror -c -O2 zgeev_example.c -o zgeev_example.o
 gfortran zgeev_example.o -llapacke -llapack -lblas -o zgeev_example
 
