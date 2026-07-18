@@ -1,6 +1,7 @@
 
 import sympy
 from sympy import exp, gamma
+from sympy.polys.polyfuncs import horner
 from genmom import generate_moments
 
 #
@@ -15,3 +16,7 @@ print("Gumbel distribution moments about 0")
 for k, m in enumerate(moments):
     print(f'\nm{k+1}:')
     sympy.pprint(m)
+    mh_beta = horner(m, wrt=beta)
+    sympy.pprint(mh_beta)
+    mh_both = horner(m, wrt=(mu, beta))
+    sympy.pprint(mh_both)
