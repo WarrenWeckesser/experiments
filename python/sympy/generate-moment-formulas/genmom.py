@@ -2,7 +2,7 @@
 import sympy
 
 
-def generate_moments(mgf, t, n):
+def generate_moments(mgf, t, n, direct_eval_limit=False):
     """
     Return moments about 0 of order 1, 2, ..., n.
 
@@ -12,5 +12,8 @@ def generate_moments(mgf, t, n):
     moments = []
     for k in range(1, n+1):
         deriv = deriv.diff(t)
-        moments.append(sympy.limit(deriv, t, 0))
+        if direct_eval_limit:
+            moments.append(deriv.subs(t, 0))
+        else:
+            moments.append(sympy.limit(deriv, t, 0))
     return moments
