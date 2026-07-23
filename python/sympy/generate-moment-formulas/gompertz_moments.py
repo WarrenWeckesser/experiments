@@ -9,6 +9,9 @@ from genmom import generate_moments
 #     https://en.wikipedia.org/wiki/Gompertz_distribution
 #
 eta, t = sympy.symbols('eta,t')
+# Note that with the first argument of expint being t, there is an alternating
+# sign of the output formulas.  Is this expected?  Changing t to -t removes
+# the sign alternation.
 mgf = eta * exp(eta) * expint(t, eta)
 moments = generate_moments(mgf, t, 5, direct_eval_limit=True)
 moments = [horner(m, wrt=eta) for m in moments]
