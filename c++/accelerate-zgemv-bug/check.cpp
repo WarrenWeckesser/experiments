@@ -78,7 +78,7 @@ int main()
     // Print y[17]
     //
     std::cout << "@ is matrix multiplication computed with cblas_zgemv.\n" << std::endl;
-    std::cout << "(CC @ weights)[17] = " << y[17] << '\n';
+    std::cout << "(CC @ weights)[17] = " << y[17] << std::endl;
 
     //
     // y17 = CC[17,:] @ weights
