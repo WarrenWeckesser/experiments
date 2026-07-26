@@ -50,7 +50,6 @@ int main()
     if (static_cast<int>(w_shape[0]) != N)
         throw std::runtime_error("length of weights does not equal the second dimension of CC");
 
-
     //
     // y = CC @ weights
     //
