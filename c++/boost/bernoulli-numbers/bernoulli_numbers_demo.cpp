@@ -11,7 +11,7 @@ int main()
     // These reference values are from the wikipedia page https://en.wikipedia.org/wiki/Bernoulli_number
     double bnumbers2n[] = {1.0,  1.0/6, -1.0/30, 1.0/42, -1.0/30, 5.0/66, -691.0/2730, 7.0/6, -3617.0/510, 43867.0/798, -174611.0/330};
     int k = 0;
-    std::cout << "    n            bernoulli_b2n(n)                   reference" << std::endl;
+    std::cout << "    n         bernoulli_b2n(n//2)                   reference" << std::endl;
     std::cout << "-----   -------------------------   -------------------------" << std::endl;
     for (const auto &ref : bnumbers2n) {
         double b = boost::math::bernoulli_b2n<double>(k, no_promote_double());
