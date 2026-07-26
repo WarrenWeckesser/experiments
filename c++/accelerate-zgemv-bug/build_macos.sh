@@ -1,0 +1,1 @@
+clang++ check.cpp -DACCELERATE_NEW_LAPACK -framework Accelerate -std=c++17 -o check
