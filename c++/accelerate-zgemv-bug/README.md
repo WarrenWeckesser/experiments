@@ -1,7 +1,7 @@
 The code here demonstrates an issue that is discussed in https://github.com/scipy/scipy/pull/25696.
 
 On MacOS, it was observed in NumPy that computing `CC @ weights` produces
-a `nan+nanj` at position 17 of the output, but row 17 of `CC` does contain
+a `nan+nanj` at position 17 of the output, but row 17 of `CC` does not contain
 `nan`, and `weights` does not contain nan.
 
 The code in `check.cpp` uses `cblas_zgemv` to compute `(CC @ weights)[17]` and
