@@ -2,7 +2,8 @@ The code here demonstrates an issue that is discussed in https://github.com/scip
 
 On MacOS, it was observed in NumPy that computing `CC @ weights` produces
 a `nan+nanj` at position 17 of the output, but row 17 of `CC` does not contain
-`nan`, and `weights` does not contain nan.
+`nan`, and `weights` does not contain nan.  The value `inf+nanj` occurs in `CC`,
+but not in row 17.
 
 The code in `check.cpp` uses `cblas_zgemv` to compute `(CC @ weights)[17]` and
 `CC[17,:] @ weights`.  They should give the same value, but the first gives `nan+nanj`
