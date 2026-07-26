@@ -5,7 +5,7 @@ a `nan+nanj` at position 17 of the output, but row 17 of `CC` does not contain
 `nan`, and `weights` does not contain nan.
 
 The code in `check.cpp` uses `cblas_zgemv` to compute `(CC @ weights)[17]` and
-`CC[17:,:] @ weights`.  They should give the same value, but the first gives `nan+nanj`
+`CC[17,:] @ weights`.  They should give the same value, but the first gives `nan+nanj`
 and the second gives a finite complex value:
 
 ```
