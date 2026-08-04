@@ -35,7 +35,7 @@ for n in interp_data_sizes:
         code = "r(z)"
         t = (timeit.timeit(code, globals=globals(), number=num_timeit_iters)
              / num_timeit_iters * 1000000)
-        print(f"{t:12.4g}", flush=True, end='')
+        print(f"{t:12.2f}", flush=True, end='')
     print()
 
 print()
