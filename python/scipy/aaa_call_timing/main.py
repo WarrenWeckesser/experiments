@@ -12,8 +12,12 @@ interp_data_sizes = [10, 100, 1000, 10000]
 # Sizes of the inputs to the __call__ method of AAA()
 eval_sizes = [10, 100, 1000, 10000]
 
+num_timeit_iters = 10000
+
 print("n is the size of the data that used to create the interpolator.")
 print("m is the size of the input evaluated by the interpolator.")
+print()
+print("Average evaluation time, in microseconds")
 print()
 print("          |                      m")
 print("       n  |", end='')
@@ -25,10 +29,13 @@ for n in interp_data_sizes:
     x = rng.standard_normal(size=(n, 2)).view(np.complex128)[:, 0]
     fx = np.sin(x)
     r = AAA(x, fx)
-    print(f"{n:8}  |", end='')
+    print(f"{n:8}  |", flush=True, end='')
     for m in eval_sizes:
         z = rng.standard_normal(size=(m, 2)).view(np.complex128)[:, 0]
         code = "r(z)"
-        t = timeit.timeit(code, globals=globals(), number=5000)
-        print(f"{t:12.5f}", end='')
+        t = (timeit.timeit(code, globals=globals(), number=num_timeit_iters)
+             / num_timeit_iters * 1000000)
+        print(f"{t:12.4g}", flush=True, end='')
     print()
+
+print()
