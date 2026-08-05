@@ -1,1 +1,1 @@
-g++ -std=c++1z gegenbauer_demo.cpp -o gegenbauer_demo
+g++ -std=c++17 -I$BOOSTDIR gegenbauer_demo.cpp -o gegenbauer_demo
