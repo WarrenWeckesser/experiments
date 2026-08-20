@@ -1,7 +1,18 @@
+import math
 import numpy as np
 import operator
-from scipy.special import logsumexp
+from scipy.special import logsumexp, comb
 from scipy.stats import multinomial, zipfian
+
+
+def len_multinomial_support(n, m):
+    """
+    Compute the number of points in the support of the multinomial distribution.
+
+    `n` is the length of the probability vector.
+    `m` is the number of draws.
+    """
+    return math.comb(m + n - 1, n - 1)
 
 
 # This is slower than list(multinomial_support_generator(n, m)).
@@ -47,9 +58,9 @@ def all_possible_pvalues(n, a, m):
     for various values of n and m.
 
         n     m   len(support)
-        5    10           2002
-        5    25         118755
-        5    40        1086008
+        5    10           1001
+        5    25          23571
+        5    40         135751
         8    15         170544
         9    15         490314
        10    15        1307504
