@@ -139,7 +139,7 @@ double tukey_lambda_invcdf3b(double p, double lam)
         return x;
     }
     double t = lam*logistic_invcdf(p);
-    return pow1p(-p, lam)*std::expm1(t)/lam;
+    return pow1p(-p, lam) * std::expm1(t) / lam;
 }
 
 #define TUKEY_LAMBDA_INVCDF_TAYLOR_MAX_N 31
@@ -269,6 +269,12 @@ get_cdf_solver_bracket(double x, double lam)
             // x > 0
             if (x > -std::pow(2.0, -lam)/lam) {
                 pmin = -std::expm1(std::log(-lam*x)/lam);
+                // If x is far enough into the tail, numerical imprecision can
+                // result in pmin not being a lower bound.  It should be close,
+                // so we decrease it by a bit.
+                if (tukey_lambda_invcdf(pmin, lam) > x) {
+                    pmin = 0.95*pmin;
+                }
             }
             else {
                 pmin = 0.5;
@@ -291,6 +297,7 @@ get_cdf_solver_bracket(double x, double lam)
 inline double
 inf_to_big(double x)
 {
+    // XXX Why 0.75*max?  Why not just max?
     return std::isinf(x) ? 0.75*std::copysign(std::numeric_limits<double>::max(), x)
                          : x;
 }
@@ -330,7 +337,9 @@ double tukey_lambda_cdf(double x, double lam)
 
     std::pair<double, double> initial_bracket = get_cdf_solver_bracket(x, lam);
     printf("  :: initial_bracket: %25.16e %25.16e\n", initial_bracket.first, initial_bracket.second);
+    double x_first  = tukey_lambda_invcdf(initial_bracket.first, lam);
     double x_second = tukey_lambda_invcdf(initial_bracket.second, lam);
+    printf("  :: x_first, x_second: %25.16e %25.16e\n", x_first, x_second);
 
     if (initial_bracket.first == 0.0) {
         if (x_second <= x) {
@@ -369,11 +378,23 @@ double tukey_lambda_cdf(double x, double lam)
         // result is chosen to be the return value.
         double x1 = tukey_lambda_invcdf(bracket.first, lam);
         double x2 = tukey_lambda_invcdf(bracket.second, lam);
+        double mid = 0.5*(bracket.first + bracket.second);
+        double xm = tukey_lambda_invcdf(mid, lam);
         if (std::abs(x - x1) < std::abs(x - x2)) {
-            return bracket.first;
+            if (std::abs(x - x1) < std::abs(x - xm)) {
+                return bracket.first;
+            }
+            else {
+                return mid;
+            }
         }
         else {
-            return bracket.second;
+            if (std::abs(x - xm) < std::abs(x - x2)) {
+                return mid;
+            }
+            else {
+                return bracket.second;
+            }
         }
     }
 }
@@ -381,6 +402,8 @@ double tukey_lambda_cdf(double x, double lam)
 
 //
 // Survival function of the Tukey lambda distribution.
+//
+// The distribution is symmetric about x=0, so sf(x, lam) = cdf(-x, lam).
 //
 double tukey_lambda_sf(double x, double lam)
 {

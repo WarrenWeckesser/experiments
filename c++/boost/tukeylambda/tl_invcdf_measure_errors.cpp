@@ -57,8 +57,8 @@ int main(int argc, char *argv[])
         lambda *= 1.1;
     }
     std::sort(lambdas.begin(), lambdas.end());
-
-    printf("lambda        invcdf1      invcdf2      invcdf3a     invcdf3b     invcdft3     invcdft9     invcdft12    invcdft15    invcdfx     invcdf_taylorp4\n");
+    printf("# p = %24.17e\n", p);
+    printf("lambda        invcdf1      invcdf2      invcdf3a     invcdf3b     invcdft3     invcdft9     invcdft12    invcdft15    invcdfx\n");
     for (auto lam: lambdas) {
         double ref = invcdf_mp<cpp_bin_float_100>(p, lam);
 

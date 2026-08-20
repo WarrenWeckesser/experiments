@@ -72,6 +72,7 @@ int main(int argc, char *argv[])
     }
     std::sort(pvalues.begin(), pvalues.end());
 
+    printf("# lam = %.17e\n", lam);
     printf("p                       invcdf1      invcdf2      invcdf3a     invcdf3b     invcdft3     invcdft9     invcdft12    invcdft15    invcdfx invcdftp\n");
     for (auto p: pvalues) {
         double ref = invcdf_mp<cpp_bin_float_100>(p, lam);
