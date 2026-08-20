@@ -5,6 +5,7 @@ This module defines functions for testing the results
 of scipy.stats.zipfian.rvs.
 """
 
+import warnings
 from dataclasses import dataclass
 import numpy as np
 from scipy import stats
@@ -36,18 +37,26 @@ class Result:
     pvalues: np.ndarray
 
 
-def run_one_test(rng, a, n, *, size, agg_indices, agg_expected):
+def run_one_test(rng, a, n, *, size, agg_indices, agg_expected, min_freq):
     x = zipfian.rvs(a=a, n=n, size=size, random_state=rng)
     b = np.bincount(x, minlength=n + 1)[1:]
     b_agg = np.add.reduceat(b, agg_indices)
+    min_agg_freq = b_agg.min()
+    warning_threshold = int(0.5*min_freq + 0.5)
+    if min_agg_freq < warning_threshold:
+        msg = f'an observed freq ({min_agg_freq}) is less than half min_freq ({min_freq})'
+        warnings.warn(msg)
     test_result = stats.power_divergence(b_agg, agg_expected, lambda_=0)
     return test_result.pvalue
 
 
-def run_nreps_tests(rng, a, n, size, agg_indices, agg_expected, nreps):
+def run_nreps_tests(rng, a, n, size, agg_indices, agg_expected, min_freq, nreps):
     pvalues = []
     for i in range(nreps):
-        pvalues.append(run_one_test(rng, a, n, size=size, agg_indices=agg_indices, agg_expected=agg_expected))
+        pvalues.append(run_one_test(rng, a, n, size=size,
+                                    agg_indices=agg_indices,
+                                    agg_expected=agg_expected,
+                                    min_freq=min_freq))
     return pvalues
 
 
@@ -78,7 +87,8 @@ def run_power_divergence_tests(rng, a, n, *, size, nreps, min_freq=50,
     for i in range(nreps):
         pvalue = run_one_test(rng, a, n, size=size,
                               agg_indices=indices,
-                              agg_expected=expected_agg)
+                              agg_expected=expected_agg,
+                              min_freq=min_freq)
         if show_progress:
             print(f'  {i = }  p = {pvalue}')
         pvalues.append(pvalue)
@@ -115,6 +125,7 @@ def run_power_divergence_tests_multi(njobs, rng, a, n, *, size, nreps, min_freq=
                                    [size]*njobs,
                                    [indices]*njobs,
                                    [expected_agg]*njobs,
+                                   [min_freq]*njobs,
                                    [nreps]*njobs)
 
     pvalues = np.concat(list(job_results))
@@ -147,9 +158,9 @@ if __name__ == "__main__":
     a = 0.75
     n = 1250
     # Samples per test:
-    m = 750000
+    m = 100_000
     # Number of tests per parallel job:
-    nreps = 25000
+    nreps = 1250
     # Number of parallel jobs:
     njobs = 4
     # Required minimum expected frequency for a bin when aggregating the
@@ -160,7 +171,7 @@ if __name__ == "__main__":
     print_result(a, n, m, result, show_pvalues=False)
 
     nbins = 50
-    plt.hist(result.pvalues, bins=nbins)
+    plt.hist(result.pvalues, bins=nbins, alpha=0.75)
     plt.grid(True)
     plt.xlabel('p')
     npvalues = len(result.pvalues)
