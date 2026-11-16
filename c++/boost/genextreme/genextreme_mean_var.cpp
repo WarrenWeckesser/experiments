@@ -1,6 +1,7 @@
 
 // Compile with
-//   g++ -std=c++17 beta_mean_var.cpp -o beta_mean_var
+//   g++ -std=c++20 genextreme_mean_var.cpp -o genextreme_mean_var
+// (Add -I <boost directory> if it is not in a standard location.)
 
 #include <iostream>
 #include <boost/math/distributions/generalized_extreme_value.hpp>
