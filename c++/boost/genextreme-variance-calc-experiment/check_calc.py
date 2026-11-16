@@ -26,5 +26,6 @@ plt.plot(c, re1, label="g2 - g1**2")
 plt.plot(c, re2, label="(sqrt(g2) - g1)*(sqrt(g2) + g1)")
 plt.grid()
 plt.legend(framealpha=1, shadow=True)
+plt.xlabel('c')
 
 plt.show()
